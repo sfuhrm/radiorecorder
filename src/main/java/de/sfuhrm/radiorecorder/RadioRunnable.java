@@ -16,11 +16,8 @@
 package de.sfuhrm.radiorecorder;
 
 import de.sfuhrm.radiorecorder.consumer.GenericConsumer;
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.net.URLConnection;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
