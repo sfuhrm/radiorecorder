@@ -17,6 +17,7 @@ package de.sfuhrm.radiorecorder;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Objects;
 import lombok.Getter;
 
 /**
@@ -34,9 +35,9 @@ public class ConsumerContext {
     private final Params params;
     
     public ConsumerContext(URL url, File directory, Params params) {
-        this.url = url;
-        this.directory = directory;
-        this.params = params;
+        this.url = Objects.requireNonNull(url);
+        this.directory = Objects.requireNonNull(directory);
+        this.params = Objects.requireNonNull(params);
     }
     
     /** Get the read/connect timeout in millis. 

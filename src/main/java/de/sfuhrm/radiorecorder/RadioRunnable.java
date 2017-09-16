@@ -15,7 +15,6 @@
  */
 package de.sfuhrm.radiorecorder;
 
-import de.sfuhrm.radiorecorder.consumer.GenericConsumer;
 import java.io.IOException;
 import java.net.URLConnection;
 import java.util.Objects;
@@ -29,18 +28,18 @@ public class RadioRunnable implements Runnable {
 
     public final static int BUFFER_SIZE = 8192;
     private final ConsumerContext consumerContext;
+    private final ConnectionHandler configurator;
 
     public RadioRunnable(ConsumerContext consumerContext) {
         this.consumerContext = Objects.requireNonNull(consumerContext);
+        this.configurator = new ConnectionHandler(consumerContext);
     }
 
     @Override
     public void run() {
         log.info("URL is {} and directory is {}", consumerContext.getUrl(), consumerContext.getDirectory());
         try {
-            URLConnection connection = consumerContext.getUrl().openConnection();
-            GenericConsumer consumer = new GenericConsumer(consumerContext);
-            consumer.accept(connection);
+            configurator.consume(consumerContext.getUrl());
         } 
         catch (IOException ex) {
             log.warn("URL " + consumerContext.getUrl().toExternalForm() + " broke down", ex);
