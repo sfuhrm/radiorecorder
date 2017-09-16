@@ -28,7 +28,7 @@ import java.util.function.Consumer;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class StreamCopyConsumer extends AbstractConsumer implements Consumer<URLConnection> {
+public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<URLConnection> {
 
     private int fileNumber;
 
@@ -38,12 +38,12 @@ public class StreamCopyConsumer extends AbstractConsumer implements Consumer<URL
     }
 
     @Override
-    protected void _accept(URLConnection t) {
+    protected void __accept(URLConnection t, InputStream inputStream) {
         FileOutputStream outputStream = null;
         try {
+            getStreamMetaData().setMetaDataConsumer(m -> {System.err.println(m);});
             byte buffer[] = new byte[BUFFER_SIZE];
 
-            InputStream inputStream = t.getInputStream();
             String contentType = t.getContentType();
 
             File f = null;

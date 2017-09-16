@@ -31,17 +31,17 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class StreamPlayConsumer extends AbstractConsumer implements Consumer<URLConnection> {
+public class StreamPlayConsumer extends MetaDataConsumer implements Consumer<URLConnection> {
 
     public StreamPlayConsumer(ConsumerContext consumerContext) {
         super(consumerContext);
     }
 
     @Override
-    protected void _accept(URLConnection t) {
+    protected void __accept(URLConnection t, InputStream inputStream) {
         try {
+            getStreamMetaData().setMetaDataConsumer(m -> {System.err.println(m);});
             byte buffer[] = new byte[BUFFER_SIZE];
-            InputStream inputStream = t.getInputStream();
 
             AudioFileFormat audioFileFormat = AudioSystem.getAudioFileFormat(t.getURL());
             AudioFormat targetFormat = new AudioFormat(44100, 16, 2, true, true);
