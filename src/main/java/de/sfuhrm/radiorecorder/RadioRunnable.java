@@ -18,6 +18,7 @@ package de.sfuhrm.radiorecorder;
 import de.sfuhrm.radiorecorder.consumer.GenericConsumer;
 import java.io.IOException;
 import java.net.URLConnection;
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -27,7 +28,7 @@ public class RadioRunnable implements Runnable {
     private final ConsumerContext consumerContext;
 
     public RadioRunnable(ConsumerContext consumerContext) {
-        this.consumerContext = consumerContext;
+        this.consumerContext = Objects.requireNonNull(consumerContext);
     }
 
     @Override
