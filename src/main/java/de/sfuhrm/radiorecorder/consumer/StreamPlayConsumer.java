@@ -22,8 +22,13 @@ import java.io.InputStream;
 import java.net.URLConnection;
 import java.util.function.Consumer;
 import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.Line;
 import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.Port;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import lombok.extern.slf4j.Slf4j;
@@ -42,20 +47,26 @@ public class StreamPlayConsumer extends AbstractConsumer implements Consumer<URL
             InputStream inputStream = t.getInputStream();
 
             AudioFileFormat audioFileFormat = AudioSystem.getAudioFileFormat(t.getURL());
-            try (SourceDataLine line = AudioSystem.getSourceDataLine(audioFileFormat.getFormat())) {
+            AudioFormat targetFormat = new AudioFormat(44100, 16, 2, true, true);
+            AudioInputStream input = AudioSystem.getAudioInputStream(inputStream);
+            AudioInputStream converted = AudioSystem.getAudioInputStream(targetFormat, input);
+            try (SourceDataLine line = AudioSystem.getSourceDataLine(targetFormat)) {
                 log.info("Streaming from url {} to line {}, format {}",
                         getContext().getUrl().toExternalForm(),
                         line.getLineInfo().toString(),
                         audioFileFormat);
                 int len;
                 long ofs = 0;
-                line.open(audioFileFormat.getFormat());
-                while (-1 != (len = inputStream.read(buffer))) {
+                line.open(targetFormat);
+                line.start();
+                while (-1 != (len = converted.read(buffer))) {
+                    log.debug("Read {} bytes", len);
                     ofs += len;
                     line.write(buffer, 0, len);
+                    log.debug("Wrote {} bytes", len);
                     log.trace("Copied {} bytes", ofs);
                 }
-
+                line.stop();
             }
         } catch (UnsupportedAudioFileException | LineUnavailableException | IOException ex) {
             log.warn("URL " + getContext().getUrl().toExternalForm() + " broke down", ex);
