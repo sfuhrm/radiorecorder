@@ -22,6 +22,11 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.MDC;
 
+/**
+ * Base-class for many consumers.
+ * Subclasses need to implement {@link #_accept(java.net.URLConnection) }.
+ * @author Stephan Fuhrmann
+ */
 @Slf4j
 public abstract class AbstractConsumer implements Consumer<URLConnection> {
 
@@ -32,6 +37,7 @@ public abstract class AbstractConsumer implements Consumer<URLConnection> {
         this.context = context;
     }
     
+    /** Configure the timeout for the conncetion. */
     protected void configureTimeout(URLConnection connection) {
         connection.setConnectTimeout(context.getTimeout());
         connection.setReadTimeout(context.getTimeout());
@@ -46,5 +52,8 @@ public abstract class AbstractConsumer implements Consumer<URLConnection> {
         MDC.remove("url");
     }
     
+    /** The inner accept implementation. Will get called after applying
+     * configuration to the URLConnection passed in.
+     */
     protected abstract void _accept(URLConnection u);
 }

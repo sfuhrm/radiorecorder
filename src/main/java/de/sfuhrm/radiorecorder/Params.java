@@ -29,6 +29,7 @@ import org.kohsuke.args4j.Option;
  * The command line parameters as a POJO.
  * Must be created using {@link #parse(java.lang.String[]) }.
  * @see #parse(java.lang.String[]) 
+ * @author Stephan Fuhrmann
  */
 @Slf4j
 public class Params {

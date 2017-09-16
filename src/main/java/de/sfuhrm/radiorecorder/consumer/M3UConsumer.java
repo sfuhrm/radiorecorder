@@ -26,6 +26,10 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Consumer for M3U playlist format URLs.
+ * @author Stephan Fuhrmann
+ */
 @Slf4j
 public class M3UConsumer extends AbstractConsumer implements Consumer<URLConnection> {
 

@@ -53,7 +53,7 @@ public class GenericConsumer extends AbstractConsumer implements Consumer<URLCon
                 return new M3UConsumer(getContext());
             case "application/pls+xml":
             case "audio/x-scpls":
-                return new PLSconsumer(getContext());
+                return new PLSConsumer(getContext());
             default:
                 log.warn("Unknown content type {}", contentType);
                 return t -> {

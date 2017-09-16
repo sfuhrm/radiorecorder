@@ -20,8 +20,8 @@ import java.net.URL;
 import lombok.Getter;
 
 /**
- *
- * @author fury
+ * Immutable context common to all consumers.
+ * @author Stephan Fuhrmann
  */
 public class ConsumerContext {
     
@@ -39,12 +39,16 @@ public class ConsumerContext {
         this.params = params;
     }
     
-    /** Get the read/connect timeout in millis. */
+    /** Get the read/connect timeout in millis. 
+     * @return the timeout in milliseconds.
+     */
     public int getTimeout() {
         return params.getTimeout() * 1000;
     }
 
-    /** Get minimum free bytes.  */
+    /** Get minimum free bytes.
+     * @return minimum number of free bytes on disk.
+     */
     public long getMinFree() {
         return params.getMinimumFree() * 1024 * 1024;
     }

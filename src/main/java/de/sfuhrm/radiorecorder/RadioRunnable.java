@@ -21,6 +21,9 @@ import java.net.URLConnection;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 
+/** Runnable for one radio station stream given in the command line.
+ * @author Stephan Fuhrmann
+ */
 @Slf4j
 public class RadioRunnable implements Runnable {
 
