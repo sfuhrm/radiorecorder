@@ -41,7 +41,7 @@ public abstract class AbstractConsumer implements Consumer<URLConnection> {
     public void accept(URLConnection u) {
         MDC.put("url", getContext().getUrl().toExternalForm());
         configureTimeout(u);
-        log.info("URL is {} and directory is {}", getContext().getUrl(), getContext().getDirectory());
+        log.info("Source URL is {}, real URL is {} and directory is {}", getContext().getUrl(), u.getURL().toExternalForm(), getContext().getDirectory());
         _accept(u);
         MDC.remove("url");
     }

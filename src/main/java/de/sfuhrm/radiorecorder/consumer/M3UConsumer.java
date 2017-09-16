@@ -32,14 +32,14 @@ public class M3UConsumer extends AbstractConsumer implements Consumer<URLConnect
     public M3UConsumer(ConsumerContext context) {
         super(context);
     }
-    
 
     @Override
     protected void _accept(URLConnection t) {
         try {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(t.getInputStream()));
             List<String> lines = bufferedReader.lines().filter(l -> l.startsWith("http")).collect(Collectors.toList());
-            
+
+            log.info("Found {} lines with URLs", lines.size());
             for (String line : lines) {
                 log.debug("Found line {}", line);
                 new GenericConsumer(getContext()).accept(new URL(line).openConnection());
