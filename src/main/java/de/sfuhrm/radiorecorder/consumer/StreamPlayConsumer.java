@@ -57,11 +57,10 @@ public class StreamPlayConsumer extends AbstractConsumer implements Consumer<URL
                 line.open(targetFormat);
                 line.start();
                 while (-1 != (len = converted.read(buffer))) {
-                    log.debug("Read {} bytes", len);
+                    log.trace("Read {} bytes", len);
                     ofs += len;
                     line.write(buffer, 0, len);
-                    log.debug("Wrote {} bytes", len);
-                    log.trace("Copied {} bytes", ofs);
+                    log.trace("Wrote {} bytes (total {})", len, ofs);
                 }
                 line.stop();
             }
