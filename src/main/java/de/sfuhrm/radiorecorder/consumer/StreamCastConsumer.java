@@ -50,6 +50,7 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<URL
 
     @Override
     protected void __accept(URLConnection t, InputStream inputStream) {
+        ChromeCast chromeCast = null;
         try {
             getStreamMetaData().setMetaDataConsumer(m -> {
                 System.err.println(m);
@@ -63,8 +64,7 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<URL
                             log.debug("Found chromecast {}", chromeCast.getTitle());
                             arrayBlockingQueue.put(chromeCast);
                             log.debug("Posted chromecast {}", chromeCast.getTitle());
-                            ChromeCasts.stopDiscovery();
-                        } catch (IOException | InterruptedException ex) {
+                        } catch (InterruptedException ex) {
                             throw new RuntimeException(ex);
                         }
                     } else {
@@ -79,7 +79,7 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<URL
             ChromeCasts.startDiscovery();
             
             log.debug("Waiting for chromecast {} to be discovered", getContext().getCastReceiver());
-            ChromeCast chromeCast = arrayBlockingQueue.take();
+            chromeCast = arrayBlockingQueue.take();
             
             log.debug("Found chromecast {}", chromeCast);
             
@@ -87,8 +87,11 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<URL
             log.debug("Connected to chromecast {}", chromeCast);
             
             Application app = chromeCast.launchApp(APP_ID);
+            chromeCast.setApplication(Main.PROJECT);
+            chromeCast.setName("My Name");
             MediaStatus mediaStatus = chromeCast.load(Main.PROJECT, null, t.getURL().toExternalForm(), t.getContentType());
-            log.debug("Loaded content to chromecast {}", chromeCast);
+            
+            log.debug("Loaded content to chromecast {}", chromeCast.getTitle());
             
             getStreamMetaData().setMetaDataConsumer(m -> {System.err.println(m);});
             byte buffer[] = new byte[BUFFER_SIZE];
@@ -101,6 +104,17 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<URL
             
         } catch (GeneralSecurityException | InterruptedException | IOException ex) {
             log.warn("Chromecast problem", ex);
+        }
+        finally {
+            try {
+                if (chromeCast != null && chromeCast.isConnected()) {
+                    chromeCast.disconnect();
+                    log.debug("Disconnected from chromecast {}", chromeCast.getTitle());
+                }
+                ChromeCasts.stopDiscovery();
+                log.debug("Stopped discovery");
+            } catch (IOException ex) {
+            }
         }
     }
 }
