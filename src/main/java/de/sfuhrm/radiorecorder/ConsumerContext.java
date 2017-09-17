@@ -54,7 +54,13 @@ public class ConsumerContext {
         return params.getMinimumFree() * 1024 * 1024;
     }
     
+    /** Whether to play or store. */
     public boolean isPlaying() {
         return params.isPlay();
+    }
+    
+    /** Whether to name the files after the metadata retrieved. */
+    public boolean isSongNames() {
+        return params.isSongNames();
     }
 }

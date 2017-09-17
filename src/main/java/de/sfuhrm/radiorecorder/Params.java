@@ -43,6 +43,10 @@ public class Params {
     private File directory;
     
     @Getter
+    @Option(name = "-use-songnames", aliases = {"-S"}, usage = "Use songnames from retrieved metadata information. Will create one file per detected song.")
+    private boolean songNames;
+    
+    @Getter
     @Option(name = "-min-free", aliases = {"-M"}, usage = "Minimum of free megs on target drive.", metaVar = "MEGS")
     private long minimumFree = 512;
     

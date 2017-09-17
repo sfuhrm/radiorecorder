@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.net.URLConnection;
 import java.nio.file.FileStore;
 import java.nio.file.Files;
+import java.util.Optional;
 import java.util.function.Consumer;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,45 +32,78 @@ import lombok.extern.slf4j.Slf4j;
 public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<URLConnection> {
 
     private int fileNumber;
+    private String metaData;
+    private boolean metaDataChanged;
 
     public StreamCopyConsumer(ConsumerContext consumerContext) {
         super(consumerContext);
         fileNumber = 1;
     }
-
+    
+    private boolean needToAbort(Optional<File> currentFile) throws IOException {
+        if (currentFile.isPresent()) {
+            File f = currentFile.get();
+            FileStore fileStore = Files.getFileStore(f.toPath());
+            long free = fileStore.getUsableSpace();
+            long required = getContext().getMinFree();
+            if (free < required) {
+                log.warn("Path {} is too full, has less than {} bytes free", f, required);
+                return true;
+            }
+        }
+        return false;
+    }
+    
     @Override
     protected void __accept(URLConnection t, InputStream inputStream) {
-        FileOutputStream outputStream = null;
+        Optional<File> file = Optional.empty();
+        Optional<FileOutputStream> outputStream = Optional.empty();
         try {
-            getStreamMetaData().setMetaDataConsumer(m -> {System.err.println(m);});
+            getStreamMetaData().setMetaDataConsumer(m -> {
+                this.metaData = m;
+                metaDataChanged = true;
+                System.err.println(m);
+            });
             byte buffer[] = new byte[BUFFER_SIZE];
-
             String contentType = t.getContentType();
 
-            File f = null;
-            do {
-                f = new File(getContext().getDirectory(), fileNumber + suffixFromContentType(contentType));
-                fileNumber++;
-            } while (f.exists() && f.length() != 0);
-            outputStream = new FileOutputStream(f);
+            if (! getContext().isSongNames()) {
+                File f = getNumberFile(contentType);
+                file = Optional.of(f);
+                outputStream = Optional.of(new FileOutputStream(f));
+                log.info("Copying from url {} to file {}, type {}",
+                        getContext().getUrl().toExternalForm(),
+                        f,
+                        contentType);
+            }
             
-            log.info("Copying from url {} to file {}, type {}", 
-                    getContext().getUrl().toExternalForm(), 
-                    f,
-                    contentType);
             int len;
             long ofs = 0;
             while (-1 != (len = inputStream.read(buffer))) {
-                
-                FileStore fileStore = Files.getFileStore(f.toPath());
-                long free = fileStore.getUsableSpace();
-                long required = getContext().getMinFree();
-                if (free < required) {
-                    log.warn("Path {} is too full, has less than {} bytes free", f, required);
+                if (needToAbort(file)) {
                     return;
                 }
                 
-                outputStream.write(buffer, 0, len);
+                if (metaDataChanged) {
+                    log.debug("Meta data changed");
+                    metaDataChanged = false;
+                    if (outputStream.isPresent()) {
+                        log.debug("Closing output stream to {}", file.get());
+                        outputStream.get().close();
+                    }
+                    
+                    file = getFileFromMetaData(contentType);
+                    log.debug("New file {}", file);
+                    outputStream = file.isPresent() ? 
+                            Optional.of(new FileOutputStream(file.get())) : 
+                            Optional.empty();
+                }
+                
+                if (outputStream.isPresent()) {
+                    outputStream.get().write(buffer, 0, len);
+                } else {
+                    log.info("Dropped {} bytes, no file name yet", len);                
+                }
                 ofs += len;
                 log.trace("Copied {} bytes", ofs);
             }
@@ -78,14 +112,38 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<URL
             log.warn("URL " + getContext().getUrl().toExternalForm() + " broke down", ex);
             fileNumber++;
         } finally {
-            if (outputStream != null) {
+            if (outputStream.isPresent()) {
                 try {
-                    outputStream.close();
+                    outputStream.get().close();
                 } catch (IOException ex) {
                     log.warn("URL " + getContext().getUrl().toExternalForm() + " close error", ex);
                 }
             }
         }
+    }
+
+    private File getNumberFile(String contentType) {
+        File f = null;
+        do {
+            f = new File(getContext().getDirectory(), fileNumber + suffixFromContentType(contentType));
+            fileNumber++;
+        } while (f.exists() && f.length() != 0);
+        return f;
+    }
+    
+    private Optional<File> getFileFromMetaData(String contentType) {
+        Optional<File> result = Optional.empty();
+        if (metaData != null) {
+            int count = 0;
+            File f = null;
+            do {
+                String extension = count == 0 ? "" : String.format(" (%d)", count);
+                f = new File(getContext().getDirectory(), metaData + extension + suffixFromContentType(contentType));
+                count++;
+            } while (f.exists() && f.length() != 0);
+            result = Optional.of(f);
+        }
+        return result;
     }
 
     public static String suffixFromContentType(String contentType) {
