@@ -21,7 +21,9 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URLConnection;
 import java.util.function.Consumer;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.MDC;
 
@@ -36,8 +38,8 @@ public abstract class AbstractConsumer implements Consumer<URLConnection> {
     @Getter
     private final ConsumerContext context;
     
-    @Getter
-    private final ConnectionHandler connectionHandler;
+    @Getter @Setter(AccessLevel.PACKAGE)
+    private ConnectionHandler connectionHandler;
 
     public AbstractConsumer(ConsumerContext context) {
         this.context = context;
