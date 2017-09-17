@@ -46,7 +46,7 @@ public class M3UConsumer extends AbstractConsumer implements Consumer<URLConnect
             log.info("Found {} lines with URLs", lines.size());
             for (String line : lines) {
                 log.debug("Found line {}", line);
-                getConfigurator().consume(new URL(line));
+                getConnectionHandler().consume(new URL(line));
             }
         } catch (IOException ex) {
             log.warn("URL " + getContext().getUrl().toExternalForm() + " broke down", ex);

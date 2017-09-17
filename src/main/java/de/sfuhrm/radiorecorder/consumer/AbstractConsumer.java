@@ -37,11 +37,11 @@ public abstract class AbstractConsumer implements Consumer<URLConnection> {
     private final ConsumerContext context;
     
     @Getter
-    private final ConnectionHandler configurator;
+    private final ConnectionHandler connectionHandler;
 
     public AbstractConsumer(ConsumerContext context) {
         this.context = context;
-        this.configurator = new ConnectionHandler(context);
+        this.connectionHandler = new ConnectionHandler(context);
     }
         
     @Override

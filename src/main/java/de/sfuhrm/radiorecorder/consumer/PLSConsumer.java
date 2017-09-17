@@ -55,7 +55,7 @@ public class PLSConsumer extends AbstractConsumer implements Consumer<URLConnect
         try {
             List<String> urls = readUrls(t.getInputStream());
             for (String url : urls) {
-                getConfigurator().consume(new URL(url));
+                getConnectionHandler().consume(new URL(url));
             }
         } catch (IOException ex) {
             log.warn("URL " + getContext().getUrl().toExternalForm() + " broke down", ex);
