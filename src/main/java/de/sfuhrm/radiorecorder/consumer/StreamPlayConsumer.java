@@ -31,6 +31,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import lombok.extern.slf4j.Slf4j;
 
 /** Plays a stream using the Java Media Framework API.
+ * @author Stephan Fuhrmann
  */
 @Slf4j
 public class StreamPlayConsumer extends MetaDataConsumer implements Consumer<URLConnection> {
