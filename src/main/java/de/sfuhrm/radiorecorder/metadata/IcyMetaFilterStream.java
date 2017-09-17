@@ -45,7 +45,7 @@ class IcyMetaFilterStream extends OffsetFilterStream {
     
     @Getter @Setter
     private Consumer<String> metaDataConsumer = t -> {};
-
+    
     IcyMetaFilterStream(int icyMetaInterval, InputStream inputStream) {
         super(inputStream);
         this.metaInterval = icyMetaInterval;
@@ -63,7 +63,7 @@ class IcyMetaFilterStream extends OffsetFilterStream {
     
     private void readIcyMeta() throws IOException {
         int c;
-        log.debug("Offset is {}, Icy Interval is {}", getOffset(), metaInterval);
+        log.trace("Offset is {}, Icy Interval is {}", getOffset(), metaInterval);
         
         c = super.read();
         int length = (c & 0xff) * 16;
@@ -71,7 +71,7 @@ class IcyMetaFilterStream extends OffsetFilterStream {
         byte metaData[] = new byte[length];
         int actually = super.read(metaData, 0, length);
         
-        log.debug("Expected len {}, actual len {}", length, actually);
+        log.trace("Expected len {}, actual len {}", length, actually);
         
         // UTF-8 is probably wrong
         int firstZero = indexOf(metaData, (byte)0);
@@ -87,7 +87,9 @@ class IcyMetaFilterStream extends OffsetFilterStream {
             lastMetaData = currentMetaData;
             log.debug("Found metadata: {}", lastMetaData);
         } else {
-            log.warn("No metadata found in stream (got: {})", meta);
+            if (length != 0) {
+                log.warn("No metadata found in stream, but had {} bytes (got: {})", length, meta);
+            }
         }
         setOffset(0);
     }
