@@ -44,14 +44,6 @@ public class StreamMetaData {
     /** Current meta data. */
     private MetaData metaData = new MetaData();
     
-    /** Get the last retrieved meta data or {@code null} if not existing. */
-    public String getStreamInfo() {
-        if (icyMetaFilterStream != null) {
-            return icyMetaFilterStream.getLastMetaData();
-        }
-        return null;
-    }
-    
     public InputStream openStream(URLConnection connection) throws IOException {
         InputStream result;
         offsetFilterStream = new OffsetFilterStream(connection.getInputStream());
