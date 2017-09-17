@@ -33,6 +33,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Main {
 
+    public final static String GITHUB_URL = "https://github.com/sfuhrm";
+    public final static String PROJECT = "Radio Recorder";
+    
     private static ConsumerContext toConsumerContext(Params p, String url) throws MalformedURLException, UnsupportedEncodingException {
         URL myUrl = new URL(url);        
         File dir = new File(p.getDirectory(), URLEncoder.encode(myUrl.getHost()+"/"+myUrl.getPath(), "UTF-8"));
