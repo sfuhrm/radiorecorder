@@ -31,15 +31,25 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<URLConnection> {
 
+    /** The consecutive file number. */
     private int fileNumber;
+
+    /** The last meta data received. Can be {@code null}. */
     private String metaData;
+    
+    /** Whether the meta data changed in the meantime. Indicates that a new file
+     * needs to be opened.
+     */
     private boolean metaDataChanged;
 
     public StreamCopyConsumer(ConsumerContext consumerContext) {
         super(consumerContext);
-        fileNumber = 1;
+        fileNumber = 1;        
     }
     
+    /** Check whether aborting is necessary because of full file system.
+     * @see ConsumerContext#getMinFree()  
+     */
     private boolean needToAbort(Optional<File> currentFile) throws IOException {
         if (currentFile.isPresent()) {
             File f = currentFile.get();
@@ -122,6 +132,9 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<URL
         }
     }
 
+    /** Get the next number based filename.
+     * @param contentType content type for calculating the suffix.
+     */
     private File getNumberFile(String contentType) {
         File f = null;
         do {
@@ -131,22 +144,24 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<URL
         return f;
     }
     
+    /** Get the file name derived from the received meta data.
+     * @return the file, if there is metadata, or empty.
+     */
     private Optional<File> getFileFromMetaData(String contentType) {
         Optional<File> result = Optional.empty();
         if (metaData != null) {
-            int count = 0;
             File f = null;
-            do {
-                String extension = count == 0 ? "" : String.format(" (%d)", count);
-                f = new File(getContext().getDirectory(), metaData + extension + suffixFromContentType(contentType));
-                count++;
+            do {                
+                String fileName = String.format("%03d.%s%s", fileNumber++, metaData, suffixFromContentType(contentType));
+                f = new File(getContext().getDirectory(), fileName);
             } while (f.exists() && f.length() != 0);
             result = Optional.of(f);
         }
         return result;
     }
 
-    public static String suffixFromContentType(String contentType) {
+    /** Calculate the file suffix. */
+    private static String suffixFromContentType(String contentType) {
         switch (contentType) {
             case "audio/mpeg":
                 return ".mp3";
