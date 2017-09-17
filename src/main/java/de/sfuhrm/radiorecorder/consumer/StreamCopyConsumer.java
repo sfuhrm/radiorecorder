@@ -15,8 +15,16 @@
  */
 package de.sfuhrm.radiorecorder.consumer;
 
+import com.mpatric.mp3agic.ID3v1;
+import com.mpatric.mp3agic.ID3v1Tag;
+import com.mpatric.mp3agic.ID3v24Tag;
+import com.mpatric.mp3agic.InvalidDataException;
+import com.mpatric.mp3agic.Mp3File;
+import com.mpatric.mp3agic.NotSupportedException;
+import com.mpatric.mp3agic.UnsupportedTagException;
 import de.sfuhrm.radiorecorder.ConsumerContext;
 import static de.sfuhrm.radiorecorder.RadioRunnable.BUFFER_SIZE;
+import de.sfuhrm.radiorecorder.metadata.MetaData;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -26,6 +34,8 @@ import java.nio.file.FileStore;
 import java.nio.file.Files;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.extern.slf4j.Slf4j;
 
 /** Copies a stream to one or multiple disk files.
@@ -37,7 +47,10 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<URL
     private int fileNumber;
 
     /** The last meta data received. Can be {@code null}. */
-    private String metaData;
+    private MetaData metaData;
+    
+    /** The last meta data received. Can be {@code null}. */
+    private MetaData previousMetaData;
     
     /** Whether the meta data changed in the meantime. Indicates that a new file
      * needs to be opened.
@@ -72,6 +85,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<URL
         Optional<FileOutputStream> outputStream = Optional.empty();
         try {
             getStreamMetaData().setMetaDataConsumer(m -> {
+                this.previousMetaData = metaData;
                 this.metaData = m;
                 metaDataChanged = true;
                 System.err.println(m);
@@ -99,10 +113,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<URL
                 if (metaDataChanged) {
                     log.debug("Meta data changed");
                     metaDataChanged = false;
-                    if (outputStream.isPresent()) {
-                        log.debug("Closing output stream to {}", file.get());
-                        outputStream.get().close();
-                    }
+                    closeStreamIfOpen(outputStream, file, contentType);
                     
                     file = getFileFromMetaData(contentType);
                     log.debug("New file {}", file);
@@ -134,6 +145,54 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<URL
         }
     }
 
+    private void closeStreamIfOpen(Optional<FileOutputStream> outputStream, Optional<File> file, String contentType) throws IOException {
+        if (outputStream.isPresent()) {
+            log.debug("Closing output stream to {}", file.get());
+            outputStream.get().close();
+            
+            if (contentType.equals("audio/mpeg") && file.isPresent() && previousMetaData != null) {
+                MetaData md = previousMetaData;
+                try {
+                    Mp3File mp3File = new Mp3File(file.get());
+                    
+                    ID3v1 id3v1 = new ID3v1Tag();
+                    md.getTitle().ifPresent(t -> id3v1.setTitle(t));
+                    md.getArtist().ifPresent(t -> id3v1.setArtist(t));
+                    md.getStationName().ifPresent(t -> id3v1.setComment(t));                    
+                    mp3File.setId3v1Tag(id3v1);
+                    
+                    ID3v24Tag id3v2 = new ID3v24Tag();
+                    md.getTitle().ifPresent(t -> id3v2.setTitle(t));
+                    md.getArtist().ifPresent(t -> id3v2.setArtist(t));
+                    md.getStationName().ifPresent(t -> id3v2.setPublisher(t));
+                    md.getStationUrl().ifPresent(t -> id3v2.setRadiostationUrl(t));
+                    mp3File.setId3v1Tag(id3v1);
+                    
+                    File bak = new File(file.get().getParentFile(), file.get().getName()+".bak");
+                    File tmp = new File(file.get().getParentFile(), file.get().getName()+".tmp");
+                    mp3File.save(tmp.getAbsolutePath());
+                    
+                    boolean ok;
+                    // foo.mp3 -> foo.mp3.bak
+                    ok = file.get().renameTo(bak);
+                    if (ok) {
+                        // foo.mp3.tmp -> foo.mp3
+                        ok = tmp.renameTo(file.get());
+                    }
+                    if (ok) {
+                        // foo.mp3.bak removed
+                        bak.delete();                        
+                    }
+                } 
+                catch (NotSupportedException | UnsupportedTagException | InvalidDataException ex) {
+                    log.warn("Exception while writing id3 tag for "+file.get(), ex);
+                }
+            }
+        }
+    }
+    
+    
+
     /** Get the next number based filename.
      * @param contentType content type for calculating the suffix.
      */
@@ -154,7 +213,11 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<URL
         if (metaData != null) {
             File f = null;
             do {                
-                String fileName = String.format("%03d.%s%s", fileNumber++, metaData, suffixFromContentType(contentType));
+                String unknown = "unknown";
+                String fileName = String.format("%03d.%s %s%s", fileNumber++, 
+                        metaData.getArtist().orElse(unknown),
+                        metaData.getTitle().orElse(unknown),
+                        suffixFromContentType(contentType));
                 f = new File(getContext().getDirectory(), fileName);
             } while (f.exists() && f.length() != 0);
             result = Optional.of(f);

@@ -18,7 +18,10 @@ package de.sfuhrm.radiorecorder.metadata;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
+import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +39,9 @@ public class StreamMetaData {
     private final static String ICY_METAINT = "icy-metaint";
     
     @Getter @Setter
-    private Consumer<String> metaDataConsumer = l -> {};
+    private Consumer<MetaData> metaDataConsumer = l -> {};
+    
+    private MetaData metaData = new MetaData();
     
     /** Get the last retrieved meta data or {@code null} if not existing. */
     public String getStreamInfo() {
@@ -51,11 +56,32 @@ public class StreamMetaData {
         offsetFilterStream = new OffsetFilterStream(connection.getInputStream());
         result = offsetFilterStream;
         
+        if (connection.getHeaderField("icy-name") != null) {
+            metaData.setStationName(Optional.of(connection.getHeaderField("icy-name")));
+        }
+        if (connection.getHeaderField("icy-url") != null) {
+            metaData.setStationUrl(Optional.of(connection.getHeaderField("icy-url")));
+        }
+        
         if (connection.getHeaderField(ICY_METAINT) != null) {
             log.debug("Found Icy Meta Interval header: {}", connection.getHeaderField(ICY_METAINT));
             int metaInterval = connection.getHeaderFieldInt(ICY_METAINT, 0);
             icyMetaFilterStream = new IcyMetaFilterStream(metaInterval, offsetFilterStream);
-            icyMetaFilterStream.setMetaDataConsumer(m -> {metaDataConsumer.accept(m);});
+            icyMetaFilterStream.setMetaDataConsumer(md -> {
+                Pattern p = Pattern.compile("(.{2,}) - (.{2,})");
+                Matcher m = p.matcher(md);
+                MetaData target = metaData.clone();
+                target.setPosition(Optional.of(offsetFilterStream.getOffset()));
+                if (m.matches()) {
+                    target.setArtist(Optional.of(m.group(1)));
+                    target.setTitle(Optional.of(m.group(2)));
+                } else {
+                    target.setArtist(Optional.empty());
+                    target.setTitle(Optional.empty());                    
+                }
+                metaData = target;
+                metaDataConsumer.accept(target);
+            });
             result = icyMetaFilterStream;
         }
         
