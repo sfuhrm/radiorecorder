@@ -34,9 +34,10 @@ import lombok.extern.slf4j.Slf4j;
 public class Main {
 
     private static ConsumerContext toConsumerContext(Params p, String url) throws MalformedURLException, UnsupportedEncodingException {
-        File dir = new File(p.getDirectory(), URLEncoder.encode(url, "UTF-8"));
+        URL myUrl = new URL(url);        
+        File dir = new File(p.getDirectory(), URLEncoder.encode(myUrl.getHost()+"/"+myUrl.getPath(), "UTF-8"));
         dir.mkdirs();
-        return new ConsumerContext(new URL(url), dir, p);
+        return new ConsumerContext(myUrl, dir, p);
     }
     
     public static void main(String[] args) throws IOException {
