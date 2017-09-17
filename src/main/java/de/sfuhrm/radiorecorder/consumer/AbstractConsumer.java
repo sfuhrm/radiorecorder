@@ -25,7 +25,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.log4j.MDC;
 
 /**
  * Base-class for many consumers.
@@ -48,7 +47,6 @@ public abstract class AbstractConsumer implements Consumer<URLConnection> {
         
     @Override
     public final void accept(URLConnection u) {
-        MDC.put("url", getContext().getUrl().toExternalForm());
         log.info("Source URL is {}, real URL is {} and directory is {}", getContext().getUrl(), u.getURL().toExternalForm(), getContext().getDirectory());
         
         if (u instanceof HttpURLConnection) {
@@ -70,7 +68,6 @@ public abstract class AbstractConsumer implements Consumer<URLConnection> {
         }
         
         _accept(u);
-        MDC.remove("url");
     }
     
     /** The inner accept implementation. Will get called after applying
