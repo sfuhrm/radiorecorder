@@ -41,6 +41,7 @@ public class StreamMetaData {
     @Getter @Setter
     private Consumer<MetaData> metaDataConsumer = l -> {};
     
+    /** Current meta data. */
     private MetaData metaData = new MetaData();
     
     /** Get the last retrieved meta data or {@code null} if not existing. */
