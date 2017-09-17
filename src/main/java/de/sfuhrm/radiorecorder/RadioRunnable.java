@@ -18,6 +18,7 @@ package de.sfuhrm.radiorecorder;
 import java.io.IOException;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 
 /** Runnable for one radio station stream given in the command line.
  * @author Stephan Fuhrmann
@@ -36,12 +37,16 @@ public class RadioRunnable implements Runnable {
 
     @Override
     public void run() {
+        MDC.put("id", Integer.toString(consumerContext.getId()));
         log.info("URL is {} and directory is {}", consumerContext.getUrl(), consumerContext.getDirectory());
         try {
             configurator.consume(consumerContext.getUrl());
         } 
         catch (IOException ex) {
             log.warn("URL " + consumerContext.getUrl().toExternalForm() + " broke down", ex);
+        }
+        finally {
+            MDC.remove("id");
         }
     }
 }

@@ -29,6 +29,9 @@ import lombok.Getter;
 public class ConsumerContext {
     
     @Getter
+    private final int id;
+    
+    @Getter
     private final URL url;
 
     @Getter
@@ -36,7 +39,8 @@ public class ConsumerContext {
     
     private final Params params;
     
-    public ConsumerContext(URL url, File directory, Params params) {
+    public ConsumerContext(int id, URL url, File directory, Params params) {
+        this.id = id;
         this.url = Objects.requireNonNull(url);
         this.directory = Objects.requireNonNull(directory);
         this.params = Objects.requireNonNull(params);

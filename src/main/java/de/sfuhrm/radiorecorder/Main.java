@@ -36,11 +36,14 @@ public class Main {
     public final static String GITHUB_URL = "https://github.com/sfuhrm";
     public final static String PROJECT = "Radio Recorder";
     
+    /** Id for {@link ConsumerContext#id}. */
+    private static int nextId = 1;
+    
     private static ConsumerContext toConsumerContext(Params p, String url) throws MalformedURLException, UnsupportedEncodingException {
         URL myUrl = new URL(url);        
         File dir = new File(p.getDirectory(), URLEncoder.encode(myUrl.getHost()+"/"+myUrl.getPath(), "UTF-8"));
         dir.mkdirs();
-        return new ConsumerContext(myUrl, dir, p);
+        return new ConsumerContext(nextId++, myUrl, dir, p);
     }
     
     public static void main(String[] args) throws IOException {
@@ -55,7 +58,6 @@ public class Main {
         }
 
         params.getArguments().stream().forEach(url -> {
-            File dir = null;
             try {
                 Runnable r = new RadioRunnable(toConsumerContext(params, url));
                 Thread t = new Thread(r, url);
