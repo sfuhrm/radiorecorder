@@ -24,8 +24,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- *
- * @author fury
+ * The meta data collected from a running stream.
+ * @author Stephan Fuhrmann
  */
 @Slf4j
 public class StreamMetaData {

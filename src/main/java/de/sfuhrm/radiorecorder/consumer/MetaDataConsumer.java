@@ -24,6 +24,11 @@ import java.util.function.Consumer;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Opens a stream and intercepts possible meta data information.
+ * Subclasses need to implement {@link #__accept(java.net.URLConnection, java.io.InputStream) }.
+ * @author Stephan Fuhrmann
+ */
 @Slf4j
 public abstract class MetaDataConsumer extends AbstractConsumer implements Consumer<URLConnection> {
 

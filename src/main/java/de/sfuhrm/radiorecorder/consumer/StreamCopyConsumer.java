@@ -28,6 +28,8 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import lombok.extern.slf4j.Slf4j;
 
+/** Copies a stream to one or multiple disk files.
+ */
 @Slf4j
 public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<URLConnection> {
 

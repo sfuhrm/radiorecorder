@@ -22,6 +22,8 @@ import lombok.Getter;
 
 /**
  * Immutable context common to all consumers.
+ * Holds the data necessary to record or play one stream from one
+ * radio station.
  * @author Stephan Fuhrmann
  */
 public class ConsumerContext {
