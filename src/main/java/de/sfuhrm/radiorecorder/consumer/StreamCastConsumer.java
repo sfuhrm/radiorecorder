@@ -17,6 +17,7 @@ package de.sfuhrm.radiorecorder.consumer;
 
 import de.sfuhrm.radiorecorder.ConsumerContext;
 import de.sfuhrm.radiorecorder.Main;
+import static de.sfuhrm.radiorecorder.RadioRunnable.BUFFER_SIZE;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
@@ -24,9 +25,11 @@ import java.security.GeneralSecurityException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.function.Consumer;
 import lombok.extern.slf4j.Slf4j;
+import su.litvak.chromecast.api.v2.Application;
 import su.litvak.chromecast.api.v2.ChromeCast;
 import su.litvak.chromecast.api.v2.ChromeCasts;
 import su.litvak.chromecast.api.v2.ChromeCastsListener;
+import su.litvak.chromecast.api.v2.MediaStatus;
 
 /**
  * Plays a stream using the Java Media Framework API.
@@ -38,7 +41,7 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<URL
 
     private ArrayBlockingQueue<ChromeCast> arrayBlockingQueue;
     
-    public final static String APP_ID = "RadioRecorder";
+    public final static String APP_ID = "CC1AD845";
     
     public StreamCastConsumer(ConsumerContext consumerContext) {
         super(consumerContext);
@@ -83,11 +86,19 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<URL
             chromeCast.connect();
             log.debug("Connected to chromecast {}", chromeCast);
             
-            chromeCast.launchApp(APP_ID);
-            log.debug("App with id {} launched to chromecast {}", APP_ID, chromeCast);
-            
-            chromeCast.load(Main.PROJECT, null, t.getURL().toExternalForm(), t.getContentType());
+            Application app = chromeCast.launchApp(APP_ID);
+            MediaStatus mediaStatus = chromeCast.load(Main.PROJECT, null, t.getURL().toExternalForm(), t.getContentType());
             log.debug("Loaded content to chromecast {}", chromeCast);
+            
+            getStreamMetaData().setMetaDataConsumer(m -> {System.err.println(m);});
+            byte buffer[] = new byte[BUFFER_SIZE];
+            int length;
+            
+            // this is a second stream just to display the meta data
+            while (-1 != (length = inputStream.read(buffer))) {
+                log.trace("Read {} bytes", length);
+            }
+            
         } catch (GeneralSecurityException | InterruptedException | IOException ex) {
             log.warn("Chromecast problem", ex);
         }
