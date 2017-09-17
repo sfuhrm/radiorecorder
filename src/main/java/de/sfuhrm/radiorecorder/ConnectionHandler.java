@@ -17,6 +17,7 @@ package de.sfuhrm.radiorecorder;
 
 import de.sfuhrm.radiorecorder.consumer.M3UConsumer;
 import de.sfuhrm.radiorecorder.consumer.PLSConsumer;
+import de.sfuhrm.radiorecorder.consumer.StreamCastConsumer;
 import de.sfuhrm.radiorecorder.consumer.StreamCopyConsumer;
 import de.sfuhrm.radiorecorder.consumer.StreamPlayConsumer;
 import java.io.IOException;
@@ -76,6 +77,9 @@ public class ConnectionHandler {
             case "audio/mpeg":
             case "audio/ogg":
             case "audio/x-wav":
+                if (cc.getCastReceiver() != null) {
+                    return new StreamCastConsumer(cc);
+                } else
                 if (cc.isPlaying()) {
                     return new StreamPlayConsumer(cc);
                 } else {

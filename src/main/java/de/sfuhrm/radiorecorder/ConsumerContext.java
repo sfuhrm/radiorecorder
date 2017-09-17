@@ -69,4 +69,9 @@ public class ConsumerContext {
     public boolean isSongNames() {
         return params.isSongNames();
     }
+    
+    /** The cast device to cast to. */
+    public String getCastReceiver() {
+        return params.getCastReceiver();
+    }
 }

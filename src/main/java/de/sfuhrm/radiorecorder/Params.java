@@ -59,6 +59,14 @@ public class Params {
     private boolean play;
     
     @Getter
+    @Option(name = "-list-cast", aliases = {"-L"}, usage = "List chromecast devices.")
+    private boolean listCast;
+    
+    @Getter
+    @Option(name = "-cast", aliases = {"-c"}, usage = "Stream to the given chrome cast device.")
+    private String castReceiver;    
+    
+    @Getter
     @Option(name = "-timeout", aliases = {"-T"}, usage = "Connect/read timeout in seconds.", metaVar = "SECS")
     private int timeout = 60;
     

@@ -24,6 +24,9 @@ import java.net.URLEncoder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.extern.slf4j.Slf4j;
+import su.litvak.chromecast.api.v2.ChromeCast;
+import su.litvak.chromecast.api.v2.ChromeCasts;
+import su.litvak.chromecast.api.v2.ChromeCastsListener;
 
 /**
  * The main class that gets executed from command line.
@@ -46,9 +49,26 @@ public class Main {
         return new ConsumerContext(nextId++, myUrl, dir, p);
     }
     
-    public static void main(String[] args) throws IOException {
+    private static class MyListener implements ChromeCastsListener {
+        @Override
+        public void newChromeCastDiscovered(ChromeCast chromeCast) {
+            System.out.printf("%s - %s\n", chromeCast.getTitle(), chromeCast.getModel());
+        }
+
+        @Override
+        public void chromeCastRemoved(ChromeCast chromeCast) {
+        }
+        
+    }
+    
+    public static void main(String[] args) throws IOException, InterruptedException {
         Params params = Params.parse(args);
         if (params == null) {
+            return;
+        }
+        
+        if (params.isListCast()) {
+            listCastDevices();
             return;
         }
         
@@ -68,5 +88,12 @@ public class Main {
         });
 
         // do something good here
+    }
+
+    private static void listCastDevices() throws InterruptedException, IOException {
+        ChromeCasts.registerListener(new MyListener());
+        ChromeCasts.startDiscovery();
+        Thread.sleep(5000);
+        ChromeCasts.stopDiscovery();
     }
 }
