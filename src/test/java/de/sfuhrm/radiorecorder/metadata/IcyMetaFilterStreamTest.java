@@ -19,8 +19,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Random;
-import org.junit.After;
-import org.junit.Assert;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -46,7 +44,7 @@ public class IcyMetaFilterStreamTest {
     }
     
     @Test
-    public void readWithOneByte() throws IOException {    
+    public void readWithByteArrayInputStream() throws IOException {    
         Random rand = new Random();
         ByteBuffer bb = ByteBuffer.allocate(256);
         
