@@ -23,6 +23,7 @@ import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.NotSupportedException;
 import com.mpatric.mp3agic.UnsupportedTagException;
 import de.sfuhrm.radiorecorder.ConsumerContext;
+import de.sfuhrm.radiorecorder.Main;
 import static de.sfuhrm.radiorecorder.RadioRunnable.BUFFER_SIZE;
 import de.sfuhrm.radiorecorder.metadata.MetaData;
 import java.io.File;
@@ -34,8 +35,6 @@ import java.nio.file.FileStore;
 import java.nio.file.Files;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import lombok.extern.slf4j.Slf4j;
 
 /** Copies a stream to one or multiple disk files.
@@ -151,43 +150,54 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<URL
             outputStream.get().close();
             
             if (contentType.equals("audio/mpeg") && file.isPresent() && previousMetaData != null) {
-                MetaData md = previousMetaData;
-                try {
-                    Mp3File mp3File = new Mp3File(file.get());
-                    
-                    ID3v1 id3v1 = new ID3v1Tag();
-                    md.getTitle().ifPresent(t -> id3v1.setTitle(t));
-                    md.getArtist().ifPresent(t -> id3v1.setArtist(t));
-                    md.getStationName().ifPresent(t -> id3v1.setComment(t));                    
-                    mp3File.setId3v1Tag(id3v1);
-                    
-                    ID3v24Tag id3v2 = new ID3v24Tag();
-                    md.getTitle().ifPresent(t -> id3v2.setTitle(t));
-                    md.getArtist().ifPresent(t -> id3v2.setArtist(t));
-                    md.getStationName().ifPresent(t -> id3v2.setPublisher(t));
-                    md.getStationUrl().ifPresent(t -> id3v2.setRadiostationUrl(t));
-                    mp3File.setId3v1Tag(id3v1);
-                    
-                    File bak = new File(file.get().getParentFile(), file.get().getName()+".bak");
-                    File tmp = new File(file.get().getParentFile(), file.get().getName()+".tmp");
-                    mp3File.save(tmp.getAbsolutePath());
-                    
-                    boolean ok;
-                    // foo.mp3 -> foo.mp3.bak
-                    ok = file.get().renameTo(bak);
-                    if (ok) {
-                        // foo.mp3.tmp -> foo.mp3
-                        ok = tmp.renameTo(file.get());
+                Runnable r = () -> {
+                    try {
+                        addID3Tags(previousMetaData.clone(), file.get());
+                    } catch (IOException ex) {
+                        log.warn("Error while adding id3 tags", ex);
                     }
-                    if (ok) {
-                        // foo.mp3.bak removed
-                        bak.delete();                        
-                    }
-                } 
-                catch (NotSupportedException | UnsupportedTagException | InvalidDataException ex) {
-                    log.warn("Exception while writing id3 tag for "+file.get(), ex);
-                }
+                };
+                Thread t = new Thread(r, "ID3 "+file.get());
+                t.start();
             }
+        }
+    }
+
+    private void addID3Tags(final MetaData md, final File file) throws IOException {
+        try {
+            log.debug("Adding id3 tag to {}", file);
+            Mp3File mp3File = new Mp3File(file);
+            
+            ID3v1 id3v1 = new ID3v1Tag();
+            md.getTitle().ifPresent(t -> id3v1.setTitle(t));
+            md.getArtist().ifPresent(t -> id3v1.setArtist(t));
+            md.getStationName().ifPresent(t -> id3v1.setComment(t));
+            mp3File.setId3v1Tag(id3v1);
+            
+            ID3v24Tag id3v2 = new ID3v24Tag();
+            md.getTitle().ifPresent(t -> id3v2.setTitle(t));
+            md.getArtist().ifPresent(t -> id3v2.setArtist(t));
+            md.getStationName().ifPresent(t -> id3v2.setPublisher(t));
+            md.getStationUrl().ifPresent(t -> id3v2.setRadiostationUrl(t));
+            id3v2.setComment(Main.PROJECT);
+            id3v2.setUrl(Main.GITHUB_URL);
+            mp3File.setId3v2Tag(id3v2);
+            
+            File bak = new File(file.getParentFile(), file.getName()+".bak");
+            File tmp = new File(file.getParentFile(), file.getName()+".tmp");
+            mp3File.save(tmp.getAbsolutePath());
+            
+            // foo.mp3 -> foo.mp3.bak
+            Files.move(file.toPath(), bak.toPath());
+            // foo.mp3.tmp -> foo.mp3
+            Files.move(tmp.toPath(), file.toPath());
+            // foo.mp3.bak
+            Files.delete(bak.toPath());
+            
+            log.debug("Done adding id3 tag to {}", file);            
+        }
+        catch (NotSupportedException | UnsupportedTagException | InvalidDataException ex) {
+            log.warn("Exception while writing id3 tag for "+file, ex);
         }
     }
     
@@ -214,7 +224,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<URL
             File f = null;
             do {                
                 String unknown = "unknown";
-                String fileName = String.format("%03d.%s %s%s", fileNumber++, 
+                String fileName = String.format("%03d.%s - %s%s", fileNumber++, 
                         metaData.getArtist().orElse(unknown),
                         metaData.getTitle().orElse(unknown),
                         suffixFromContentType(contentType));
