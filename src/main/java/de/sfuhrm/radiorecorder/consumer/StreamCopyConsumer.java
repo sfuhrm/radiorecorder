@@ -89,7 +89,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<URL
                 this.previousMetaData = metaData;
                 this.metaData = m;
                 metaDataChanged = true;
-                System.err.println(m);
+                new ConsoleMetaDataConsumer().accept(m);
             });
             byte buffer[] = new byte[BUFFER_SIZE];
             Optional<MimeType> contentType = MimeType.byContentType(t.getContentType());

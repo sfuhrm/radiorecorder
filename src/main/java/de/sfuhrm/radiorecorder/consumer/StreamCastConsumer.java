@@ -80,9 +80,7 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<URL
     @Override
     protected void __accept(URLConnection t, InputStream inputStream) {
         try {
-            getStreamMetaData().setMetaDataConsumer(m -> {
-                System.err.println(m);
-            });
+            getStreamMetaData().setMetaDataConsumer(new ConsoleMetaDataConsumer());
             
             ChromeCasts.registerListener(new MyChromeCastsListener());
             ChromeCasts.startDiscovery();
