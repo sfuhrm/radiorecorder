@@ -19,16 +19,20 @@ import de.sfuhrm.radiorecorder.metadata.MetaData;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.function.Consumer;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Consumer that prints the current title on the console.
  * @author Stephan Fuhrmann
  */
+@Slf4j
 class ConsoleMetaDataConsumer implements Consumer<MetaData> {
 
     @Override
     public void accept(MetaData md) {
         StringBuilder builder = new StringBuilder();
+        
+        log.info("New metadata: {}", md);
         
         Date now = new Date();
         DateFormat dateFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
