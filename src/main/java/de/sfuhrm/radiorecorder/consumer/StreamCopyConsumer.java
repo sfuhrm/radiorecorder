@@ -149,7 +149,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<URL
     }
 
     private void closeStreamIfOpen(Optional<FileOutputStream> outputStream, Optional<File> file, Optional<MimeType> contentType) throws IOException {
-        MetaData fileMetaData = previousMetaData.clone();
+        MetaData fileMetaData = previousMetaData != null ? previousMetaData.clone() : null;
         if (outputStream.isPresent()) {
             log.debug("Closing output stream to {}", file.get());
             outputStream.get().close();
