@@ -69,9 +69,12 @@ public class ConnectionHandler {
         return connection;
     }
     
-    public void consume(URL url) throws IOException {
-        URLConnection connection = openConnection(url);
-        consumerFromContentType(consumerContext, connection.getContentType()).accept(connection);        
+    public void consume(URL url) throws IOException {        
+        do {
+            URLConnection connection = openConnection(url);
+            Consumer<URLConnection> consumer = consumerFromContentType(consumerContext, connection.getContentType());
+            consumer.accept(connection);        
+        } while (consumerContext.isReconnect());
     }
     
     public static Consumer<URLConnection> consumerFromContentType(ConsumerContext cc, String contentType) {

@@ -70,6 +70,11 @@ public class ConsumerContext {
         return params.isSongNames();
     }
     
+    /** Reconnect forever. */
+    public boolean isReconnect() {
+        return params.isReconnect();
+    }
+    
     /** The cast device to cast to. */
     public String getCastReceiver() {
         return params.getCastReceiver();
