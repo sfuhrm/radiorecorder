@@ -58,6 +58,17 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<URL
      * needs to be opened.
      */
     private boolean metaDataChanged;
+    
+    /** The current file being written to, if any. 
+     * @see #outputStream
+     */
+    private Optional<File> file = Optional.empty();
+    
+    /** The current output stream being written to, if any. 
+     * @see #file
+     */
+    private Optional<FileOutputStream> outputStream = Optional.empty();
+    
 
     public StreamCopyConsumer(ConsumerContext consumerContext) {
         super(consumerContext);
@@ -83,8 +94,9 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<URL
     
     @Override
     protected void __accept(URLConnection t, InputStream inputStream) {
-        Optional<File> file = Optional.empty();
-        Optional<FileOutputStream> outputStream = Optional.empty();
+        Runnable cleanup = () -> cleanup(getContext().isSongNames());
+        Thread cleanupThread = new Thread(cleanup);
+        Runtime.getRuntime().addShutdownHook(cleanupThread);
         try {
             getStreamMetaData().setMetaDataConsumer(m -> {
                 this.previousMetaData = metaData;
@@ -137,13 +149,22 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<URL
             log.warn("URL " + getContext().getUrl().toExternalForm() + " broke down", ex);
             fileNumber++;
         } finally {
-            if (outputStream.isPresent()) {
-                try {
-                    outputStream.get().close();
-                } catch (IOException ex) {
-                    log.warn("URL " + getContext().getUrl().toExternalForm() + " close error", ex);
-                }
+            cleanup(getContext().isSongNames());
+            Runtime.getRuntime().removeShutdownHook(cleanupThread);
+        }
+    }
+    
+    private void cleanup(boolean deletePartly) {
+        if (outputStream.isPresent()) {
+            try {
+                outputStream.get().close();
+            } catch (IOException ex) {
+                log.warn("URL " + getContext().getUrl().toExternalForm() + " close error", ex);
             }
+        }
+        if (file.isPresent() && deletePartly) {
+            log.info("Deleting partly file {}", file.get());
+            file.get().delete();
         }
     }
 
@@ -245,7 +266,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<URL
         return result;
     }
     
-    private final static String sanitizeFileName(String in) {
+    private static String sanitizeFileName(String in) {
         return in.replaceAll("[/:\\|]", "_");
     }
 
