@@ -26,6 +26,7 @@ import de.sfuhrm.radiorecorder.ConsumerContext;
 import de.sfuhrm.radiorecorder.Main;
 import static de.sfuhrm.radiorecorder.RadioRunnable.BUFFER_SIZE;
 import de.sfuhrm.radiorecorder.metadata.MetaData;
+import de.sfuhrm.radiorecorder.metadata.MimeType;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -91,7 +92,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<URL
                 System.err.println(m);
             });
             byte buffer[] = new byte[BUFFER_SIZE];
-            String contentType = t.getContentType();
+            Optional<MimeType> contentType = MimeType.byContentType(t.getContentType());
 
             if (! getContext().isSongNames()) {
                 File f = getNumberFile(contentType);
@@ -145,12 +146,12 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<URL
         }
     }
 
-    private void closeStreamIfOpen(Optional<FileOutputStream> outputStream, Optional<File> file, String contentType) throws IOException {
+    private void closeStreamIfOpen(Optional<FileOutputStream> outputStream, Optional<File> file, Optional<MimeType> contentType) throws IOException {
         if (outputStream.isPresent()) {
             log.debug("Closing output stream to {}", file.get());
             outputStream.get().close();
             
-            if (contentType.equals("audio/mpeg") && file.isPresent() && previousMetaData != null) {
+            if (contentType.isPresent() && contentType.get() == MimeType.AUDIO_MPEG && file.isPresent() && previousMetaData != null) {
                 Runnable r = () -> {
                     try {
                         addID3Tags(previousMetaData.clone(), file.get());
@@ -207,7 +208,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<URL
     /** Get the next number based filename.
      * @param contentType content type for calculating the suffix.
      */
-    private File getNumberFile(String contentType) {
+    private File getNumberFile(Optional<MimeType> contentType) {
         File f = null;
         do {
             f = new File(getContext().getDirectory(), fileNumber + suffixFromContentType(contentType));
@@ -219,7 +220,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<URL
     /** Get the file name derived from the received meta data.
      * @return the file, if there is metadata, or empty.
      */
-    private Optional<File> getFileFromMetaData(String contentType) {
+    private Optional<File> getFileFromMetaData(Optional<MimeType> contentType) {
         Optional<File> result = Optional.empty();
         if (metaData != null) {
             File f = null;
@@ -237,16 +238,10 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<URL
     }
 
     /** Calculate the file suffix. */
-    private static String suffixFromContentType(String contentType) {
-        switch (contentType) {
-            case "audio/mpeg":
-                return ".mp3";
-            case "audio/ogg":
-                return ".ogg";
-            case "audio/x-wav":
-                return ".wav";
-            default:
-                return "";
+    private static String suffixFromContentType(Optional<MimeType> contentType) {
+        if (! contentType.isPresent()) {
+            return "";
         }
+        return contentType.get().getSuffix();
     }
 }

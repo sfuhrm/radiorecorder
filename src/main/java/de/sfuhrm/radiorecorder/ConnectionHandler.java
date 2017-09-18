@@ -20,10 +20,12 @@ import de.sfuhrm.radiorecorder.consumer.PLSConsumer;
 import de.sfuhrm.radiorecorder.consumer.StreamCastConsumer;
 import de.sfuhrm.radiorecorder.consumer.StreamCopyConsumer;
 import de.sfuhrm.radiorecorder.consumer.StreamPlayConsumer;
+import de.sfuhrm.radiorecorder.metadata.MimeType;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 import lombok.extern.slf4j.Slf4j;
 
@@ -73,10 +75,17 @@ public class ConnectionHandler {
     }
     
     public static Consumer<URLConnection> consumerFromContentType(ConsumerContext cc, String contentType) {
-        switch (contentType) {
-            case "audio/mpeg":
-            case "audio/ogg":
-            case "audio/x-wav":
+        Optional<MimeType> mimeType = MimeType.byContentType(contentType);
+        if (!mimeType.isPresent()) {
+            log.warn("Unknown content type {}", contentType);
+            return t -> {};
+        }
+        
+        switch (mimeType.get()) {
+            case AUDIO_MPEG:
+            case AUDIO_OGG:
+            case AUDIO_XWAV:
+            case AUDIO_XMSWMA:
                 if (cc.getCastReceiver() != null) {
                     return new StreamCastConsumer(cc);
                 } else
@@ -85,11 +94,11 @@ public class ConnectionHandler {
                 } else {
                     return new StreamCopyConsumer(cc);
                 }
-            case "audio/mpegurl":
-            case "audio/x-mpegurl":
+            case AUDIO_MPEGURL:
+            case AUDIO_XMPEGURL:
                 return new M3UConsumer(cc);
-            case "application/pls+xml":
-            case "audio/x-scpls":
+            case AUDIO_XSCPLS:
+            case APPLICATION_PLS_XML:
                 return new PLSConsumer(cc);
             default:
                 log.warn("Unknown content type {}", contentType);
