@@ -1,6 +1,12 @@
 ## Radio Recorder
 
-A very simple internet radio recorder.
+A command line internet radio player and recorder.
+Some of the features are:
+* Display of the current song title played.
+* Playback using Java Media Framework.
+* Recording different files for different song titles.
+* Writing of ID3 tags (ID3v1 and ID3V2.4).
+* Chromecast replay of radio streams.
 
 ## License
 
