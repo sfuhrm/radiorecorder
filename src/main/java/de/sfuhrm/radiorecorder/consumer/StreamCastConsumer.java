@@ -101,7 +101,6 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<URL
             
             log.debug("Loaded content to chromecast {}", chromeCast.getTitle());
             
-            getStreamMetaData().setMetaDataConsumer(m -> {System.err.println(m);});
             byte buffer[] = new byte[BUFFER_SIZE];
             int length;
             
