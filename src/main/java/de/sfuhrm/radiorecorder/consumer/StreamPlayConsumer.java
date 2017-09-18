@@ -51,17 +51,26 @@ public class StreamPlayConsumer extends MetaDataConsumer implements Consumer<URL
             AudioInputStream input = AudioSystem.getAudioInputStream(inputStream);
             AudioInputStream converted = AudioSystem.getAudioInputStream(targetFormat, input);
             try (SourceDataLine line = AudioSystem.getSourceDataLine(targetFormat)) {
-                log.info("Streaming from url {} to line {}, format {}",
+                long bufferSize = line.getBufferSize();
+                log.info("Streaming from url {} to line {}, format {}, buffer size {}",
                         getContext().getUrl().toExternalForm(),
                         line.getLineInfo().toString(),
-                        audioFileFormat);
+                        audioFileFormat,
+                        bufferSize);
                 int len;
                 long ofs = 0;
                 line.open(targetFormat);
-                line.start();
+                
                 while (-1 != (len = converted.read(buffer))) {
                     log.trace("Read {} bytes", len);
                     ofs += len;
+                    
+                    // start the line before blocking
+                    if (! line.isRunning() && line.available() < len) {
+                        log.debug("Starting line, not yet running, {} / {} available", line.available(), bufferSize);
+                        line.start();
+                    }
+                    
                     line.write(buffer, 0, len);
                     log.trace("Wrote {} bytes (total {})", len, ofs);
                 }
