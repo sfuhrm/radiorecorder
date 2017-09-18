@@ -39,8 +39,11 @@ import su.litvak.chromecast.api.v2.MediaStatus;
 @Slf4j
 public class StreamCastConsumer extends MetaDataConsumer implements Consumer<URLConnection> {
 
+    /** Async communication of the chromecast discovered. */
     private ArrayBlockingQueue<ChromeCast> arrayBlockingQueue;
     
+    /** The ID of the default media receiver app. 
+     */
     public final static String APP_ID = "CC1AD845";
     
     public StreamCastConsumer(ConsumerContext consumerContext) {
