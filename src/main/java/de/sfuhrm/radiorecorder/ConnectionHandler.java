@@ -69,11 +69,16 @@ public class ConnectionHandler {
         return connection;
     }
     
-    public void consume(URL url) throws IOException {        
+    public void consume(URL url) throws IOException {
+        boolean first = true;
         do {
+            if (!first) {
+                log.info("Reconnecting.");
+            }
             URLConnection connection = openConnection(url);
             Consumer<URLConnection> consumer = consumerFromContentType(consumerContext, connection.getContentType());
-            consumer.accept(connection);        
+            consumer.accept(connection);
+            first = false;
         } while (consumerContext.isReconnect());
     }
     

@@ -18,6 +18,7 @@ package de.sfuhrm.radiorecorder.metadata;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
@@ -64,6 +65,7 @@ public class StreamMetaData {
                 Pattern p = Pattern.compile("(.{2,}) - (.{2,})");
                 Matcher m = p.matcher(md);
                 MetaData target = metaData.clone();
+                target.setCreated(ZonedDateTime.now());
                 target.setPosition(Optional.of(offsetFilterStream.getOffset()));
                 if (m.matches()) {
                     target.setArtist(Optional.of(m.group(1)));

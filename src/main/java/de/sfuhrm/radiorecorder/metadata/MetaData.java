@@ -15,6 +15,9 @@
  */
 package de.sfuhrm.radiorecorder.metadata;
 
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -25,6 +28,9 @@ import lombok.Setter;
  * @author Stephan Fuhrmann
  */
 public class MetaData implements Cloneable {
+    @Getter @Setter(AccessLevel.PACKAGE)
+    private ZonedDateTime created;
+    
     @Getter @Setter(AccessLevel.PACKAGE)
     private Optional<String> artist;
     
@@ -41,6 +47,7 @@ public class MetaData implements Cloneable {
     private Optional<Long> position;
 
     public MetaData() {
+        created = ZonedDateTime.now();
         artist = Optional.empty();
         title = Optional.empty();
         stationName = Optional.empty();

@@ -34,6 +34,8 @@ import java.io.InputStream;
 import java.net.URLConnection;
 import java.nio.file.FileStore;
 import java.nio.file.Files;
+import java.nio.file.attribute.FileTime;
+import java.time.ZoneOffset;
 import java.util.Optional;
 import java.util.function.Consumer;
 import lombok.extern.slf4j.Slf4j;
@@ -147,20 +149,27 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<URL
     }
 
     private void closeStreamIfOpen(Optional<FileOutputStream> outputStream, Optional<File> file, Optional<MimeType> contentType) throws IOException {
+        MetaData fileMetaData = previousMetaData.clone();
         if (outputStream.isPresent()) {
             log.debug("Closing output stream to {}", file.get());
             outputStream.get().close();
             
-            if (contentType.isPresent() && contentType.get() == MimeType.AUDIO_MPEG && file.isPresent() && previousMetaData != null) {
+            if (contentType.isPresent() && contentType.get() == MimeType.AUDIO_MPEG && file.isPresent() && fileMetaData != null) {
                 Runnable r = () -> {
                     try {
-                        addID3Tags(previousMetaData.clone(), file.get());
+                        addID3Tags(fileMetaData, file.get());
                     } catch (IOException ex) {
                         log.warn("Error while adding id3 tags", ex);
                     }
                 };
                 Thread t = new Thread(r, "ID3 "+file.get());
                 t.start();
+            }
+            
+            // adjust time to stream start
+            if (file.isPresent() && fileMetaData != null) {
+                File f = file.get();
+                Files.setLastModifiedTime(f.toPath(), FileTime.from(fileMetaData.getCreated().toInstant()));
             }
         }
     }
@@ -227,14 +236,18 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<URL
             do {                
                 String unknown = "unknown";
                 String fileName = String.format("%03d.%s - %s%s", fileNumber++, 
-                        metaData.getArtist().orElse(unknown),
-                        metaData.getTitle().orElse(unknown),
+                        sanitizeFileName(metaData.getArtist().orElse(unknown)),
+                        sanitizeFileName(metaData.getTitle().orElse(unknown)),
                         suffixFromContentType(contentType));
                 f = new File(getContext().getDirectory(), fileName);
             } while (f.exists() && f.length() != 0);
             result = Optional.of(f);
         }
         return result;
+    }
+    
+    private final static String sanitizeFileName(String in) {
+        return in.replaceAll("[/:\\|]", "_");
     }
 
     /** Calculate the file suffix. */
