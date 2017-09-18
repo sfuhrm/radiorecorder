@@ -45,6 +45,9 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<URL
     
     /** Async communication of the chromecast discovered. */
     private final ArrayBlockingQueue<ChromeCast> arrayBlockingQueue;
+
+    /** The chrome cast discovered. */
+    private ChromeCast chromeCast = null;
     
     private class MyChromeCastsListener implements ChromeCastsListener {
 
@@ -76,7 +79,6 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<URL
 
     @Override
     protected void __accept(URLConnection t, InputStream inputStream) {
-        ChromeCast chromeCast = null;
         try {
             getStreamMetaData().setMetaDataConsumer(m -> {
                 System.err.println(m);
@@ -105,24 +107,36 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<URL
             byte buffer[] = new byte[BUFFER_SIZE];
             int length;
             
+            Thread shutdown = new Thread(() -> cleanup());
+            Runtime.getRuntime().addShutdownHook(shutdown);
+            
             // this is a second stream just to display the meta data
             while (-1 != (length = inputStream.read(buffer))) {
                 log.trace("Read {} bytes", length);
             }
+            Runtime.getRuntime().removeShutdownHook(shutdown);
             
         } catch (GeneralSecurityException | InterruptedException | IOException ex) {
             log.warn("Chromecast problem", ex);
         }
         finally {
-            try {
-                if (chromeCast != null && chromeCast.isConnected()) {
-                    chromeCast.disconnect();
-                    log.debug("Disconnected from chromecast {}", chromeCast.getTitle());
+            cleanup();
+        }
+    }
+    
+    private void cleanup() {
+        try {
+            if (chromeCast != null && chromeCast.isConnected()) {
+                if (chromeCast.isAppRunning(APP_ID)) {
+                    chromeCast.stopApp();
                 }
-                ChromeCasts.stopDiscovery();
-                log.debug("Stopped discovery");
-            } catch (IOException ex) {
+                chromeCast.disconnect();
+                log.debug("Disconnected from chromecast {}", chromeCast.getTitle());
+                chromeCast = null;
             }
+            ChromeCasts.stopDiscovery();
+            log.debug("Stopped discovery");
+        } catch (IOException ex) {
         }
     }
 }
