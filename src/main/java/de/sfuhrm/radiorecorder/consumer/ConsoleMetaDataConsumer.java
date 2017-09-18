@@ -35,10 +35,10 @@ class ConsoleMetaDataConsumer implements Consumer<MetaData> {
         
         builder.append(dateFormat.format(now));
         builder.append(": ");
-        
+
+        md.getStationName().ifPresent(t -> builder.append(" -> ").append(t));        
         md.getArtist().ifPresent(t -> builder.append(t));
         md.getTitle().ifPresent(t -> builder.append(" - ").append(t));
-        md.getStationName().ifPresent(t -> builder.append(" - ").append(t));
 
         System.err.println(builder.toString());
     }
