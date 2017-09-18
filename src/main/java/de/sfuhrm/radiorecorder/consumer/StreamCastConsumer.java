@@ -32,19 +32,42 @@ import su.litvak.chromecast.api.v2.ChromeCastsListener;
 import su.litvak.chromecast.api.v2.MediaStatus;
 
 /**
- * Plays a stream using the Java Media Framework API.
+ * Plays a stream using a named Chrome Cast device.
  *
  * @author Stephan Fuhrmann
  */
 @Slf4j
 public class StreamCastConsumer extends MetaDataConsumer implements Consumer<URLConnection> {
-
-    /** Async communication of the chromecast discovered. */
-    private ArrayBlockingQueue<ChromeCast> arrayBlockingQueue;
     
     /** The ID of the default media receiver app. 
      */
     public final static String APP_ID = "CC1AD845";
+    
+    /** Async communication of the chromecast discovered. */
+    private final ArrayBlockingQueue<ChromeCast> arrayBlockingQueue;
+    
+    private class MyChromeCastsListener implements ChromeCastsListener {
+
+        @Override
+        public void newChromeCastDiscovered(ChromeCast chromeCast) {
+            if (chromeCast.getTitle().equalsIgnoreCase(getContext().getCastReceiver())) {
+                try {
+                    log.debug("Found chromecast {}", chromeCast.getTitle());
+                    arrayBlockingQueue.put(chromeCast);
+                    log.debug("Posted chromecast {}", chromeCast.getTitle());
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+            } else {
+                log.debug("Ignoring chromecast {}", chromeCast.getTitle());
+            }
+        }
+
+        @Override
+        public void chromeCastRemoved(ChromeCast chromeCast) {
+        }
+    }
+    
     
     public StreamCastConsumer(ConsumerContext consumerContext) {
         super(consumerContext);
@@ -59,28 +82,10 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<URL
                 System.err.println(m);
             });
             
-            ChromeCasts.registerListener(new ChromeCastsListener() {
-                @Override
-                public void newChromeCastDiscovered(ChromeCast chromeCast) {
-                    if (chromeCast.getTitle().equalsIgnoreCase(getContext().getCastReceiver())) {
-                        try {
-                            log.debug("Found chromecast {}", chromeCast.getTitle());
-                            arrayBlockingQueue.put(chromeCast);
-                            log.debug("Posted chromecast {}", chromeCast.getTitle());
-                        } catch (InterruptedException ex) {
-                            throw new RuntimeException(ex);
-                        }
-                    } else {
-                        log.debug("Ignoring chromecast {}", chromeCast.getTitle());                        
-                    }
-                }
-
-                @Override
-                public void chromeCastRemoved(ChromeCast chromeCast) {
-                }
-            });
+            ChromeCasts.registerListener(new MyChromeCastsListener());
             ChromeCasts.startDiscovery();
             
+            System.err.println("Waiting for discovery");
             log.debug("Waiting for chromecast {} to be discovered", getContext().getCastReceiver());
             chromeCast = arrayBlockingQueue.take();
             
