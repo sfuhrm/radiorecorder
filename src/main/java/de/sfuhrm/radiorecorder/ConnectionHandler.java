@@ -20,6 +20,7 @@ import de.sfuhrm.radiorecorder.consumer.PLSConsumer;
 import de.sfuhrm.radiorecorder.consumer.StreamCastConsumer;
 import de.sfuhrm.radiorecorder.consumer.StreamCopyConsumer;
 import de.sfuhrm.radiorecorder.consumer.StreamPlayConsumer;
+import de.sfuhrm.radiorecorder.consumer.XSPFConsumer;
 import de.sfuhrm.radiorecorder.metadata.MimeType;
 import java.io.IOException;
 import java.net.URL;
@@ -105,8 +106,9 @@ public class ConnectionHandler {
             case AUDIO_MPEGURL:
             case AUDIO_XMPEGURL:
                 return new M3UConsumer(cc);
-            case AUDIO_XSCPLS:
             case APPLICATION_PLS_XML:
+                return new XSPFConsumer(cc);
+            case AUDIO_XSCPLS:
                 return new PLSConsumer(cc);
             default:
                 log.warn("Unknown content type {}", contentType);
