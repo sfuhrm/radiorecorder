@@ -106,8 +106,8 @@ public class ConnectionHandler {
             case AUDIO_MPEGURL:
             case AUDIO_XMPEGURL:
                 return new M3UConsumer(cc);
+//                return new XSPFConsumer(cc);
             case APPLICATION_PLS_XML:
-                return new XSPFConsumer(cc);
             case AUDIO_XSCPLS:
                 return new PLSConsumer(cc);
             default:
