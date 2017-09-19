@@ -16,6 +16,7 @@
 package de.sfuhrm.radiorecorder.consumer;
 
 import de.sfuhrm.radiorecorder.ConsumerContext;
+import de.sfuhrm.radiorecorder.RadioException;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -35,6 +36,7 @@ import org.xml.sax.InputSource;
 
 /**
  * Consumer for XSPF playlist format URLs.
+ *
  * @author Stephan Fuhrmann
  */
 @Slf4j
@@ -42,11 +44,11 @@ public class XSPFConsumer extends AbstractConsumer implements Consumer<URLConnec
 
     public final static String NS = "http://xspf.org/ns/0/";
     public final static String PREFIX = "x";
-    
+
     public XSPFConsumer(ConsumerContext context) {
         super(context);
     }
-    
+
     @Override
     protected void _accept(URLConnection t) {
         try {
@@ -69,16 +71,19 @@ public class XSPFConsumer extends AbstractConsumer implements Consumer<URLConnec
                 }
             });
             InputSource is = new InputSource(t.getInputStream());
-            
+
             NodeList nl = (NodeList) xp.evaluate("/x:playlist/x:trackList/x:track/x:location", is, XPathConstants.NODESET);
 
-            for (int i=0; i < nl.getLength(); i++) {
+            for (int i = 0; i < nl.getLength(); i++) {
                 Node n = nl.item(i);
                 String url = n.getTextContent();
                 getConnectionHandler().consume(new URL(url));
             }
-        } catch (XPathExpressionException | IOException ex) {
+        } catch (XPathExpressionException ex) {
+            throw new RadioException(false, ex);
+        } catch (IOException ex) {
             log.warn("URL " + getContext().getUrl().toExternalForm() + " broke down", ex);
+            throw new RadioException(true, ex);
         }
     }
 }

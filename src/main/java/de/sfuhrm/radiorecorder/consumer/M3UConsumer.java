@@ -16,6 +16,7 @@
 package de.sfuhrm.radiorecorder.consumer;
 
 import de.sfuhrm.radiorecorder.ConsumerContext;
+import de.sfuhrm.radiorecorder.RadioException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -48,8 +49,10 @@ public class M3UConsumer extends AbstractConsumer implements Consumer<URLConnect
                 log.debug("Found line {}", line);
                 getConnectionHandler().consume(new URL(line));
             }
-        } catch (IOException ex) {
+        } 
+        catch (IOException ex) {
             log.warn("URL " + getContext().getUrl().toExternalForm() + " broke down", ex);
+            throw new RadioException(true, ex);
         }
     }
 }

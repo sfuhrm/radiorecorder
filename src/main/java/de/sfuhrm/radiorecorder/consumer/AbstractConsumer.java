@@ -17,6 +17,7 @@ package de.sfuhrm.radiorecorder.consumer;
 
 import de.sfuhrm.radiorecorder.ConnectionHandler;
 import de.sfuhrm.radiorecorder.ConsumerContext;
+import de.sfuhrm.radiorecorder.RadioException;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URLConnection;
@@ -64,6 +65,7 @@ public abstract class AbstractConsumer implements Consumer<URLConnection> {
                 }
             } catch (IOException ex) {
                 log.warn("Error in HTTP communication", ex);
+                throw new RadioException(true, ex);
             }
         }
         

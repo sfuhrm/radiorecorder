@@ -16,6 +16,7 @@
 package de.sfuhrm.radiorecorder.consumer;
 
 import de.sfuhrm.radiorecorder.ConsumerContext;
+import de.sfuhrm.radiorecorder.RadioException;
 import de.sfuhrm.radiorecorder.metadata.StreamMetaData;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,8 +26,9 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Opens a stream and intercepts possible meta data information.
- * Subclasses need to implement {@link #__accept(java.net.URLConnection, java.io.InputStream) }.
+ * Opens a stream and intercepts possible meta data information. Subclasses need
+ * to implement {@link #__accept(java.net.URLConnection, java.io.InputStream) }.
+ *
  * @author Stephan Fuhrmann
  */
 @Slf4j
@@ -34,7 +36,7 @@ public abstract class MetaDataConsumer extends AbstractConsumer implements Consu
 
     @Getter
     private final StreamMetaData streamMetaData;
-    
+
     public MetaDataConsumer(ConsumerContext consumerContext) {
         super(consumerContext);
         streamMetaData = new StreamMetaData();
@@ -47,9 +49,10 @@ public abstract class MetaDataConsumer extends AbstractConsumer implements Consu
             __accept(t, inputStream);
         } catch (IOException ex) {
             log.warn("Failed to open", ex);
+            throw new RadioException(true, ex);
         }
     }
-    
+
     protected abstract void __accept(URLConnection t, InputStream inputStream);
-    
+
 }

@@ -17,6 +17,7 @@ package de.sfuhrm.radiorecorder.consumer;
 
 import de.sfuhrm.radiorecorder.ConsumerContext;
 import de.sfuhrm.radiorecorder.Main;
+import de.sfuhrm.radiorecorder.RadioException;
 import static de.sfuhrm.radiorecorder.RadioRunnable.BUFFER_SIZE;
 import java.io.IOException;
 import java.io.InputStream;
@@ -107,15 +108,22 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<URL
             Thread shutdown = new Thread(() -> cleanup());
             Runtime.getRuntime().addShutdownHook(shutdown);
             
+            try {
             // this is a second stream just to display the meta data
             while (-1 != (length = inputStream.read(buffer))) {
                 log.trace("Read {} bytes", length);
             }
             Runtime.getRuntime().removeShutdownHook(shutdown);
+            }
+            catch (IOException ioe) {
+                log.warn("Error reading stream", ioe);
+                throw new RadioException(true, ioe);                
+            }
             
-        } catch (GeneralSecurityException | InterruptedException | IOException ex) {
+        } catch (GeneralSecurityException | InterruptedException | IOException  ex) {
             log.warn("Chromecast problem", ex);
-        }
+            throw new RadioException(false, ex);
+        } 
         finally {
             cleanup();
         }

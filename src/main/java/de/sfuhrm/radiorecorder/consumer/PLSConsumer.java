@@ -16,6 +16,7 @@
 package de.sfuhrm.radiorecorder.consumer;
 
 import de.sfuhrm.radiorecorder.ConsumerContext;
+import de.sfuhrm.radiorecorder.RadioException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,6 +60,7 @@ public class PLSConsumer extends AbstractConsumer implements Consumer<URLConnect
             }
         } catch (IOException ex) {
             log.warn("URL " + getContext().getUrl().toExternalForm() + " broke down", ex);
+            throw new RadioException(true, ex);
         }
     }
 }
