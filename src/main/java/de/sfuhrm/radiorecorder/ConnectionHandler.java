@@ -93,6 +93,7 @@ public class ConnectionHandler {
         switch (mimeType.get()) {
             case AUDIO_MPEG:
             case AUDIO_OGG:
+            case APPLICATION_OGG:
             case AUDIO_XWAV:
             case AUDIO_XMSWMA:
                 if (cc.getCastReceiver() != null) {
