@@ -22,6 +22,11 @@ import lombok.Getter;
  * @author Stephan Fuhrmann
  */
 public class RadioException extends RuntimeException {
+    
+    /** Is the cause of the exception tagged as being retryable?
+     * This is typically the case when there is a I/O problem with the
+     * remote side.
+     */
     @Getter
     private final boolean retryable;
 
