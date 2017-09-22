@@ -23,6 +23,7 @@ import de.sfuhrm.radiorecorder.consumer.StreamPlayConsumer;
 import de.sfuhrm.radiorecorder.consumer.XSPFConsumer;
 import de.sfuhrm.radiorecorder.http.HttpConnection;
 import de.sfuhrm.radiorecorder.http.HttpConnectionBuilder;
+import de.sfuhrm.radiorecorder.http.HttpConnectionBuilderFactory;
 import de.sfuhrm.radiorecorder.metadata.MimeType;
 import java.io.IOException;
 import java.net.URL;
@@ -39,9 +40,11 @@ import lombok.extern.slf4j.Slf4j;
 public class ConnectionHandler {
     
     private final ConsumerContext consumerContext;
+    private final HttpConnectionBuilderFactory builderFactory;
 
     public ConnectionHandler(ConsumerContext consumerContext) {
         this.consumerContext = Objects.requireNonNull(consumerContext);
+        this.builderFactory = new HttpConnectionBuilderFactory();
     }
 
     /** Configure the timeout for the conncetion.
@@ -66,7 +69,7 @@ public class ConnectionHandler {
     }
     
     public HttpConnection openConnection(URL url) throws IOException {
-        HttpConnectionBuilder builder = new HttpConnectionBuilder(url);
+        HttpConnectionBuilder builder = builderFactory.newInstance(url);
         configure(builder);
         return builder.build();
     }

@@ -15,18 +15,18 @@
  */
 package de.sfuhrm.radiorecorder.http;
 
-import java.io.IOException;
+import java.net.URL;
 
 /**
- * Configures an HttpConnection.
+ * Configures an URLConnection.
  * @author Stephan Fuhrmann
  */
-public interface HttpConnectionBuilder {
-    public void setConnectTimeout(int timeout) throws IOException;
-
-    public void setReadTimeout(int timeout) throws IOException;
-
-    public void setRequestProperty(String key, String value) throws IOException;
+public class HttpConnectionBuilderFactory {
     
-    public HttpConnection build() throws IOException;
+    public HttpConnectionBuilderFactory() {
+    }
+    
+    public HttpConnectionBuilder newInstance(URL url) {
+        return new JavaNetHttpConnectionBuilder(url);
+    }
 }
