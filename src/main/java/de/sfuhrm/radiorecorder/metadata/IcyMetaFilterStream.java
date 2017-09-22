@@ -61,6 +61,7 @@ class IcyMetaFilterStream extends OffsetFilterStream {
         return -1;
     }
     
+    /** Read a meta data block at the current stream position. */
     private void readIcyMeta() throws IOException {
         int c;
         log.trace("Offset is {}, Icy Interval is {}", getOffset(), metaInterval);
