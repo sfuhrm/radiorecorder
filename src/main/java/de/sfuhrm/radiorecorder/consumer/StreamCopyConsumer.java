@@ -131,7 +131,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
                     return;
                 }
                 
-                if (metaDataChanged) {
+                if (metaDataChanged && getContext().isSongNames()) {
                     log.debug("Meta data changed");
                     metaDataChanged = false;
                     closeStreamIfOpen(outputStream, file, contentType);
