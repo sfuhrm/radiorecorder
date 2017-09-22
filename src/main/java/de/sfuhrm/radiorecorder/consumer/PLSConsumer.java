@@ -16,12 +16,12 @@
 package de.sfuhrm.radiorecorder.consumer;
 
 import de.sfuhrm.radiorecorder.ConsumerContext;
+import de.sfuhrm.radiorecorder.http.HttpConnection;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author Stephan Fuhrmann
  */
 @Slf4j
-public class PLSConsumer extends AbstractConsumer implements Consumer<URLConnection> {
+public class PLSConsumer extends AbstractConsumer implements Consumer<HttpConnection> {
 
     public PLSConsumer(ConsumerContext context) {
         super(context);
@@ -51,7 +51,7 @@ public class PLSConsumer extends AbstractConsumer implements Consumer<URLConnect
     }
 
     @Override
-    protected void _accept(URLConnection t) {
+    protected void _accept(HttpConnection t) {
         try {
             List<String> urls = readUrls(t.getInputStream());
             for (String url : urls) {

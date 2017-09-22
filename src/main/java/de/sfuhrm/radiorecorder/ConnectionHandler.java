@@ -21,10 +21,11 @@ import de.sfuhrm.radiorecorder.consumer.StreamCastConsumer;
 import de.sfuhrm.radiorecorder.consumer.StreamCopyConsumer;
 import de.sfuhrm.radiorecorder.consumer.StreamPlayConsumer;
 import de.sfuhrm.radiorecorder.consumer.XSPFConsumer;
+import de.sfuhrm.radiorecorder.http.HttpConnection;
+import de.sfuhrm.radiorecorder.http.HttpConnectionBuilder;
 import de.sfuhrm.radiorecorder.metadata.MimeType;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -44,30 +45,30 @@ public class ConnectionHandler {
     }
 
     /** Configure the timeout for the conncetion.
-     * @param connection the connection to configure.
+     * @param builder the connection to configure.
      */
-    protected void configureTimeout(URLConnection connection) {
-        connection.setConnectTimeout(consumerContext.getTimeout());
-        connection.setReadTimeout(consumerContext.getTimeout());
+    protected void configureTimeout(HttpConnectionBuilder builder) throws IOException {
+        builder.setConnectTimeout(consumerContext.getTimeout());
+        builder.setReadTimeout(consumerContext.getTimeout());
     }
     
     /** Set headers to motivate Icecast servers to send meta data.
-     * @param connection the connection to configure.
+     * @param builder the connection to configure.
      * @see <a href="https://anton.logvinenko.name/en/blog/how-to-get-title-from-audio-stream-with-python.html">ID3 and icecast</a>
      */
-    protected void configureIcecast(URLConnection connection) {
-        connection.setRequestProperty("Icy-Metadata", "1");
+    protected void configureIcecast(HttpConnectionBuilder builder) throws IOException {
+        builder.setRequestProperty("Icy-Metadata", "1");
     }
     
-    protected void configure(URLConnection connection) {
-        configureIcecast(connection);
-        configureTimeout(connection);
+    protected void configure(HttpConnectionBuilder builder) throws IOException {
+        configureIcecast(builder);
+        configureTimeout(builder);
     }
     
-    public URLConnection openConnection(URL url) throws IOException {
-        URLConnection connection = url.openConnection();
-        configure(connection);
-        return connection;
+    public HttpConnection openConnection(URL url) throws IOException {
+        HttpConnectionBuilder builder = new HttpConnectionBuilder(url);
+        configure(builder);
+        return builder.build();
     }
     
     public void consume(URL url) throws IOException {
@@ -76,14 +77,14 @@ public class ConnectionHandler {
             if (!first) {
                 log.info("Reconnecting.");
             }
-            URLConnection connection = openConnection(url);
-            Consumer<URLConnection> consumer = consumerFromContentType(consumerContext, connection.getContentType());
+            HttpConnection connection = openConnection(url);
+            Consumer<HttpConnection> consumer = consumerFromContentType(consumerContext, connection.getContentType());
             consumer.accept(connection);
             first = false;
         } while (consumerContext.isReconnect());
     }
     
-    public static Consumer<URLConnection> consumerFromContentType(ConsumerContext cc, String contentType) {
+    public static Consumer<HttpConnection> consumerFromContentType(ConsumerContext cc, String contentType) {
         Optional<MimeType> mimeType = MimeType.byContentType(contentType);
         if (!mimeType.isPresent()) {
             log.warn("Unknown content type {}", contentType);

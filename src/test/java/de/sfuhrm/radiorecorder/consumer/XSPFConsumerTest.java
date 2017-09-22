@@ -17,6 +17,7 @@ package de.sfuhrm.radiorecorder.consumer;
 
 import de.sfuhrm.radiorecorder.ConnectionHandler;
 import de.sfuhrm.radiorecorder.ConsumerContext;
+import de.sfuhrm.radiorecorder.http.HttpConnection;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -51,7 +52,7 @@ public class XSPFConsumerTest {
 
         Mockito.when(consumerContext.getUrl()).thenReturn(url);
 
-        URLConnection connection = Mockito.mock(URLConnection.class);
+        HttpConnection connection = Mockito.mock(HttpConnection.class);
         Mockito.when(connection.getURL()).thenReturn(url);
         Mockito.when(connection.getInputStream()).thenReturn(url.openStream());
 

@@ -25,6 +25,7 @@ import com.mpatric.mp3agic.UnsupportedTagException;
 import de.sfuhrm.radiorecorder.ConsumerContext;
 import de.sfuhrm.radiorecorder.Main;
 import static de.sfuhrm.radiorecorder.RadioRunnable.BUFFER_SIZE;
+import de.sfuhrm.radiorecorder.http.HttpConnection;
 import de.sfuhrm.radiorecorder.metadata.MetaData;
 import de.sfuhrm.radiorecorder.metadata.MimeType;
 import java.io.File;
@@ -43,7 +44,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author Stephan Fuhrmann
  */
 @Slf4j
-public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<URLConnection> {
+public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<HttpConnection> {
 
     /** The consecutive file number. */
     private int fileNumber;
@@ -93,7 +94,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<URL
     }
     
     @Override
-    protected void __accept(URLConnection t, InputStream inputStream) {
+    protected void __accept(HttpConnection t, InputStream inputStream) {
         Runnable cleanup = () -> cleanup(getContext().isSongNames());
         Thread cleanupThread = new Thread(cleanup);
         Runtime.getRuntime().addShutdownHook(cleanupThread);

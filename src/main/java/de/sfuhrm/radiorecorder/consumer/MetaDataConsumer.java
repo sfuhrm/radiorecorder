@@ -16,10 +16,10 @@
 package de.sfuhrm.radiorecorder.consumer;
 
 import de.sfuhrm.radiorecorder.ConsumerContext;
+import de.sfuhrm.radiorecorder.http.HttpConnection;
 import de.sfuhrm.radiorecorder.metadata.StreamMetaData;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URLConnection;
 import java.util.function.Consumer;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author Stephan Fuhrmann
  */
 @Slf4j
-public abstract class MetaDataConsumer extends AbstractConsumer implements Consumer<URLConnection> {
+public abstract class MetaDataConsumer extends AbstractConsumer implements Consumer<HttpConnection> {
 
     @Getter
     private final StreamMetaData streamMetaData;
@@ -41,7 +41,7 @@ public abstract class MetaDataConsumer extends AbstractConsumer implements Consu
     }
 
     @Override
-    protected final void _accept(URLConnection t) {
+    protected final void _accept(HttpConnection t) {
         try {
             InputStream inputStream = streamMetaData.openStream(t);
             __accept(t, inputStream);
@@ -50,6 +50,6 @@ public abstract class MetaDataConsumer extends AbstractConsumer implements Consu
         }
     }
     
-    protected abstract void __accept(URLConnection t, InputStream inputStream);
+    protected abstract void __accept(HttpConnection t, InputStream inputStream);
     
 }

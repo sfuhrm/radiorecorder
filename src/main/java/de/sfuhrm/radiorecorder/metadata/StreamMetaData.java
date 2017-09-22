@@ -15,10 +15,12 @@
  */
 package de.sfuhrm.radiorecorder.metadata;
 
+import de.sfuhrm.radiorecorder.http.HttpConnection;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URLConnection;
 import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
@@ -45,21 +47,22 @@ public class StreamMetaData {
     /** Current meta data. */
     private MetaData metaData = new MetaData();
     
-    public InputStream openStream(URLConnection connection) throws IOException {
+    public InputStream openStream(HttpConnection connection) throws IOException {
         InputStream result;
         offsetFilterStream = new OffsetFilterStream(connection.getInputStream());
         result = offsetFilterStream;
         
-        if (connection.getHeaderField("icy-name") != null) {
-            metaData.setStationName(Optional.of(connection.getHeaderField("icy-name")));
+        Map<String,List<String>> headers = connection.getHeaderFields();
+        if (headers.containsKey("icy-name")) {
+            metaData.setStationName(Optional.of(headers.get("icy-name").get(0)));
         }
-        if (connection.getHeaderField("icy-url") != null) {
-            metaData.setStationUrl(Optional.of(connection.getHeaderField("icy-url")));
+        if (headers.containsKey("icy-url")) {
+            metaData.setStationUrl(Optional.of(headers.get("icy-url").get(0)));
         }
         
-        if (connection.getHeaderField(ICY_METAINT) != null) {
-            log.debug("Found Icy Meta Interval header: {}", connection.getHeaderField(ICY_METAINT));
-            int metaInterval = connection.getHeaderFieldInt(ICY_METAINT, 0);
+        if (headers.containsKey(ICY_METAINT)) {
+            log.debug("Found Icy Meta Interval header: {}", headers.containsKey(ICY_METAINT));
+            int metaInterval = Integer.parseInt(headers.get(ICY_METAINT).get(0));
             icyMetaFilterStream = new IcyMetaFilterStream(metaInterval, offsetFilterStream);
             icyMetaFilterStream.setMetaDataConsumer(md -> {
                 Pattern p = Pattern.compile("(.{2,}) - (.{2,})");

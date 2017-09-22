@@ -16,6 +16,7 @@
 package de.sfuhrm.radiorecorder.consumer;
 
 import de.sfuhrm.radiorecorder.ConsumerContext;
+import de.sfuhrm.radiorecorder.http.HttpConnection;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -31,14 +32,14 @@ import lombok.extern.slf4j.Slf4j;
  * @author Stephan Fuhrmann
  */
 @Slf4j
-public class M3UConsumer extends AbstractConsumer implements Consumer<URLConnection> {
+public class M3UConsumer extends AbstractConsumer implements Consumer<HttpConnection> {
 
     public M3UConsumer(ConsumerContext context) {
         super(context);
     }
 
     @Override
-    protected void _accept(URLConnection t) {
+    protected void _accept(HttpConnection t) {
         try {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(t.getInputStream()));
             List<String> lines = bufferedReader.lines().filter(l -> l.startsWith("http")).collect(Collectors.toList());

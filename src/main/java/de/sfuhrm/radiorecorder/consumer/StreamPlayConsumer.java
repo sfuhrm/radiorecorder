@@ -17,9 +17,9 @@ package de.sfuhrm.radiorecorder.consumer;
 
 import de.sfuhrm.radiorecorder.ConsumerContext;
 import static de.sfuhrm.radiorecorder.RadioRunnable.BUFFER_SIZE;
+import de.sfuhrm.radiorecorder.http.HttpConnection;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URLConnection;
 import java.util.function.Consumer;
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
@@ -34,14 +34,14 @@ import lombok.extern.slf4j.Slf4j;
  * @author Stephan Fuhrmann
  */
 @Slf4j
-public class StreamPlayConsumer extends MetaDataConsumer implements Consumer<URLConnection> {
+public class StreamPlayConsumer extends MetaDataConsumer implements Consumer<HttpConnection> {
 
     public StreamPlayConsumer(ConsumerContext consumerContext) {
         super(consumerContext);
     }
 
     @Override
-    protected void __accept(URLConnection t, InputStream inputStream) {
+    protected void __accept(HttpConnection t, InputStream inputStream) {
         try {
             getStreamMetaData().setMetaDataConsumer(new ConsoleMetaDataConsumer());
             byte buffer[] = new byte[BUFFER_SIZE];

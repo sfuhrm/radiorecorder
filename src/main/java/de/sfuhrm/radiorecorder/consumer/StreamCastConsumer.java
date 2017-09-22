@@ -18,9 +18,9 @@ package de.sfuhrm.radiorecorder.consumer;
 import de.sfuhrm.radiorecorder.ConsumerContext;
 import de.sfuhrm.radiorecorder.Main;
 import static de.sfuhrm.radiorecorder.RadioRunnable.BUFFER_SIZE;
+import de.sfuhrm.radiorecorder.http.HttpConnection;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URLConnection;
 import java.security.GeneralSecurityException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.function.Consumer;
@@ -37,7 +37,7 @@ import su.litvak.chromecast.api.v2.MediaStatus;
  * @author Stephan Fuhrmann
  */
 @Slf4j
-public class StreamCastConsumer extends MetaDataConsumer implements Consumer<URLConnection> {
+public class StreamCastConsumer extends MetaDataConsumer implements Consumer<HttpConnection> {
     
     /** The ID of the default media receiver app. 
      */
@@ -78,7 +78,7 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<URL
     }
 
     @Override
-    protected void __accept(URLConnection t, InputStream inputStream) {
+    protected void __accept(HttpConnection t, InputStream inputStream) {
         try {
             getStreamMetaData().setMetaDataConsumer(new ConsoleMetaDataConsumer());
             

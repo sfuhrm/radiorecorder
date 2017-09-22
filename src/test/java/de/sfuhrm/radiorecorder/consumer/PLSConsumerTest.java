@@ -17,6 +17,7 @@ package de.sfuhrm.radiorecorder.consumer;
 
 import de.sfuhrm.radiorecorder.ConnectionHandler;
 import de.sfuhrm.radiorecorder.ConsumerContext;
+import de.sfuhrm.radiorecorder.http.HttpConnection;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -50,7 +51,7 @@ public class PLSConsumerTest {
             
             Mockito.when(consumerContext.getUrl()).thenReturn(tmp.getURL());
             
-            URLConnection connection = Mockito.mock(URLConnection.class);
+            HttpConnection connection = Mockito.mock(HttpConnection.class);
             Mockito.when(connection.getURL()).thenReturn(tmp.getURL());
             //Mockito.when(connection.getContentType()).thenReturn("audio/x-scpls");
             Mockito.when(connection.getInputStream()).thenReturn(tmp.getInputStream());

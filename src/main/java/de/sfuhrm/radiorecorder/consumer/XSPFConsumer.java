@@ -16,9 +16,9 @@
 package de.sfuhrm.radiorecorder.consumer;
 
 import de.sfuhrm.radiorecorder.ConsumerContext;
+import de.sfuhrm.radiorecorder.http.HttpConnection;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.function.Consumer;
@@ -38,7 +38,7 @@ import org.xml.sax.InputSource;
  * @author Stephan Fuhrmann
  */
 @Slf4j
-public class XSPFConsumer extends AbstractConsumer implements Consumer<URLConnection> {
+public class XSPFConsumer extends AbstractConsumer implements Consumer<HttpConnection> {
 
     public final static String NS = "http://xspf.org/ns/0/";
     public final static String PREFIX = "x";
@@ -48,7 +48,7 @@ public class XSPFConsumer extends AbstractConsumer implements Consumer<URLConnec
     }
     
     @Override
-    protected void _accept(URLConnection t) {
+    protected void _accept(HttpConnection t) {
         try {
             XPathFactory factory = XPathFactory.newInstance();
             XPath xp = factory.newXPath();
