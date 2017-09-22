@@ -26,34 +26,17 @@ import java.util.Map;
  * Wrapper for URLConnection.
  * @author Stephan Fuhrmann
  */
-public class HttpConnection {
-    private final HttpURLConnection connection;
+public interface HttpConnection {
 
-    HttpConnection(HttpURLConnection connection) {
-        this.connection = connection;
-    }
+    public URL getURL();
 
-    public URL getURL() {
-        return connection.getURL();
-    }
+    public Map<String, List<String>> getHeaderFields() throws IOException;
 
-    public Map<String, List<String>> getHeaderFields() {
-        return connection.getHeaderFields();
-    }
+    public InputStream getInputStream() throws IOException;
 
-    public InputStream getInputStream() throws IOException {
-        return connection.getInputStream();
-    }
-
-    public String getContentType() {
-        return connection.getContentType();
-    }
+    public String getContentType() throws IOException;
     
-    public int getResponseCode() throws IOException {
-        return connection.getResponseCode();
-    }
+    public int getResponseCode() throws IOException;
     
-    public String getResponseMessage() throws IOException {
-        return connection.getResponseMessage();
-    }
+    public String getResponseMessage() throws IOException;
 }

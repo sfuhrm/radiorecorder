@@ -51,6 +51,6 @@ public class HttpConnectionBuilder {
     }
     
     public HttpConnection build() throws IOException {
-        return new HttpConnection(connection());
+        return new JavaNetHttpConnection(connection());
     }
 }
