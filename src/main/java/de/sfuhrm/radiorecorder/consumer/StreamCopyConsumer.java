@@ -38,6 +38,7 @@ import java.nio.file.attribute.FileTime;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 import lombok.extern.slf4j.Slf4j;
 
 /** Copies a stream to one or multiple disk files.
@@ -241,14 +242,15 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
     
     /** Find the maximum used file number on disk. */
     private void initFileNumber() throws IOException {
-
+        final Pattern integerPattern = Pattern.compile("[0-9]+");
+        
         // this works for both songnamed files and number files
-        OptionalInt maxFileNumber = Files.list(getContext().getDirectory().toPath())
+        final OptionalInt maxFileNumber = Files.list(getContext().getDirectory().toPath())
                 .filter(p -> Files.isRegularFile(p))
                 .map(p -> p.getFileName().toString())
                 .filter(s -> s.contains("."))
                 .map(s -> s.substring(0, s.indexOf('.')))
-                .filter(s -> s.matches("[0-9]+"))
+                .filter(s -> integerPattern.matcher(s).matches())
                 .mapToInt(s -> Integer.parseInt(s))
                 .max();
 
