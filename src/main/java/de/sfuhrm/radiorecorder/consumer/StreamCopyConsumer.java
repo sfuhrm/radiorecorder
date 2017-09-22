@@ -254,7 +254,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
                 .mapToInt(s -> Integer.parseInt(s))
                 .max();
 
-        fileNumber = maxFileNumber.isPresent() ? maxFileNumber.getAsInt() + 1 : 1;
+        fileNumber = maxFileNumber.orElse(0) + 1;
         log.debug("Found file number {}, fileNumber starts at {}", maxFileNumber, fileNumber);
     }    
 
