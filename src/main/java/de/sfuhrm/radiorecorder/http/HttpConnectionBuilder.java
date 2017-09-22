@@ -18,15 +18,31 @@ package de.sfuhrm.radiorecorder.http;
 import java.io.IOException;
 
 /**
- * Configures an HttpConnection.
+ * Configures an HttpConnection. The connection can be created
+ * after construction.
+ * @see #build() {@code build()} for building a HttpConnection
  * @author Stephan Fuhrmann
  */
 public interface HttpConnectionBuilder {
+    /** Configures the timeout for connecting to the server.
+     * @param timeout the timeout in milliseconds.
+     */
     public void setConnectTimeout(int timeout) throws IOException;
 
+    /** Configures the timeout for reading from the server.
+     * @param timeout the timeout in milliseconds.
+     */
     public void setReadTimeout(int timeout) throws IOException;
 
+    /** Adds a HTTP request header field to the request.
+     * @param key the header field name, for example "User-Agent".
+     * @param value the header field value.
+     */
     public void setRequestProperty(String key, String value) throws IOException;
     
+    /** Constructs a connection from this builder. 
+     * The connection is usually being opened by this method.
+     * @return a readly open HTTP connection.
+     */
     public HttpConnection build() throws IOException;
 }
