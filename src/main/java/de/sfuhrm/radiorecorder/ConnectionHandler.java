@@ -32,7 +32,7 @@ import java.util.function.Consumer;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Handles a single URLConnection.
+ * Handles a single {@link HttpConnection}.
  * @author Stephan Fuhrmann
  */
 @Slf4j

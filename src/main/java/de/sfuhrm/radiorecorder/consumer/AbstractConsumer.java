@@ -19,7 +19,6 @@ import de.sfuhrm.radiorecorder.ConnectionHandler;
 import de.sfuhrm.radiorecorder.ConsumerContext;
 import de.sfuhrm.radiorecorder.http.HttpConnection;
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.util.function.Consumer;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -28,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Base-class for many consumers.
- * Subclasses need to implement {@link #_accept(java.net.URLConnection) }.
+ * Subclasses need to implement {@link #_accept(de.sfuhrm.radiorecorder.http.HttpConnection) }.
  * @author Stephan Fuhrmann
  */
 @Slf4j
@@ -68,7 +67,7 @@ public abstract class AbstractConsumer implements Consumer<HttpConnection> {
     }
     
     /** The inner accept implementation. Will get called after applying
-     * configuration to the URLConnection passed in.
+     * configuration to the HttpConnection passed in.
      * @param u the connection to process.
      */
     protected abstract void _accept(HttpConnection u);

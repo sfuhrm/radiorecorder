@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Opens a stream and intercepts possible meta data information.
- * Subclasses need to implement {@link #__accept(java.net.URLConnection, java.io.InputStream) }.
+ * Subclasses need to implement {@link #__accept(de.sfuhrm.radiorecorder.http.HttpConnection, java.io.InputStream) }.
  * @author Stephan Fuhrmann
  */
 @Slf4j

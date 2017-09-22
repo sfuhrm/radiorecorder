@@ -15,7 +15,7 @@
  */
 
 /**
- * Consumer classes for {@link URLConnection URLConnections}.
+ * Consumer classes for {@link HttpConnection HttpConnections}.
  * These classes handle the incoming data and dispatch the
  * actions depending on the retrieved data.
  * @author Stephan Fuhrmann

@@ -20,7 +20,6 @@ import de.sfuhrm.radiorecorder.ConsumerContext;
 import de.sfuhrm.radiorecorder.http.HttpConnection;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLConnection;
 import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.*;

@@ -28,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Filters icecast meta data out of the stream.
- * @see ConnectionHandler#configureIcecast(java.net.URLConnection) 
+ * @see ConnectionHandler#configureIcecast(de.sfuhrm.radiorecorder.http.HttpConnectionBuilder) 
  * @author Stephan Fuhrmann
  */
 @Slf4j
