@@ -248,6 +248,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
                 .map(p -> p.getFileName().toString())
                 .filter(s -> s.contains("."))
                 .map(s -> s.substring(0, s.indexOf('.')))
+                .filter(s -> s.matches("[0-9]+"))
                 .mapToInt(s -> Integer.parseInt(s))
                 .max();
 
