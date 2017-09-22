@@ -19,12 +19,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
 
 
 /**
- * Wrapper for URLConnection.
+ * Wrapper for {@link URLConnection}.
  * @author Stephan Fuhrmann
  */
 class JavaNetHttpConnection implements HttpConnection {

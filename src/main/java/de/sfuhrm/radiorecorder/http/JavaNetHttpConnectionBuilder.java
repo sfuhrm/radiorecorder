@@ -29,7 +29,7 @@ public class JavaNetHttpConnectionBuilder implements HttpConnectionBuilder {
     private final URL url;
     private HttpURLConnection connection;
     
-    public JavaNetHttpConnectionBuilder(URL url) {
+    JavaNetHttpConnectionBuilder(URL url) {
         this.url = url;
     }
     

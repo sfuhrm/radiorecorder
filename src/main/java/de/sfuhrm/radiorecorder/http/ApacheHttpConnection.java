@@ -29,7 +29,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 
 
 /**
- * Wrapper for URLConnection.
+ * Wrapper for a Apache HttpClient based connection.
  * @author Stephan Fuhrmann
  */
 class ApacheHttpConnection implements HttpConnection {

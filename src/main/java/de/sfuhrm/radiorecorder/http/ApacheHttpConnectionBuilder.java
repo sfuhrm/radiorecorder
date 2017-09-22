@@ -25,16 +25,16 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 /**
- * Configures an URLConnection.
+ * Builder for a Apache HttpClient based connection.
  * @author Stephan Fuhrmann
  */
 @Slf4j
-public class ApacheHttpConnectionBuilder implements HttpConnectionBuilder {
+class ApacheHttpConnectionBuilder implements HttpConnectionBuilder {
 
     private final RequestConfig.Builder configBuilder;
     private final RequestBuilder requestBuilder;
         
-    public ApacheHttpConnectionBuilder(URL url) throws URISyntaxException {
+    ApacheHttpConnectionBuilder(URL url) throws URISyntaxException {
         configBuilder = RequestConfig.custom();
         requestBuilder = RequestBuilder.get(url.toURI());
         
