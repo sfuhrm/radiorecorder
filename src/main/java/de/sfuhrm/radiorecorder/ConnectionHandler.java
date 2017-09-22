@@ -67,7 +67,7 @@ public class ConnectionHandler {
      * @param builder the connection to configure.
      */
     protected void configureClient(HttpConnectionBuilder builder) throws IOException {
-        builder.setRequestProperty("User-Client", Main.PROJECT);
+        builder.setRequestProperty("User-Agent", Main.PROJECT);
     }
     
     protected void configure(HttpConnectionBuilder builder) throws IOException {
