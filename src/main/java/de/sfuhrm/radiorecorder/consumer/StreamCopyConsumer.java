@@ -36,6 +36,7 @@ import java.nio.file.FileStore;
 import java.nio.file.Files;
 import java.nio.file.attribute.FileTime;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.function.Consumer;
 import lombok.extern.slf4j.Slf4j;
 
@@ -72,7 +73,13 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
 
     public StreamCopyConsumer(ConsumerContext consumerContext) {
         super(consumerContext);
-        fileNumber = 1;        
+        
+        try {
+            initFileNumber();
+        } catch (IOException ex) {
+            log.warn("File number finding problem", ex);
+            fileNumber = 1;
+        }
     }
     
     /** Check whether aborting is necessary because of full file system.
@@ -232,7 +239,21 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
         }
     }
     
-    
+    /** Find the maximum used file number on disk. */
+    private void initFileNumber() throws IOException {
+
+        // this works for both songnamed files and number files
+        OptionalInt maxFileNumber = Files.list(getContext().getDirectory().toPath())
+                .filter(p -> Files.isRegularFile(p))
+                .map(p -> p.getFileName().toString())
+                .filter(s -> s.contains("."))
+                .map(s -> s.substring(0, s.indexOf('.')))
+                .mapToInt(s -> Integer.parseInt(s))
+                .max();
+
+        fileNumber = maxFileNumber.isPresent() ? maxFileNumber.getAsInt() + 1 : 1;
+        log.debug("Found file number {}, fileNumber starts at {}", maxFileNumber, fileNumber);
+    }    
 
     /** Get the next number based filename.
      * @param contentType content type for calculating the suffix.
@@ -240,7 +261,9 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
     private File getNumberFile(Optional<MimeType> contentType) {
         File f = null;
         do {
-            f = new File(getContext().getDirectory(), fileNumber + suffixFromContentType(contentType));
+            String fileName = String.format("%03d%s", fileNumber,
+                    suffixFromContentType(contentType));
+            f = new File(getContext().getDirectory(), fileName);
             fileNumber++;
         } while (f.exists() && f.length() != 0);
         return f;
