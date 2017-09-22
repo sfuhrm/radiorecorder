@@ -28,7 +28,7 @@ import java.util.Map;
  */
 public interface HttpConnection {
 
-    public URL getURL();
+    public URL getURL() throws IOException;
 
     public Map<String, List<String>> getHeaderFields() throws IOException;
 

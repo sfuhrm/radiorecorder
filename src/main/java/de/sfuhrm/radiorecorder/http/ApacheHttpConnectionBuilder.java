@@ -16,50 +16,55 @@
 package de.sfuhrm.radiorecorder.http;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.RequestBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 /**
  * Configures an URLConnection.
  * @author Stephan Fuhrmann
  */
 @Slf4j
-public class JavaNetHttpConnectionBuilder implements HttpConnectionBuilder {
+public class ApacheHttpConnectionBuilder implements HttpConnectionBuilder {
     private final URL url;
-    private HttpURLConnection connection;
-    
-    public JavaNetHttpConnectionBuilder(URL url) {
+    private final RequestConfig.Builder configBuilder;
+    private final RequestBuilder requestBuilder;
+        
+    public ApacheHttpConnectionBuilder(URL url) throws URISyntaxException {
         this.url = url;
+        configBuilder = RequestConfig.custom();
+        requestBuilder = RequestBuilder.get(url.toURI());
+        
+        log.debug("Request for uri {}", requestBuilder.getUri());
     }
     
-    private HttpURLConnection connection() throws IOException {
-        if (connection == null) {
-            connection = (HttpURLConnection)url.openConnection();
-        }
-        return connection;
-    }
     
     @Override
     public void setConnectTimeout(int timeout) throws IOException {
         log.debug("Connect timeout is {}", timeout);
-        connection().setConnectTimeout(timeout);
+        configBuilder.setConnectTimeout(timeout);
+        configBuilder.setConnectionRequestTimeout(timeout);        
     }
 
     @Override
     public void setReadTimeout(int timeout) throws IOException {
         log.debug("Read timeout is {}", timeout);
-        connection().setReadTimeout(timeout);
+        configBuilder.setSocketTimeout(timeout);
     }
 
     @Override
     public void setRequestProperty(String key, String value) throws IOException {
         log.debug("Request property {} => {}", key, value);
-        connection().setRequestProperty(key, value);
+        requestBuilder.addHeader(key, value);
     }
     
     @Override
     public HttpConnection build() throws IOException {
-        return new JavaNetHttpConnection(connection());
+        CloseableHttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(configBuilder.build()).build();
+        return new ApacheHttpConnection(client.execute(requestBuilder.build()), requestBuilder.getUri());
     }
 }

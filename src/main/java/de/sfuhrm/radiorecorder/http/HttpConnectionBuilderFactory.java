@@ -15,7 +15,10 @@
  */
 package de.sfuhrm.radiorecorder.http;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Configures an URLConnection.
@@ -26,7 +29,12 @@ public class HttpConnectionBuilderFactory {
     public HttpConnectionBuilderFactory() {
     }
     
-    public HttpConnectionBuilder newInstance(URL url) {
-        return new JavaNetHttpConnectionBuilder(url);
+    public HttpConnectionBuilder newInstance(URL url) throws IOException {
+        try {
+            //        return new JavaNetHttpConnectionBuilder(url);
+            return new ApacheHttpConnectionBuilder(url);
+        } catch (URISyntaxException ex) {
+            throw new IOException(ex);
+        }
     }
 }
