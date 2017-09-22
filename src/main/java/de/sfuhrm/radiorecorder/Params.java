@@ -72,7 +72,7 @@ public class Params {
     
       
     @Getter
-    @Argument
+    @Argument(usage = "URLs of the internet radio station(s).", metaVar = "URL", required = true)
     private List<String> arguments;
     
     /** Parse the command line options. 
