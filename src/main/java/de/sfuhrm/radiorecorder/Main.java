@@ -58,7 +58,13 @@ public class Main {
         @Override
         public void chromeCastRemoved(ChromeCast chromeCast) {
         }
-        
+    }
+    
+    private static void listCastDevices() throws InterruptedException, IOException {
+        ChromeCasts.registerListener(new MyListener());
+        ChromeCasts.startDiscovery();
+        Thread.sleep(5000);
+        ChromeCasts.stopDiscovery();
     }
     
     public static void main(String[] args) throws IOException, InterruptedException {
@@ -86,14 +92,5 @@ public class Main {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
-
-        // do something good here
-    }
-
-    private static void listCastDevices() throws InterruptedException, IOException {
-        ChromeCasts.registerListener(new MyListener());
-        ChromeCasts.startDiscovery();
-        Thread.sleep(5000);
-        ChromeCasts.stopDiscovery();
     }
 }
