@@ -40,6 +40,8 @@ public class StreamMetaData {
     private IcyMetaFilterStream icyMetaFilterStream;
     
     private final static String ICY_METAINT = "icy-metaint";
+    private final static String ICY_NAME = "icy-name";
+    private final static String ICY_URL = "icy-url";
     
     @Getter @Setter
     private Consumer<MetaData> metaDataConsumer = l -> {};
@@ -53,11 +55,11 @@ public class StreamMetaData {
         result = offsetFilterStream;
         
         Map<String,List<String>> headers = connection.getHeaderFields();
-        if (headers.containsKey("icy-name")) {
-            metaData.setStationName(Optional.of(headers.get("icy-name").get(0)));
+        if (headers.containsKey(ICY_NAME)) {
+            metaData.setStationName(Optional.of(headers.get(ICY_NAME).get(0)));
         }
-        if (headers.containsKey("icy-url")) {
-            metaData.setStationUrl(Optional.of(headers.get("icy-url").get(0)));
+        if (headers.containsKey(ICY_URL)) {
+            metaData.setStationUrl(Optional.of(headers.get(ICY_URL).get(0)));
         }
         
         if (headers.containsKey(ICY_METAINT)) {
