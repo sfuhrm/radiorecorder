@@ -30,12 +30,11 @@ import org.apache.http.impl.client.HttpClientBuilder;
  */
 @Slf4j
 public class ApacheHttpConnectionBuilder implements HttpConnectionBuilder {
-    private final URL url;
+
     private final RequestConfig.Builder configBuilder;
     private final RequestBuilder requestBuilder;
         
     public ApacheHttpConnectionBuilder(URL url) throws URISyntaxException {
-        this.url = url;
         configBuilder = RequestConfig.custom();
         requestBuilder = RequestBuilder.get(url.toURI());
         
