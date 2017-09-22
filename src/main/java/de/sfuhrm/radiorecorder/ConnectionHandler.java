@@ -63,9 +63,17 @@ public class ConnectionHandler {
         builder.setRequestProperty("Icy-Metadata", "1");
     }
     
+    /** Set headers for user client.
+     * @param builder the connection to configure.
+     */
+    protected void configureClient(HttpConnectionBuilder builder) throws IOException {
+        builder.setRequestProperty("User-Client", Main.PROJECT);
+    }
+    
     protected void configure(HttpConnectionBuilder builder) throws IOException {
         configureIcecast(builder);
         configureTimeout(builder);
+        configureClient(builder);
     }
     
     public HttpConnection openConnection(URL url) throws IOException {
