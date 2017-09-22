@@ -76,14 +76,17 @@ public class ConnectionHandler {
         configureClient(builder);
     }
     
-    public HttpConnection openConnection(URL url) throws IOException {
+    /** Opens the url using a configured connection. */
+    private HttpConnection openConnection(URL url) throws IOException {
         HttpConnectionBuilder builder = builderFactory.newInstance(url);
         configure(builder);
         return builder.build();
     }
     
+    /** Consumes the given URL. */
     public void consume(URL url) throws IOException {
         boolean first = true;
+        Objects.requireNonNull(url, "url must be non-null");
         do {
             if (!first) {
                 log.info("Reconnecting.");
@@ -95,7 +98,7 @@ public class ConnectionHandler {
         } while (consumerContext.isReconnect());
     }
     
-    public static Consumer<HttpConnection> consumerFromContentType(ConsumerContext cc, String contentType) {
+    private static Consumer<HttpConnection> consumerFromContentType(ConsumerContext cc, String contentType) {
         Optional<MimeType> mimeType = MimeType.byContentType(contentType);
         if (!mimeType.isPresent()) {
             log.warn("Unknown content type {}", contentType);
