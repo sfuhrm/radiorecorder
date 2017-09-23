@@ -26,6 +26,7 @@ import java.util.stream.Stream;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.impl.client.CloseableHttpClient;
 
 
 /**
@@ -34,10 +35,12 @@ import org.apache.http.client.methods.CloseableHttpResponse;
  */
 class ApacheHttpConnection implements HttpConnection {
 
+    private final CloseableHttpClient client;
     private final CloseableHttpResponse response;
     private final URI uri;
 
-    ApacheHttpConnection(CloseableHttpResponse connection, URI uri) {
+    ApacheHttpConnection(CloseableHttpClient client, CloseableHttpResponse connection, URI uri) {
+        this.client = client;
         this.response = connection;
         this.uri = uri;
     }
@@ -82,5 +85,6 @@ class ApacheHttpConnection implements HttpConnection {
     @Override
     public void close() throws IOException {
         response.close();
+        client.close();
     }
 }

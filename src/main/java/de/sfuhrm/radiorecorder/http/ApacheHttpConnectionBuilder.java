@@ -64,7 +64,7 @@ class ApacheHttpConnectionBuilder implements HttpConnectionBuilder {
     @Override
     public HttpConnection build() throws IOException {
         CloseableHttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(configBuilder.build()).build();
-        return new ApacheHttpConnection(client.execute(requestBuilder.build()), requestBuilder.getUri());
+        return new ApacheHttpConnection(client, client.execute(requestBuilder.build()), requestBuilder.getUri());
     }
 
     @Override
