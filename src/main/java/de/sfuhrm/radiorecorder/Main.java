@@ -45,6 +45,11 @@ public class Main {
     /** Id for {@link ConsumerContext#id}. */
     private static int nextId = 1;
     
+    /** Read the URLs or names given and resolve them using {@link RadioBrowser}.
+     * @param urls the input urls from the command line.
+     * @param params the command line.
+     * @return the sanitized URLs.
+     */
     private static List<String> sanitize(List<String> urls, Params params) {
         List<String> result = new ArrayList<>();
         RadioBrowser browser = new RadioBrowser(params.getTimeout() * 1000, PROJECT);
