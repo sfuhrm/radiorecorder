@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author Stephan Fuhrmann
  */
 @Slf4j
-public class JavaNetHttpConnectionBuilder implements HttpConnectionBuilder {
+class JavaNetHttpConnectionBuilder implements HttpConnectionBuilder {
     private final URL url;
     private HttpURLConnection connection;
     
