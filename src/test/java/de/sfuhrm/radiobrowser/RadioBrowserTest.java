@@ -42,6 +42,22 @@ public class RadioBrowserTest {
     }
     
     @Test
+    public void listStationsByWithName() {
+        List<Station> stations = browser.listStationsBy(0, 5, RadioBrowser.SearchMode.byname, "synthradio");
+        assertThat(stations, notNullValue());
+        assertThat(stations.size(), is(1));
+        assertThat(stations.get(0).url, is("http://synth-radio.ru/synthradio192.m3u"));
+    }    
+    
+    @Test
+    public void resolveStreamUrl() {
+        List<Station> stations = browser.listStationsBy(0, 5, RadioBrowser.SearchMode.byname, "synthradio");        
+        UrlResponse response = browser.resolveStreamUrl(stations.get(0));
+        assertThat(response, notNullValue());
+        assertThat(response.url, is("http://86.62.102.131:8005/live192"));
+    }    
+    
+    @Test
     public void listStationsBy() {
         List<Station> stations = browser.listStationsBy(0, 5, RadioBrowser.SearchMode.byname, "ding");
         assertThat(stations, notNullValue());
