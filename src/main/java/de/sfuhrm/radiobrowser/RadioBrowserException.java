@@ -16,12 +16,12 @@
 package de.sfuhrm.radiobrowser;
 
 /**
- *
+ * Exception in radio browser communication.
  * @author Stephan Fuhrmann
  */
-public class RadioException extends RuntimeException {
+public class RadioBrowserException extends RuntimeException {
 
-    public RadioException(String message) {
+    public RadioBrowserException(String message) {
         super(message);
     }
     

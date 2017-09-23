@@ -16,7 +16,6 @@
 package de.sfuhrm.radiobrowser;
 
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -57,7 +56,6 @@ public class RadioBrowser {
      * possible stations.
      */
     public List<Station> listStations(int offset, int limit) {
-        List<Station> result = new LinkedList<>();
         MultivaluedMap<String, String> requestParams = new MultivaluedHashMap<>();
         requestParams.put("limit", Collections.singletonList(Integer.toString(limit)));
         requestParams.put("offset", Collections.singletonList(Integer.toString(offset)));
@@ -69,14 +67,8 @@ public class RadioBrowser {
                 .header("User-Agent", userAgent)
                 .post(entity);
         LOGGER.debug("response status={}, length={}", response.getStatus(), response.getLength());
-        List<Station> list;
-
-        list = response.readEntity(new GenericType<List<Station>>() {
-        });
-
-        result.addAll(list);
-
-        return result;
+        
+        return response.readEntity(new GenericType<List<Station>>() {});
     }
     
     public enum SearchMode {
@@ -109,7 +101,6 @@ public class RadioBrowser {
         Objects.requireNonNull(searchMode, "searchMode must be non-null");
         Objects.requireNonNull(searchTerm, "searchTerm must be non-null");
 
-        List<Station> result = new LinkedList<>();
         MultivaluedMap<String, String> requestParams = new MultivaluedHashMap<>();
         requestParams.put("limit", Collections.singletonList(Integer.toString(limit)));
         requestParams.put("offset", Collections.singletonList(Integer.toString(offset)));
@@ -122,16 +113,12 @@ public class RadioBrowser {
                 .header("User-Agent", userAgent)
                 .post(entity);
         LOGGER.debug("response status={}, length={}", response.getStatus(), response.getLength());
-        List<Station> list;
 
-        list = response.readEntity(new GenericType<List<Station>>() {
-        });
-
-        result.addAll(list);
-
-        return result;
+        return response.readEntity(new GenericType<List<Station>>() {});
     }
     
+    /** Resolves the streaming URL for the given station.
+     */
     public UrlResponse resolveStreamUrl(Station station) {
         Objects.requireNonNull(station, "station must be non-null");
         // http://www.radio-browser.info/webservice/v2/json/url/stationid 
@@ -144,12 +131,14 @@ public class RadioBrowser {
         LOGGER.debug("URI is {}", webTarget.getUri());
         if (response.getStatus() != 200) {
             LOGGER.warn("Non 200 status: {} {}", response.getStatus(), response.getStatusInfo().getReasonPhrase());
-            throw new RadioException(response.getStatusInfo().getReasonPhrase());
+            throw new RadioBrowserException(response.getStatusInfo().getReasonPhrase());
         }
-        UrlResponse response2 = response.readEntity(UrlResponse.class);
-        return response2;
+        return response.readEntity(UrlResponse.class);
     }
     
+    /** Posts a new station to the server.
+     * Note: This call only transmits name, homepage and url.
+     */
     public void postNewStation(Station station) {
         // http://www.radio-browser.info/webservice/json/add
         Objects.requireNonNull(station, "station must be non-null");
