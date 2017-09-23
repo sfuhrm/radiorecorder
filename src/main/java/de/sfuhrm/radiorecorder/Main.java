@@ -15,14 +15,17 @@
  */
 package de.sfuhrm.radiorecorder;
 
+import de.sfuhrm.radiobrowser.RadioBrowser;
+import de.sfuhrm.radiobrowser.Station;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import su.litvak.chromecast.api.v2.ChromeCast;
 import su.litvak.chromecast.api.v2.ChromeCasts;
@@ -41,6 +44,25 @@ public class Main {
     
     /** Id for {@link ConsumerContext#id}. */
     private static int nextId = 1;
+    
+    private static List<String> sanitize(List<String> urls, Params params) {
+        List<String> result = new ArrayList<>();
+        RadioBrowser browser = new RadioBrowser(params.getTimeout(), PROJECT);
+        
+        int limit = 10;
+        for (String urlString : urls) {
+            try {
+                new URL(urlString); // parse the url
+                result.add(urlString);
+            } catch (MalformedURLException ex) {
+                log.debug("URL not valid "+urlString+", will try to lookup", ex);
+                List<Station> stations = browser.listStationsBy(0, limit, RadioBrowser.SearchMode.byname, urlString);
+                result.addAll(stations.stream().map(s -> s.url).collect(Collectors.toList()));
+            }
+        }
+        return result;
+    }
+
     
     private static ConsumerContext toConsumerContext(Params p, String url) throws MalformedURLException, UnsupportedEncodingException {
         URL myUrl = new URL(url);        
@@ -83,13 +105,15 @@ public class Main {
             return;
         }
 
-        params.getArguments().stream().forEach(url -> {
+        List<String> stations = sanitize(params.getArguments(), params);
+        stations.stream().forEach(url -> {
             try {
+                System.err.println(url);
                 Runnable r = new RadioRunnable(toConsumerContext(params, url));
                 Thread t = new Thread(r, url);
                 t.start();
             } catch (IOException ex) {
-                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                log.warn("Could not start thread for url "+url, ex);
             }
         });
     }
