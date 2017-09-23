@@ -47,7 +47,7 @@ public class Main {
     
     private static List<String> sanitize(List<String> urls, Params params) {
         List<String> result = new ArrayList<>();
-        RadioBrowser browser = new RadioBrowser(params.getTimeout(), PROJECT);
+        RadioBrowser browser = new RadioBrowser(params.getTimeout() * 1000, PROJECT);
         
         int limit = 10;
         for (String urlString : urls) {
