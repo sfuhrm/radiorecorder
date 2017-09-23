@@ -18,6 +18,7 @@ package de.sfuhrm.radiorecorder.consumer;
 import de.sfuhrm.radiorecorder.ConnectionHandler;
 import de.sfuhrm.radiorecorder.ConsumerContext;
 import de.sfuhrm.radiorecorder.http.HttpConnection;
+import de.sfuhrm.radiorecorder.RadioException;
 import java.io.IOException;
 import java.util.function.Consumer;
 import lombok.AccessLevel;
@@ -60,6 +61,7 @@ public abstract class AbstractConsumer implements Consumer<HttpConnection> {
             }
         } catch (IOException ex) {
             log.warn("Error in HTTP communication", ex);
+            throw new RadioException(true, ex);
         }
         
         _accept(u);

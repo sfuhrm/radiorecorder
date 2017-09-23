@@ -87,15 +87,22 @@ public class ConnectionHandler {
     public void consume(URL url) throws IOException {
         boolean first = true;
         Objects.requireNonNull(url, "url must be non-null");
+        boolean loop = consumerContext.isReconnect();
         do {
-            if (!first) {
-                log.info("Reconnecting.");
+            try {
+                if (!first) {
+                    log.info("Reconnecting.");
+                }
+                HttpConnection connection = openConnection(url);
+                Consumer<HttpConnection> consumer = consumerFromContentType(consumerContext, connection.getContentType());
+                consumer.accept(connection);
+                first = false;
+                loop = false;
+            } catch (RadioException re) {
+                loop &= re.isRetryable();
+                log.debug("Retrying after {}? retryable={}, will retry={}", re.getMessage(), re.isRetryable(), loop);
             }
-            HttpConnection connection = openConnection(url);
-            Consumer<HttpConnection> consumer = consumerFromContentType(consumerContext, connection.getContentType());
-            consumer.accept(connection);
-            first = false;
-        } while (consumerContext.isReconnect());
+        } while (loop);
     }
     
     private static Consumer<HttpConnection> consumerFromContentType(ConsumerContext cc, String contentType) {

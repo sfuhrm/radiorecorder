@@ -16,6 +16,7 @@
 package de.sfuhrm.radiorecorder.consumer;
 
 import de.sfuhrm.radiorecorder.ConsumerContext;
+import de.sfuhrm.radiorecorder.RadioException;
 import static de.sfuhrm.radiorecorder.RadioRunnable.BUFFER_SIZE;
 import de.sfuhrm.radiorecorder.http.HttpConnection;
 import java.io.IOException;
@@ -30,7 +31,9 @@ import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import lombok.extern.slf4j.Slf4j;
 
-/** Plays a stream using the Java Media Framework API.
+/**
+ * Plays a stream using the Java Media Framework API.
+ *
  * @author Stephan Fuhrmann
  */
 @Slf4j
@@ -60,24 +63,28 @@ public class StreamPlayConsumer extends MetaDataConsumer implements Consumer<Htt
                 int len;
                 long ofs = 0;
                 line.open(targetFormat);
-                
-                while (-1 != (len = converted.read(buffer))) {
-                    log.trace("Read {} bytes", len);
-                    ofs += len;
-                    
-                    // start the line before blocking
-                    if (! line.isRunning() && line.available() < len) {
-                        log.debug("Starting line, not yet running, {} / {} available", line.available(), bufferSize);
-                        line.start();
+                try {
+                    while (-1 != (len = converted.read(buffer))) {
+                        log.trace("Read {} bytes", len);
+                        ofs += len;
+
+                        // start the line before blocking
+                        if (!line.isRunning() && line.available() < len) {
+                            log.debug("Starting line, not yet running, {} / {} available", line.available(), bufferSize);
+                            line.start();
+                        }
+
+                        line.write(buffer, 0, len);
+                        log.trace("Wrote {} bytes (total {})", len, ofs);
                     }
-                    
-                    line.write(buffer, 0, len);
-                    log.trace("Wrote {} bytes (total {})", len, ofs);
+                } catch (IOException ioe) {
+                    throw new RadioException(true, ioe);
                 }
                 line.stop();
             }
         } catch (UnsupportedAudioFileException | LineUnavailableException | IOException ex) {
             log.warn("URL " + getContext().getUrl().toExternalForm() + " broke down", ex);
+            throw new RadioException(false, ex);
         }
     }
 }
