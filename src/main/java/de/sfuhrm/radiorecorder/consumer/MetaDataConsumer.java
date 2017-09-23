@@ -44,8 +44,7 @@ public abstract class MetaDataConsumer extends AbstractConsumer implements Consu
 
     @Override
     protected final void _accept(HttpConnection t) {
-        try {
-            InputStream inputStream = streamMetaData.openStream(t);
+        try (InputStream inputStream = streamMetaData.openStream(t)) {
             __accept(t, inputStream);
         } catch (IOException ex) {
             log.warn("Failed to open", ex);

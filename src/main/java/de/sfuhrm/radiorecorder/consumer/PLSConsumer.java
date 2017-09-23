@@ -53,8 +53,8 @@ public class PLSConsumer extends AbstractConsumer implements Consumer<HttpConnec
 
     @Override
     protected void _accept(HttpConnection t) {
-        try {
-            List<String> urls = readUrls(t.getInputStream());
+        try (InputStream is = t.getInputStream()) {
+            List<String> urls = readUrls(is);
             for (String url : urls) {
                 getConnectionHandler().consume(new URL(url));
             }

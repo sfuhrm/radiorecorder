@@ -19,6 +19,7 @@ import de.sfuhrm.radiorecorder.ConsumerContext;
 import de.sfuhrm.radiorecorder.http.HttpConnection;
 import de.sfuhrm.radiorecorder.RadioException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Iterator;
@@ -51,7 +52,7 @@ public class XSPFConsumer extends AbstractConsumer implements Consumer<HttpConne
 
     @Override
     protected void _accept(HttpConnection t) {
-        try {
+        try (InputStream is = t.getInputStream()) {
             XPathFactory factory = XPathFactory.newInstance();
             XPath xp = factory.newXPath();
             xp.setNamespaceContext(new NamespaceContext() {
@@ -70,9 +71,9 @@ public class XSPFConsumer extends AbstractConsumer implements Consumer<HttpConne
                     return namespaceURI.equals(NS) ? Collections.singletonList(PREFIX).iterator() : Collections.emptyIterator();
                 }
             });
-            InputSource is = new InputSource(t.getInputStream());
+            InputSource inputSource = new InputSource(is);
 
-            NodeList nl = (NodeList) xp.evaluate("/x:playlist/x:trackList/x:track/x:location", is, XPathConstants.NODESET);
+            NodeList nl = (NodeList) xp.evaluate("/x:playlist/x:trackList/x:track/x:location", inputSource, XPathConstants.NODESET);
 
             for (int i = 0; i < nl.getLength(); i++) {
                 Node n = nl.item(i);

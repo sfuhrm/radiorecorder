@@ -78,9 +78,10 @@ public class ConnectionHandler {
     
     /** Opens the url using a configured connection. */
     private HttpConnection openConnection(URL url) throws IOException {
-        HttpConnectionBuilder builder = builderFactory.newInstance(url);
-        configure(builder);
-        return builder.build();
+        try (HttpConnectionBuilder builder = builderFactory.newInstance(url)) {
+            configure(builder);
+            return builder.build();
+        }
     }
     
     /** Consumes the given URL. */
