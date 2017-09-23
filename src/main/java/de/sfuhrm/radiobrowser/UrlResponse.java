@@ -15,10 +15,13 @@
  */
 package de.sfuhrm.radiobrowser;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 
 /**
- * @author fury
+ * @author Stephan Fuhrmann
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UrlResponse {
     public String ok;
     public String message;

@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -39,7 +40,7 @@ public class RadioBrowser {
 
     private final WebTarget webTarget;
     private final String userAgent;
-    private static final Logger logger = LoggerFactory.getLogger(RadioBrowser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RadioBrowser.class);
 
     public RadioBrowser(int timeout, String userAgent) {
         Client client = ClientBuilder.newBuilder().register(JacksonFeature.class).build();
@@ -49,57 +50,113 @@ public class RadioBrowser {
         webTarget = client.target(API_URL);
     }
 
-    public List<Station> readAllStations(Integer totalLimit) {
-        int step = 100;
+    /** Get a list of all stations. Will return a single batch.
+     * @param offset the offset to return the list part in.
+     * @param limit the limit of the list part.
+     * @return the partial list of the stations. Can be empty for exceeding the
+     * possible stations.
+     */
+    public List<Station> listStations(int offset, int limit) {
         List<Station> result = new LinkedList<>();
-        for (int i = 0; i < Integer.MAX_VALUE && (totalLimit == null || i < totalLimit); i += step) {
-            MultivaluedMap<String, String> requestParams = new MultivaluedHashMap<>();
-            requestParams.put("limit", Collections.singletonList(Integer.toString(step)));
-            requestParams.put("offset", Collections.singletonList(Integer.toString(i)));
-            logger.info("limit={}, offset={}", step, i);
-            Entity entity = Entity.form(requestParams);
-            Response response = webTarget.path("json/stations")
-                    .request(MediaType.APPLICATION_JSON_TYPE)
-                    .accept(MediaType.APPLICATION_JSON_TYPE)
-                    .header("User-Agent", userAgent)
-                    .post(entity);
-            logger.debug("response status={}, length={}", response.getStatus(), response.getLength());
-            List<Station> list;
-            
-            list = response.readEntity(new GenericType<List<Station>>() {
-            });
-            if (list.isEmpty()) {
-                break;
-            }
+        MultivaluedMap<String, String> requestParams = new MultivaluedHashMap<>();
+        requestParams.put("limit", Collections.singletonList(Integer.toString(limit)));
+        requestParams.put("offset", Collections.singletonList(Integer.toString(offset)));
+        LOGGER.info("limit={}, offset={}", limit, offset);
+        Entity entity = Entity.form(requestParams);
+        Response response = webTarget.path("json/stations")
+                .request(MediaType.APPLICATION_JSON_TYPE)
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+                .header("User-Agent", userAgent)
+                .post(entity);
+        LOGGER.debug("response status={}, length={}", response.getStatus(), response.getLength());
+        List<Station> list;
 
-            result.addAll(list);
-        }
+        list = response.readEntity(new GenericType<List<Station>>() {
+        });
+
+        result.addAll(list);
+
         return result;
     }
+    
+    public enum SearchMode {
+        byid,
+        byname,
+        bynameexact,
+        bycodec,
+        bycodecexact,
+        bycountry,
+        bycountryexact,
+        bystate,
+        bystateexact,
+        bylanguage,
+        bylanguageexact,
+        bytag,
+        bytagexact;
+    }
+    
+    /** Get a list of stations matching a certain search criteria. Will return a single batch.
+     * @param offset the offset to return the list part in.
+     * @param limit the limit of the list part.
+     * @param searchMode the field to match.
+     * @param searchTerm the term to search for.
+     * @return the partial list of the stations. Can be empty for exceeding the
+     * number of matching stations.
+     */
+    public List<Station> listStationsBy(int offset, int limit, SearchMode searchMode, String searchTerm) {
+        // http://www.radio-browser.info/webservice/format/stations/byid/searchterm 
+        
+        Objects.requireNonNull(searchMode, "searchMode must be non-null");
+        Objects.requireNonNull(searchTerm, "searchTerm must be non-null");
 
-    public UrlResponse resolveStreamUrl(Station bStation) {
+        List<Station> result = new LinkedList<>();
+        MultivaluedMap<String, String> requestParams = new MultivaluedHashMap<>();
+        requestParams.put("limit", Collections.singletonList(Integer.toString(limit)));
+        requestParams.put("offset", Collections.singletonList(Integer.toString(offset)));
+        LOGGER.info("limit={}, offset={}", limit, offset);
+        Entity entity = Entity.form(requestParams);
+        Response response = webTarget
+                .path("json/stations").path(searchMode.name()).path(searchTerm)
+                .request(MediaType.APPLICATION_JSON_TYPE)
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+                .header("User-Agent", userAgent)
+                .post(entity);
+        LOGGER.debug("response status={}, length={}", response.getStatus(), response.getLength());
+        List<Station> list;
+
+        list = response.readEntity(new GenericType<List<Station>>() {
+        });
+
+        result.addAll(list);
+
+        return result;
+    }
+    
+    public UrlResponse resolveStreamUrl(Station station) {
+        Objects.requireNonNull(station, "station must be non-null");
         // http://www.radio-browser.info/webservice/v2/json/url/stationid 
-        Response response = webTarget.path("v2/json/url").path(bStation.id)
+        Response response = webTarget.path("v2/json/url").path(station.id)
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .accept(MediaType.APPLICATION_JSON_TYPE)
                 .header("User-Agent", userAgent)
                 .get();
 
-        logger.debug("URI is {}", webTarget.getUri());
+        LOGGER.debug("URI is {}", webTarget.getUri());
         if (response.getStatus() != 200) {
-            logger.warn("Non 200 status: {} {}", response.getStatus(), response.getStatusInfo().getReasonPhrase());
+            LOGGER.warn("Non 200 status: {} {}", response.getStatus(), response.getStatusInfo().getReasonPhrase());
             throw new RadioException(response.getStatusInfo().getReasonPhrase());
         }
         UrlResponse response2 = response.readEntity(UrlResponse.class);
         return response2;
     }
     
-    public void postNewStation(Station postMe) {
+    public void postNewStation(Station station) {
         // http://www.radio-browser.info/webservice/json/add
+        Objects.requireNonNull(station, "station must be non-null");
         MultivaluedMap<String, String> requestParams = new MultivaluedHashMap<>();
-        requestParams.put("name", Collections.singletonList(postMe.name));
-        requestParams.put("homepage", Collections.singletonList(postMe.homepage));
-        requestParams.put("url", Collections.singletonList(postMe.url));        
+        requestParams.put("name", Collections.singletonList(station.name));
+        requestParams.put("homepage", Collections.singletonList(station.homepage));
+        requestParams.put("url", Collections.singletonList(station.url));        
         
         Entity entity = Entity.form(requestParams);
 
@@ -110,6 +167,9 @@ public class RadioBrowser {
         .post(entity);
 
         Map<String, Object> map = response.readEntity(new GenericType<Map<String, Object>>() {});
-        logger.debug("Result: {}", map);
+        
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Result: {}", map);
+        }
     }
 }

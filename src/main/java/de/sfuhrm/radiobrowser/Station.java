@@ -15,14 +15,17 @@
  */
 package de.sfuhrm.radiobrowser;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.Objects;
 
 /**
- * @author fury
+ * @author Stephan Fuhrmann
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Station {
     public String id;
     public String name;
+    public String ip;
     public String url;
     public String homepage;
     public String favicon;
