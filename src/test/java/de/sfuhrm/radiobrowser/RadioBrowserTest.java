@@ -22,7 +22,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- *
+ * Some integration tests against the real service.
+ * This kind of testing sucks.
  * @author Stephan Fuhrmann
  */
 public class RadioBrowserTest {
