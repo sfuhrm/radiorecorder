@@ -89,11 +89,10 @@ public class ConnectionHandler {
         Objects.requireNonNull(url, "url must be non-null");
         boolean loop = consumerContext.isReconnect();
         do {
-            try {
-                if (!first) {
-                    log.info("Reconnecting.");
-                }
-                HttpConnection connection = openConnection(url);
+            if (!first) {
+                log.info("Reconnecting.");
+            }
+            try (HttpConnection connection = openConnection(url)) {
                 Consumer<HttpConnection> consumer = consumerFromContentType(consumerContext, connection.getContentType());
                 consumer.accept(connection);
                 first = false;

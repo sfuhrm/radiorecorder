@@ -25,7 +25,7 @@ import java.util.Map;
  * Wrapper for an open HTTP protocol connection.
  * @author Stephan Fuhrmann
  */
-public interface HttpConnection {
+public interface HttpConnection extends AutoCloseable {
 
     /** Get the URL being associated to this connection.
      */
@@ -59,4 +59,7 @@ public interface HttpConnection {
      * @see #getResponseCode() 
      */
     public String getResponseMessage() throws IOException;
+
+    @Override
+    public void close() throws IOException;
 }

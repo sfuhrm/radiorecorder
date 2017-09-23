@@ -63,4 +63,9 @@ class JavaNetHttpConnection implements HttpConnection {
     public String getResponseMessage() throws IOException {
         return connection.getResponseMessage();
     }
+
+    @Override
+    public void close() throws IOException {
+        connection.disconnect();
+    }
 }

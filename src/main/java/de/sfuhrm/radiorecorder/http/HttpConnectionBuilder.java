@@ -23,7 +23,7 @@ import java.io.IOException;
  * @see #build() {@code build()} for building a HttpConnection
  * @author Stephan Fuhrmann
  */
-public interface HttpConnectionBuilder {
+public interface HttpConnectionBuilder extends AutoCloseable {
     /** Configures the timeout for connecting to the server.
      * @param timeout the timeout in milliseconds.
      */
@@ -45,4 +45,7 @@ public interface HttpConnectionBuilder {
      * @return a readly open HTTP connection.
      */
     public HttpConnection build() throws IOException;
+    
+    @Override
+    public void close() throws IOException;
 }

@@ -62,4 +62,9 @@ public class JavaNetHttpConnectionBuilder implements HttpConnectionBuilder {
     public HttpConnection build() throws IOException {
         return new JavaNetHttpConnection(connection());
     }
+
+    @Override
+    public void close() throws IOException {
+        connection.disconnect();
+    }
 }

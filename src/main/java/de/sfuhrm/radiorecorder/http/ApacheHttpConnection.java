@@ -78,4 +78,9 @@ class ApacheHttpConnection implements HttpConnection {
     public String getResponseMessage() throws IOException {
         return response.getStatusLine().getReasonPhrase();
     }
+
+    @Override
+    public void close() throws IOException {
+        response.close();
+    }
 }
