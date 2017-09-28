@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 fury.
+ * Copyright 2017 Stephan Fuhrmann.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
