@@ -111,6 +111,10 @@ public class Main {
         }
 
         List<String> stations = sanitize(params.getArguments(), params);
+        if (params.isPlay() && stations.size() > 1) {
+            stations = stations.subList(0, 1);
+            System.err.println("Restricting to first station because playing.");
+        }
         stations.stream().forEach(url -> {
             try {
                 System.err.println(url);
