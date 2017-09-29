@@ -42,9 +42,6 @@ public class RadioRunnable implements Runnable {
         try {
             configurator.consume(consumerContext.getUrl());
         } 
-        catch (IOException ex) {
-            log.warn("URL " + consumerContext.getUrl().toExternalForm() + " broke down", ex);
-        }
         finally {
             MDC.remove("id");
         }
