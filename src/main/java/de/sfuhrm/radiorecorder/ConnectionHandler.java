@@ -77,20 +77,29 @@ public class ConnectionHandler {
     }
     
     /** Opens the url using a configured connection. */
-    private HttpConnection openConnection(URL url) throws IOException {
+    private HttpConnection openConnection(URL url) throws RadioException {
         try (HttpConnectionBuilder builder = builderFactory.newInstance(url)) {
             configure(builder);
             return builder.build();
+        } catch (IOException ex) {
+            throw new RadioException(true, ex);
         }
     }
     
+    private long GRACE_PERIOD = 5000;
+    
     /** Consumes the given URL. */
-    public void consume(URL url) throws IOException {
+    public void consume(URL url) {
         boolean first = true;
         Objects.requireNonNull(url, "url must be non-null");
         boolean loop = consumerContext.isReconnect();
         do {
             if (!first) {
+                log.info("Sleeping for {} millis before retry", GRACE_PERIOD);
+                try {
+                    Thread.sleep(GRACE_PERIOD);
+                } catch (InterruptedException ex) {
+                }
                 log.info("Reconnecting.");
             }
             try (HttpConnection connection = openConnection(url)) {
@@ -101,6 +110,10 @@ public class ConnectionHandler {
             } catch (RadioException re) {
                 loop &= re.isRetryable();
                 log.debug("Retrying after {}? retryable={}, will retry={}", re.getMessage(), re.isRetryable(), loop);
+            } catch (IOException ex) {
+                // IOE from the implicit close of the try-with-resources-call
+                loop &= true;
+                log.debug("Retrying after {}? retryable={}, will retry={}", ex.getMessage(), true, loop);                
             }
         } while (loop);
     }
