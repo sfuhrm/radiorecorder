@@ -15,7 +15,8 @@ license: APACHE_20 # license the project is in
 targets: # which platforms to build an archive for
 - centos_7
 - debian_stretch
-gitUrl: https://github.com/sfuhrm/radiorecorder.git
+git:
+  gitUrl: https://github.com/sfuhrm/radiorecorder.git
 redhat:
   group: Applications/Multimedia
   relations:
