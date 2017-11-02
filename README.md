@@ -1,4 +1,4 @@
-## Radio Recorder
+## Radio Recorder ![Travis CI Status](https://travis-ci.org/sfuhrm/radiorecorder.svg?branch=master)
 
 A command line internet radio player and recorder.
 Some of the features are:
