@@ -9,6 +9,12 @@ Some of the features are:
 * Chromecast replay of radio streams.
 * Parallel recording of multiple radio stations.
 
+## Downloading & installation
+
+The current version can be downloaded for Debian and Fedora systems here:
+
+https://github.com/sfuhrm/radiorecorder/releases
+
 ## Usage
 
 The program is a command line only program. It supports multiple parameters:
