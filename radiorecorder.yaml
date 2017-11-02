@@ -1,0 +1,69 @@
+packageName: radiorecorder # name of the project package
+author: # who's the main author of the program TBD: author/maintainer/etc
+  name: Stephan Fuhrmann
+  email: s@sfuhrm.de
+maintainer: # who's the package maintainer of the program
+  name: Stephan Fuhrmann
+  email: s@sfuhrm.de
+shortSummary: Record or play internet radio streams. # short summary of package content
+longDescription: # long description of package content
+- The radiorecorder command consumes one or more internet radio
+- streams and either records them to files, plays them locally
+- or using a Chromecast device.
+homepage: http://github.com/sfuhrm/radiorecorder # homepage of the project
+license: APACHE_20 # license the project is in
+targets: # which platforms to build an archive for
+- centos_7
+- debian_stretch
+gitUrl: https://github.com/sfuhrm/radiorecorder.git
+redhat:
+  group: Applications/Multimedia
+  relations:
+  - pkg: jre
+    op: ge
+    version: 1.8.0
+debian:
+  priority: optional
+  section: sound
+  architecture: all
+  relations:
+  - pkg: java8-runtime-headless
+  - pkg: ${misc:Depends}
+# Version history of the package. Used for Debian changelogs.
+versions:
+- version: 1.0.0
+  release: 1
+  date: 2017-11-02T13:15:00+01:00
+  changes:
+  - Initial version
+# Where to install what on the target system?
+install:
+- copy:
+    from: target/RadioRecorder-1.0.0-SNAPSHOT-jar-with-dependencies.jar
+    to: /usr/share/radiorecorder/radiorecorder-jar-with-dependencies.jar
+    owner: root
+    group: root
+    mode: rw-r--r--
+- copy:
+    from: src/main/package/radiorecorder
+    to: /usr/bin/radiorecorder
+    owner: root
+    group: root
+    mode: rwxr-xr-x
+- run:
+    command: gzip src/main/package/radiorecorder.1
+- copy:
+    from: src/main/package/radiorecorder.1.gz
+    to: /usr/share/man/man1/radiorecorder.1.gz
+    owner: root
+    group: root
+    mode: rw-r--r--
+- run:
+    command: gzip README.md
+- copy:
+    from: README.md.gz
+    to: /usr/share/doc/radiorecorder/README.md.gz
+    owner: root
+    group: root
+    mode: rw-r--r--
+
