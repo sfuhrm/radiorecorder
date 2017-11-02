@@ -7,6 +7,27 @@ Some of the features are:
 * Recording different files for different song titles.
 * Writing of ID3 tags (ID3v1 and ID3V2.4).
 * Chromecast replay of radio streams.
+* Parallel recording of multiple radio stations.
+
+## Usage
+
+The program is a command line only program. It supports multiple parameters:
+
+     URLORNAME           : URLs of the internet radio station(s) or station name
+                           for lookup at http://www.radio-browser.info/
+     -cast (-c) VAL      : Stream to the given chrome cast device.
+     -directory (-d) DIR : Write to this directory. (default: USER-HOME)
+     -help (-h)          : Show this command line help. (default: true)
+     -list-cast (-L)     : List chromecast devices. (default: false)
+     -min-free (-M) MEGS : Minimum of free megs on target drive. (default: 512)
+     -play (-p)          : Play live instead of recording to a file. (default:
+                           false)
+     -reconnect (-r)     : Automatically reconnect after connection loss. (default:
+                           false)
+     -timeout (-T) SECS  : Connect/read timeout in seconds. (default: 60)
+     -use-songnames (-S) : Use songnames from retrieved metadata information. Will
+                           create one file per detected song. (default: false)
+
 
 ## License
 
