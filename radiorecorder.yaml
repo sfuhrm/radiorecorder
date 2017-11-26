@@ -1,4 +1,5 @@
 packageName: radiorecorder # name of the project package
+buildCommand: mvn --batch-mode clean package
 author: # who's the main author of the program TBD: author/maintainer/etc
   name: Stephan Fuhrmann
   email: s@sfuhrm.de
@@ -15,20 +16,42 @@ license: APACHE_20 # license the project is in
 targets: # which platforms to build an archive for
 - centos_7
 - debian_stretch
-gitUrl: https://github.com/sfuhrm/radiorecorder.git
+git:
+  gitUrl: https://github.com/sfuhrm/radiorecorder.git
 redhat:
   group: Applications/Multimedia
   relations:
-  - pkg: jre
-    op: ge
-    version: 1.8.0
+    depends:
+    - pkg: jre
+      op: ge
+      version: 1.8.0
+    build_depends:
+    - pkg: java-1.8.0-openjdk-headless
+      op: ge
+      version: 1.8.0
+    - pkg: maven
 debian:
   priority: optional
   section: sound
   architecture: all
   relations:
-  - pkg: java8-runtime-headless
-  - pkg: ${misc:Depends}
+    depends:
+    - pkg: java8-runtime-headless
+    - pkg: ${misc:Depends}
+    build_depends:
+    - pkg: debhelper
+      op: ge
+      version: 10
+    - pkg: openjdk-8-jdk-headless
+    - pkg: maven
+archlinux:
+  architecture: any
+  relations:
+    depends:
+    - pkg: java-runtime
+    build_depends:
+    - pkg: jdk8-openjdk
+    - pkg: maven
 # Version history of the package. Used for Debian changelogs.
 versions:
 - version: 1.0.0
