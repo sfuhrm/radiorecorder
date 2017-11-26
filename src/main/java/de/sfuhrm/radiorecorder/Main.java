@@ -15,8 +15,8 @@
  */
 package de.sfuhrm.radiorecorder;
 
-import de.sfuhrm.radiobrowser.RadioBrowser;
-import de.sfuhrm.radiobrowser.Station;
+import de.sfuhrm.radiobrowser4j.Paging;
+import de.sfuhrm.radiobrowser4j.RadioBrowser;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -26,6 +26,9 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import de.sfuhrm.radiobrowser4j.SearchMode;
+import de.sfuhrm.radiobrowser4j.Station;
 import lombok.extern.slf4j.Slf4j;
 import su.litvak.chromecast.api.v2.ChromeCast;
 import su.litvak.chromecast.api.v2.ChromeCasts;
@@ -39,12 +42,12 @@ import su.litvak.chromecast.api.v2.ChromeCastsListener;
 @Slf4j
 public class Main {
 
-    public final static String GITHUB_URL = "https://github.com/sfuhrm";
+    public final static String GITHUB_URL = "https://github.com/sfuhrm/radiorecorder";
     public final static String PROJECT = "Radio Recorder";
-    
+
     /** Id for {@link ConsumerContext#id}. */
     private static int nextId = 1;
-    
+
     /** Read the URLs or names given and resolve them using {@link RadioBrowser}.
      * @param urls the input urls from the command line.
      * @param params the command line.
@@ -52,8 +55,8 @@ public class Main {
      */
     private static List<String> sanitize(List<String> urls, Params params) {
         List<String> result = new ArrayList<>();
-        RadioBrowser browser = new RadioBrowser(params.getTimeout() * 1000, PROJECT);
-        
+        RadioBrowser browser = new RadioBrowser(params.getTimeout() * 1000, GITHUB_URL);
+
         int limit = 10;
         for (String urlString : urls) {
             try {
@@ -61,21 +64,24 @@ public class Main {
                 result.add(urlString);
             } catch (MalformedURLException ex) {
                 log.debug("URL not valid "+urlString+", will try to lookup", ex);
-                List<Station> stations = browser.listStationsBy(0, limit, RadioBrowser.SearchMode.byname, urlString);
-                result.addAll(stations.stream().map(s -> s.url).collect(Collectors.toList()));
+                List<Station> stations = browser.listStationsBy(
+                        Paging.at(0, limit),
+                        SearchMode.byname,
+                        urlString);
+                result.addAll(stations.stream().map(s -> s.getUrl()).collect(Collectors.toList()));
             }
         }
         return result;
     }
 
-    
+
     private static ConsumerContext toConsumerContext(Params p, String url) throws MalformedURLException, UnsupportedEncodingException {
-        URL myUrl = new URL(url);        
+        URL myUrl = new URL(url);
         File dir = new File(p.getDirectory(), URLEncoder.encode(myUrl.getHost()+"/"+myUrl.getPath(), "UTF-8"));
         dir.mkdirs();
         return new ConsumerContext(nextId++, myUrl, dir, p);
     }
-    
+
     private static class MyListener implements ChromeCastsListener {
         @Override
         public void newChromeCastDiscovered(ChromeCast chromeCast) {
@@ -86,25 +92,25 @@ public class Main {
         public void chromeCastRemoved(ChromeCast chromeCast) {
         }
     }
-    
+
     private static void listCastDevices() throws InterruptedException, IOException {
         ChromeCasts.registerListener(new MyListener());
         ChromeCasts.startDiscovery();
         Thread.sleep(5000);
         ChromeCasts.stopDiscovery();
     }
-    
+
     public static void main(String[] args) throws IOException, InterruptedException {
         Params params = Params.parse(args);
         if (params == null) {
             return;
         }
-        
+
         if (params.isListCast()) {
             listCastDevices();
             return;
         }
-        
+
         if (params.getArguments() == null) {
             System.err.println("Please enter command line arguments (radio urls)");
             return;
