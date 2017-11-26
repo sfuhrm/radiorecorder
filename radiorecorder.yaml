@@ -7,10 +7,10 @@ maintainer: # who's the package maintainer of the program
   name: Stephan Fuhrmann
   email: s@sfuhrm.de
 shortSummary: Record or play internet radio streams. # short summary of package content
-longDescription: # long description of package content
-- The radiorecorder command consumes one or more internet radio
-- streams and either records them to files, plays them locally
-- or using a Chromecast device.
+longDescription: |
+  The radiorecorder command consumes one or more internet radio
+  streams and either records them to files, plays them locally
+  or using a Chromecast device.
 homepage: http://github.com/sfuhrm/radiorecorder # homepage of the project
 license: APACHE_20 # license the project is in
 targets: # which platforms to build an archive for

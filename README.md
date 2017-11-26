@@ -1,4 +1,4 @@
-## Radio Recorder ![Travis CI Status](https://travis-ci.org/sfuhrm/radiorecorder.svg?branch=master)
+## Radio Recorder ![Travis CI Status](https://travis-ci.org/sfuhrm/radiorecorder.svg?branch=master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 A command line internet radio player and recorder.
 Some of the features are:
@@ -8,6 +8,12 @@ Some of the features are:
 * Writing of ID3 tags (ID3v1 and ID3V2.4).
 * Chromecast replay of radio streams.
 * Parallel recording of multiple radio stations.
+
+## Downloading & installation
+
+The current version can be downloaded for Debian and Fedora systems here:
+
+https://github.com/sfuhrm/radiorecorder/releases
 
 ## Usage
 
