@@ -66,7 +66,7 @@ public class Main {
                 log.debug("URL not valid "+urlString+", will try to lookup", ex);
                 List<Station> stations = browser.listStationsBy(
                         Paging.at(0, limit),
-                        SearchMode.byname,
+                        SearchMode.BYNAME,
                         urlString);
                 result.addAll(stations.stream().map(s -> s.getUrl()).collect(Collectors.toList()));
             }
