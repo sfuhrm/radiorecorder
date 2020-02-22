@@ -36,7 +36,7 @@ public abstract class AbstractConsumer implements Consumer<HttpConnection> {
 
     @Getter
     private final ConsumerContext context;
-    
+
     @Getter @Setter(AccessLevel.PACKAGE)
     private ConnectionHandler connectionHandler;
 
@@ -44,9 +44,9 @@ public abstract class AbstractConsumer implements Consumer<HttpConnection> {
         this.context = context;
         this.connectionHandler = new ConnectionHandler(context);
     }
-        
+
     @Override
-    public final void accept(HttpConnection u) {        
+    public final void accept(HttpConnection u) {
         try {
             log.info("Source URL is {}, real URL is {} and directory is {}", getContext().getUrl(), u.getURL().toExternalForm(), getContext().getDirectory());
             log.info("HTTP {} {}", u.getResponseCode(), u.getResponseMessage());
@@ -55,18 +55,16 @@ public abstract class AbstractConsumer implements Consumer<HttpConnection> {
                 u.getHeaderFields()
                         .entrySet()
                         .stream()
-                        .forEach(e -> {
-                            log.debug("  {}: {}", e.getKey(), e.getValue());
-                        });
+                        .forEach(e -> log.debug("  {}: {}", e.getKey(), e.getValue()));
             }
         } catch (IOException ex) {
             log.warn("Error in HTTP communication", ex);
             throw new RadioException(true, ex);
         }
-        
+
         _accept(u);
     }
-    
+
     /** The inner accept implementation. Will get called after applying
      * configuration to the HttpConnection passed in.
      * @param u the connection to process.

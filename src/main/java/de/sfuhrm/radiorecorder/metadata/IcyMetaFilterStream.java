@@ -28,30 +28,30 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Filters icecast meta data out of the stream.
- * @see ConnectionHandler#configureIcecast(de.sfuhrm.radiorecorder.http.HttpConnectionBuilder) 
+ * @see ConnectionHandler
  * @author Stephan Fuhrmann
  */
 @Slf4j
 class IcyMetaFilterStream extends OffsetFilterStream {
-       
+
     /** Byte interval in the stream to the next meta data block. */
     private final int metaInterval;
-    
+
     /** Pattern for meta data String. */
     private final Pattern metaPattern;
-    
+
     @Getter
     private String lastMetaData;
-    
+
     @Getter @Setter
     private Consumer<String> metaDataConsumer = t -> {};
-    
+
     IcyMetaFilterStream(int icyMetaInterval, InputStream inputStream) {
         super(inputStream);
         this.metaInterval = icyMetaInterval;
         metaPattern = Pattern.compile("StreamTitle='(.*)';");
     }
-    
+
     private static int indexOf(byte[] array, byte findMe) {
         for (int i=0; i < array.length; i++) {
             if (array[i] == findMe) {
@@ -60,20 +60,20 @@ class IcyMetaFilterStream extends OffsetFilterStream {
         }
         return -1;
     }
-    
+
     /** Read a meta data block at the current stream position. */
     private void readIcyMeta() throws IOException {
         int c;
         log.trace("Offset is {}, Icy Interval is {}", getOffset(), metaInterval);
-        
+
         c = super.read();
         int length = (c & 0xff) * 16;
-        
-        byte metaData[] = new byte[length];
+
+        byte[] metaData = new byte[length];
         int actually = super.read(metaData, 0, length);
-        
+
         log.trace("Expected len {}, actual len {}", length, actually);
-        
+
         // UTF-8 is probably wrong
         int firstZero = indexOf(metaData, (byte)0);
         int stringLen = firstZero != -1 ? firstZero : length;
@@ -81,7 +81,7 @@ class IcyMetaFilterStream extends OffsetFilterStream {
         Matcher matcher = metaPattern.matcher(meta);
         if (matcher.matches()) {
             String currentMetaData = matcher.group(1);
-            
+
             if (!currentMetaData.equals(lastMetaData)) {
                 metaDataConsumer.accept(currentMetaData);
             }
@@ -100,8 +100,8 @@ class IcyMetaFilterStream extends OffsetFilterStream {
         if (getOffset() == metaInterval) {
             readIcyMeta();
         }
-        
-        int result = super.read();        
+
+        int result = super.read();
         return result;
     }
 
@@ -119,14 +119,14 @@ class IcyMetaFilterStream extends OffsetFilterStream {
             if (len < next) {
                 // the offset is not within the next 'len' bytes
                 // go on, don't care about icy meta data
-                result = super.read(b, off, len);                
+                result = super.read(b, off, len);
             } else {
                 // the offset is within the next 'len' bytes
                 // first read next 'next' bytes and pretend we're not interested in more
                 result = super.read(b, off, next);
             }
         }
-        
+
         return result;
     }
 }

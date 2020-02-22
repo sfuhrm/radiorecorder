@@ -67,7 +67,7 @@ public class XSPFConsumer extends AbstractConsumer implements Consumer<HttpConne
                 }
 
                 @Override
-                public Iterator getPrefixes(String namespaceURI) {
+                public Iterator<String> getPrefixes(String namespaceURI) {
                     return namespaceURI.equals(NS) ? Collections.singletonList(PREFIX).iterator() : Collections.emptyIterator();
                 }
             });

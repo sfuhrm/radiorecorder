@@ -33,20 +33,20 @@ class ApacheHttpConnectionBuilder implements HttpConnectionBuilder {
 
     private final RequestConfig.Builder configBuilder;
     private final RequestBuilder requestBuilder;
-        
+
     ApacheHttpConnectionBuilder(URL url) throws URISyntaxException {
         configBuilder = RequestConfig.custom();
         requestBuilder = RequestBuilder.get(url.toURI());
-        
+
         log.debug("Request for uri {}", requestBuilder.getUri());
     }
-    
-    
+
+
     @Override
     public void setConnectTimeout(int timeout) throws IOException {
         log.debug("Connect timeout is {}", timeout);
         configBuilder.setConnectTimeout(timeout);
-        configBuilder.setConnectionRequestTimeout(timeout);        
+        configBuilder.setConnectionRequestTimeout(timeout);
     }
 
     @Override
@@ -60,7 +60,7 @@ class ApacheHttpConnectionBuilder implements HttpConnectionBuilder {
         log.debug("Request property {} => {}", key, value);
         requestBuilder.addHeader(key, value);
     }
-    
+
     @Override
     public HttpConnection build() throws IOException {
         CloseableHttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(configBuilder.build()).build();
@@ -68,6 +68,7 @@ class ApacheHttpConnectionBuilder implements HttpConnectionBuilder {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
+        // nothing to close here
     }
 }

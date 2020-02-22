@@ -52,13 +52,11 @@ class ApacheHttpConnection implements HttpConnection {
 
     @Override
     public Map<String, List<String>> getHeaderFields() {
-       
-        Map<String, List<String>> headers = Stream
+
+        return Stream
                 .of(response.getAllHeaders())
                 .filter(h -> h.getValue() != null)
                 .collect(groupingBy(Header::getName, mapping(Header::getValue, toList())));
-        
-        return headers;
     }
 
     @Override
@@ -71,12 +69,12 @@ class ApacheHttpConnection implements HttpConnection {
     public String getContentType() {
         return response.getFirstHeader("Content-Type").getValue();
     }
-    
+
     @Override
     public int getResponseCode() throws IOException {
         return response.getStatusLine().getStatusCode();
     }
-    
+
     @Override
     public String getResponseMessage() throws IOException {
         return response.getStatusLine().getReasonPhrase();

@@ -45,7 +45,7 @@ public class Main {
     public final static String GITHUB_URL = "https://github.com/sfuhrm/radiorecorder";
     public final static String PROJECT = "Radio Recorder";
 
-    /** Id for {@link ConsumerContext#id}. */
+    /** Id for {@link ConsumerContext}. */
     private static int nextId = 1;
 
     /** Read the URLs or names given and resolve them using {@link RadioBrowser}.
@@ -68,7 +68,7 @@ public class Main {
                         Paging.at(0, limit),
                         SearchMode.BYNAME,
                         urlString);
-                result.addAll(stations.stream().map(s -> s.getUrl()).collect(Collectors.toList()));
+                result.addAll(stations.stream().map(Station::getUrl).collect(Collectors.toList()));
             }
         }
         return result;

@@ -15,7 +15,6 @@
  */
 package de.sfuhrm.radiorecorder;
 
-import java.io.IOException;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -41,7 +40,7 @@ public class RadioRunnable implements Runnable {
         log.info("URL is {} and directory is {}", consumerContext.getUrl(), consumerContext.getDirectory());
         try {
             configurator.consume(consumerContext.getUrl());
-        } 
+        }
         finally {
             MDC.remove("id");
         }

@@ -20,7 +20,6 @@ import de.sfuhrm.radiorecorder.consumer.PLSConsumer;
 import de.sfuhrm.radiorecorder.consumer.StreamCastConsumer;
 import de.sfuhrm.radiorecorder.consumer.StreamCopyConsumer;
 import de.sfuhrm.radiorecorder.consumer.StreamPlayConsumer;
-import de.sfuhrm.radiorecorder.consumer.XSPFConsumer;
 import de.sfuhrm.radiorecorder.http.HttpConnection;
 import de.sfuhrm.radiorecorder.http.HttpConnectionBuilder;
 import de.sfuhrm.radiorecorder.http.HttpConnectionBuilderFactory;
@@ -38,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class ConnectionHandler {
-    
+
     private final ConsumerContext consumerContext;
     private final HttpConnectionBuilderFactory builderFactory;
 
@@ -54,7 +53,7 @@ public class ConnectionHandler {
         builder.setConnectTimeout(consumerContext.getTimeout());
         builder.setReadTimeout(consumerContext.getTimeout());
     }
-    
+
     /** Set headers to motivate Icecast servers to send meta data.
      * @param builder the connection to configure.
      * @see <a href="https://anton.logvinenko.name/en/blog/how-to-get-title-from-audio-stream-with-python.html">ID3 and icecast</a>
@@ -62,20 +61,20 @@ public class ConnectionHandler {
     protected void configureIcecast(HttpConnectionBuilder builder) throws IOException {
         builder.setRequestProperty("Icy-Metadata", "1");
     }
-    
+
     /** Set headers for user client.
      * @param builder the connection to configure.
      */
     protected void configureClient(HttpConnectionBuilder builder) throws IOException {
         builder.setRequestProperty("User-Agent", Main.PROJECT);
     }
-    
+
     protected void configure(HttpConnectionBuilder builder) throws IOException {
         configureIcecast(builder);
         configureTimeout(builder);
         configureClient(builder);
     }
-    
+
     /** Opens the url using a configured connection. */
     private HttpConnection openConnection(URL url) throws RadioException {
         try (HttpConnectionBuilder builder = builderFactory.newInstance(url)) {
@@ -85,9 +84,9 @@ public class ConnectionHandler {
             throw new RadioException(true, ex);
         }
     }
-    
+
     private long GRACE_PERIOD = 5000;
-    
+
     /** Consumes the given URL. */
     public void consume(URL url) {
         boolean first = true;
@@ -112,19 +111,18 @@ public class ConnectionHandler {
                 log.debug("Retrying after {}? retryable={}, will retry={}", re.getMessage(), re.isRetryable(), loop);
             } catch (IOException ex) {
                 // IOE from the implicit close of the try-with-resources-call
-                loop &= true;
-                log.debug("Retrying after {}? retryable={}, will retry={}", ex.getMessage(), true, loop);                
+                log.debug("Retrying after {}? retryable={}, will retry={}", ex.getMessage(), true, loop);
             }
         } while (loop);
     }
-    
+
     private static Consumer<HttpConnection> consumerFromContentType(ConsumerContext cc, String contentType) {
         Optional<MimeType> mimeType = MimeType.byContentType(contentType);
         if (!mimeType.isPresent()) {
             log.warn("Unknown content type {}", contentType);
             return t -> {};
         }
-        
+
         switch (mimeType.get()) {
             case AUDIO_MPEG:
             case AUDIO_OGG:
@@ -151,5 +149,5 @@ public class ConnectionHandler {
                 return t -> {
                 };
         }
-    }    
+    }
 }

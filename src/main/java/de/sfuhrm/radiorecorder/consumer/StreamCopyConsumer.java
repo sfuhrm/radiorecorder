@@ -88,7 +88,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
 
     public StreamCopyConsumer(ConsumerContext consumerContext) {
         super(consumerContext);
-        
+
         try {
             initFileNumber();
         } catch (IOException ex) {
@@ -128,7 +128,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
                 metaDataChanged = true;
                 new ConsoleMetaDataConsumer().accept(m);
             });
-            byte buffer[] = new byte[BUFFER_SIZE];
+            byte[] buffer = new byte[BUFFER_SIZE];
             Optional<MimeType> contentType = MimeType.byContentType(t.getContentType());
 
             if (!getContext().isSongNames()) {
@@ -203,7 +203,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
     private void closeStreamIfOpen(Optional<FileOutputStream> outputStream, Optional<File> file, Optional<MimeType> contentType) throws IOException {
         MetaData fileMetaData = previousMetaData != null ? previousMetaData.clone() : null;
         if (outputStream.isPresent()) {
-            log.debug("Closing output stream to {}", file.get());
+            log.debug("Closing output stream to {}", file.orElse(null));
             outputStream.get().close();
 
             if (contentType.isPresent() && contentType.get() == MimeType.AUDIO_MPEG && file.isPresent() && fileMetaData != null) {
@@ -232,16 +232,16 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
             Mp3File mp3File = new Mp3File(file);
 
             ID3v1 id3v1 = new ID3v1Tag();
-            md.getTitle().ifPresent(t -> id3v1.setTitle(t));
-            md.getArtist().ifPresent(t -> id3v1.setArtist(t));
-            md.getStationName().ifPresent(t -> id3v1.setComment(t));
+            md.getTitle().ifPresent(id3v1::setTitle);
+            md.getArtist().ifPresent(id3v1::setArtist);
+            md.getStationName().ifPresent(id3v1::setComment);
             mp3File.setId3v1Tag(id3v1);
 
             ID3v24Tag id3v2 = new ID3v24Tag();
-            md.getTitle().ifPresent(t -> id3v2.setTitle(t));
-            md.getArtist().ifPresent(t -> id3v2.setArtist(t));
-            md.getStationName().ifPresent(t -> id3v2.setPublisher(t));
-            md.getStationUrl().ifPresent(t -> id3v2.setRadiostationUrl(t));
+            md.getTitle().ifPresent(id3v2::setTitle);
+            md.getArtist().ifPresent(id3v2::setArtist);
+            md.getStationName().ifPresent(id3v2::setPublisher);
+            md.getStationUrl().ifPresent(id3v2::setRadiostationUrl);
             id3v2.setComment(Main.PROJECT);
             id3v2.setUrl(Main.GITHUB_URL);
             mp3File.setId3v2Tag(id3v2);
@@ -262,11 +262,11 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
             log.warn("Exception while writing id3 tag for " + file, ex);
         }
     }
-    
+
     /** Find the maximum used file number on disk. */
     private void initFileNumber() throws IOException {
         final Pattern integerPattern = Pattern.compile("[0-9]+");
-        
+
         // this works for both songnamed files and number files
         final OptionalInt maxFileNumber = Files.list(getContext().getDirectory().toPath())
                 .filter(p -> Files.isRegularFile(p))
@@ -274,12 +274,12 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
                 .filter(s -> s.contains("."))
                 .map(s -> s.substring(0, s.indexOf('.')))
                 .filter(s -> integerPattern.matcher(s).matches())
-                .mapToInt(s -> Integer.parseInt(s))
+                .mapToInt(Integer::parseInt)
                 .max();
 
         fileNumber = maxFileNumber.orElse(0) + 1;
         log.debug("Found file number {}, fileNumber starts at {}", maxFileNumber, fileNumber);
-    }    
+    }
 
     /**
      * Get the next number based filename.

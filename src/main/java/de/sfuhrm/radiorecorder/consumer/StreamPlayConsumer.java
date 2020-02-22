@@ -47,7 +47,7 @@ public class StreamPlayConsumer extends MetaDataConsumer implements Consumer<Htt
     protected void __accept(HttpConnection t, InputStream inputStream) {
         try {
             getStreamMetaData().setMetaDataConsumer(new ConsoleMetaDataConsumer());
-            byte buffer[] = new byte[BUFFER_SIZE];
+            byte[] buffer = new byte[BUFFER_SIZE];
 
             AudioFileFormat audioFileFormat = AudioSystem.getAudioFileFormat(t.getURL());
             AudioFormat targetFormat = new AudioFormat(44100, 16, 2, true, true);

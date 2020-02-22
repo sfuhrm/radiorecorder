@@ -18,17 +18,16 @@ package de.sfuhrm.radiorecorder.http;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Configures an URLConnection.
  * @author Stephan Fuhrmann
  */
 public class HttpConnectionBuilderFactory {
-    
+
     public HttpConnectionBuilderFactory() {
     }
-    
+
     public HttpConnectionBuilder newInstance(URL url) throws IOException {
         try {
             //        return new JavaNetHttpConnectionBuilder(url);

@@ -18,8 +18,8 @@ package de.sfuhrm.radiorecorder.metadata;
 import java.io.IOException;
 import java.util.Optional;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.*;
 
 /** JUnit based test for {@link MimeType}.
  * @author Stephan Fuhrmann
@@ -36,7 +36,7 @@ public class MimeTypeTest {
         Optional<MimeType> mimeType = MimeType.byContentType("audio/mpeg");
         assertThat(mimeType, is(Optional.of(MimeType.AUDIO_MPEG)));
     }
-    
+
     @Test
     public void byContentTypeWithUnknown() throws IOException {
         Optional<MimeType> mimeType = MimeType.byContentType("foo/bar");

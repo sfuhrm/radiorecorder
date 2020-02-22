@@ -31,20 +31,20 @@ class ConsoleMetaDataConsumer implements Consumer<MetaData> {
     @Override
     public void accept(MetaData md) {
         StringBuilder builder = new StringBuilder();
-        
+
         log.info("New metadata: {}", md);
-        
+
         Date now = new Date();
         DateFormat dateFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
-        
+
         builder.append(dateFormat.format(now));
         builder.append(": ");
 
-        md.getStationName().ifPresent(t -> builder.append(t).append(" -> "));        
-        md.getArtist().ifPresent(t -> builder.append(t));
+        md.getStationName().ifPresent(t -> builder.append(t).append(" -> "));
+        md.getArtist().ifPresent(builder::append);
         md.getTitle().ifPresent(t -> builder.append(" - ").append(t));
 
         System.err.println(builder.toString());
     }
-    
+
 }

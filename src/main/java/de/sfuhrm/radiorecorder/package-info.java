@@ -15,12 +15,12 @@
  */
 
 /**
- * A Internet radio recorder program. 
+ * A Internet radio recorder program.
  * Holds the classes for setting up the program.
- * {@link Main} is the main class that is started by the JVM.
- * It holds in {@link Params} the command line parameters.
+ * {@link de.sfuhrm.radiorecorder.Main} is the main class that is started by the JVM.
+ * It holds in {@link de.sfuhrm.radiorecorder.Params} the command line parameters.
  * For each station url given in the command line a
- * {@link RadioRunnable} is started to process the urls and streams.
+ * {@link de.sfuhrm.radiorecorder.RadioRunnable} is started to process the urls and streams.
  * @author Stephan Fuhrmann
  */
 package de.sfuhrm.radiorecorder;

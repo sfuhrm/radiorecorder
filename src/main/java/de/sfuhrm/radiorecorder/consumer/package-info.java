@@ -15,7 +15,7 @@
  */
 
 /**
- * Consumer classes for {@link HttpConnection HttpConnections}.
+ * Consumer classes for {@link de.sfuhrm.radiorecorder.http.HttpConnection HttpConnections}.
  * These classes handle the incoming data and dispatch the
  * actions depending on the retrieved data.
  * @author Stephan Fuhrmann

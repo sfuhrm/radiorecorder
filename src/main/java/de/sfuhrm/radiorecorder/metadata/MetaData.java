@@ -15,9 +15,7 @@
  */
 package de.sfuhrm.radiorecorder.metadata;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.util.Date;
 import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -30,19 +28,19 @@ import lombok.Setter;
 public class MetaData implements Cloneable {
     @Getter @Setter(AccessLevel.PACKAGE)
     private ZonedDateTime created;
-    
+
     @Getter @Setter(AccessLevel.PACKAGE)
     private Optional<String> artist;
-    
+
     @Getter @Setter(AccessLevel.PACKAGE)
     private Optional<String> title;
-    
+
     @Getter @Setter(AccessLevel.PACKAGE)
     private Optional<String> stationName;
-    
+
     @Getter @Setter(AccessLevel.PACKAGE)
     private Optional<String> stationUrl;
-    
+
     @Getter @Setter(AccessLevel.PACKAGE)
     private Optional<Long> position;
 
@@ -57,7 +55,7 @@ public class MetaData implements Cloneable {
 
     @Override
     public MetaData clone() {
-        try { 
+        try {
             return (MetaData) super.clone();
         } catch (CloneNotSupportedException ex) {
             throw new RuntimeException(ex); // can not happen
@@ -67,7 +65,7 @@ public class MetaData implements Cloneable {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        artist.ifPresent(t -> builder.append(t));
+        artist.ifPresent(builder::append);
         title.ifPresent(t -> builder.append(" - ").append(t));
         stationName.ifPresent(t -> builder.append(" - ").append(t));
         return builder.toString();

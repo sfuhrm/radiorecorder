@@ -33,18 +33,18 @@ public enum MimeType {
     AUDIO_XSCPLS("audio/x-scpls", ".pls"),
     APPLICATION_OGG("application/ogg", ".ogg"),
     APPLICATION_PLS_XML("application/pls+xml", ".pls");
-    
+
     @Getter
     private final String contentType;
-    
+
     @Getter
     private final String suffix;
 
-    private MimeType(String contentType, String suffix) {
+    MimeType(String contentType, String suffix) {
         this.contentType = contentType;
         this.suffix = suffix;
     }
-    
+
     /** Finds the mime type by content type.
      * @param contentType a content type String for example {@code "audio/mpeg"}.
      * @return the identified enum instance wrapped in an {@code Optional}
@@ -57,5 +57,5 @@ public enum MimeType {
         return Stream.of(MimeType.values())
                 .filter(mt -> mt.contentType.equalsIgnoreCase(contentType))
                 .findFirst();
-    }    
+    }
 }
