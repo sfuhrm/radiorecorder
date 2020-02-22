@@ -85,7 +85,7 @@ public class ConnectionHandler {
         }
     }
 
-    private long GRACE_PERIOD = 5000;
+    private static final long GRACE_PERIOD = 5000;
 
     /** Consumes the given URL. */
     public void consume(URL url) {
