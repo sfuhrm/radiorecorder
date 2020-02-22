@@ -287,7 +287,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
      * @param contentType content type for calculating the suffix.
      */
     private File getNumberFile(Optional<MimeType> contentType) {
-        File f = null;
+        File f;
         do {
             String fileName = String.format("%03d%s", fileNumber,
                     suffixFromContentType(contentType));

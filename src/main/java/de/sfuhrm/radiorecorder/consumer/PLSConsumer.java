@@ -38,17 +38,16 @@ public class PLSConsumer extends AbstractConsumer implements Consumer<HttpConnec
     public PLSConsumer(ConsumerContext context) {
         super(context);
     }
-    
+
     static List<String> readUrls(InputStream i) {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(i));
-            List<String> urls = bufferedReader
-                    .lines()
-                    .filter(l -> l.startsWith("File"))
-                    .filter(l -> l.contains("="))
-                    .map(l -> l.substring(l.indexOf("=") + 1))
-                    .filter(l -> l.startsWith("http"))
-                    .collect(Collectors.toList());
-            return urls;
+        return bufferedReader
+                .lines()
+                .filter(l -> l.startsWith("File"))
+                .filter(l -> l.contains("="))
+                .map(l -> l.substring(l.indexOf("=") + 1))
+                .filter(l -> l.startsWith("http"))
+                .collect(Collectors.toList());
     }
 
     @Override

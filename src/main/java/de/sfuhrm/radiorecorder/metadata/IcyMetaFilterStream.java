@@ -101,8 +101,7 @@ class IcyMetaFilterStream extends OffsetFilterStream {
             readIcyMeta();
         }
 
-        int result = super.read();
-        return result;
+        return super.read();
     }
 
     @Override
