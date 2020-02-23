@@ -24,7 +24,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import de.sfuhrm.radiobrowser4j.SearchMode;
@@ -53,8 +56,8 @@ public class Main {
      * @param params the command line.
      * @return the sanitized URLs.
      */
-    private static List<String> sanitize(List<String> urls, Params params) {
-        List<String> result = new ArrayList<>();
+    private static Collection<String> sanitize(List<String> urls, Params params) {
+        Set<String> result = new HashSet<>();
         RadioBrowser browser = new RadioBrowser(params.getTimeout() * 1000, GITHUB_URL);
 
         int limit = 10;
@@ -116,9 +119,9 @@ public class Main {
             return;
         }
 
-        List<String> stations = sanitize(params.getArguments(), params);
+        Collection<String> stations = sanitize(params.getArguments(), params);
         if (params.isPlay() && stations.size() > 1) {
-            stations = stations.subList(0, 1);
+            stations = stations.stream().limit(1).collect(Collectors.toList());
             System.err.println("Restricting to first station because playing.");
         }
         stations.stream().forEach(url -> {
