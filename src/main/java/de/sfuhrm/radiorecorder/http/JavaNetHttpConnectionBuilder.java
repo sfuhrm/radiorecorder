@@ -28,18 +28,18 @@ import lombok.extern.slf4j.Slf4j;
 class JavaNetHttpConnectionBuilder implements HttpConnectionBuilder {
     private final URL url;
     private HttpURLConnection connection;
-    
+
     JavaNetHttpConnectionBuilder(URL url) {
         this.url = url;
     }
-    
+
     private HttpURLConnection connection() throws IOException {
         if (connection == null) {
             connection = (HttpURLConnection)url.openConnection();
         }
         return connection;
     }
-    
+
     @Override
     public void setConnectTimeout(int timeout) throws IOException {
         log.debug("Connect timeout is {}", timeout);
@@ -57,14 +57,14 @@ class JavaNetHttpConnectionBuilder implements HttpConnectionBuilder {
         log.debug("Request property {} => {}", key, value);
         connection().setRequestProperty(key, value);
     }
-    
+
     @Override
     public HttpConnection build() throws IOException {
         return new JavaNetHttpConnection(connection());
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         connection.disconnect();
     }
 }

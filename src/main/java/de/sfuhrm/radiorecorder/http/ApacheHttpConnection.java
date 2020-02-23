@@ -71,12 +71,12 @@ class ApacheHttpConnection implements HttpConnection {
     }
 
     @Override
-    public int getResponseCode() throws IOException {
+    public int getResponseCode() {
         return response.getStatusLine().getStatusCode();
     }
 
     @Override
-    public String getResponseMessage() throws IOException {
+    public String getResponseMessage() {
         return response.getStatusLine().getReasonPhrase();
     }
 

@@ -43,20 +43,20 @@ class ApacheHttpConnectionBuilder implements HttpConnectionBuilder {
 
 
     @Override
-    public void setConnectTimeout(int timeout) throws IOException {
+    public void setConnectTimeout(int timeout) {
         log.debug("Connect timeout is {}", timeout);
         configBuilder.setConnectTimeout(timeout);
         configBuilder.setConnectionRequestTimeout(timeout);
     }
 
     @Override
-    public void setReadTimeout(int timeout) throws IOException {
+    public void setReadTimeout(int timeout) {
         log.debug("Read timeout is {}", timeout);
         configBuilder.setSocketTimeout(timeout);
     }
 
     @Override
-    public void setRequestProperty(String key, String value) throws IOException {
+    public void setRequestProperty(String key, String value) {
         log.debug("Request property {} => {}", key, value);
         requestBuilder.addHeader(key, value);
     }

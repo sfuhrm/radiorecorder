@@ -19,6 +19,7 @@ import de.sfuhrm.radiorecorder.ConnectionHandler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -77,7 +78,7 @@ class IcyMetaFilterStream extends OffsetFilterStream {
         // UTF-8 is probably wrong
         int firstZero = indexOf(metaData, (byte)0);
         int stringLen = firstZero != -1 ? firstZero : length;
-        String meta = new String(metaData,0, stringLen, Charset.forName("UTF-8"));
+        String meta = new String(metaData,0, stringLen, StandardCharsets.UTF_8);
         Matcher matcher = metaPattern.matcher(meta);
         if (matcher.matches()) {
             String currentMetaData = matcher.group(1);

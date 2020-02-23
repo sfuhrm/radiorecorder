@@ -36,9 +36,9 @@ public class XSPFConsumerTest {
 
     @Mock
     ConsumerContext consumerContext;
-    
+
     @Test
-    public void create() throws IOException {
+    public void create() {
         XSPFConsumer consumer = new XSPFConsumer(consumerContext);
         assertEquals(consumerContext, consumer.getContext());
     }
@@ -46,7 +46,7 @@ public class XSPFConsumerTest {
     @Test
     public void accept() throws IOException {
         URL url = getClass().getResource("/playlist.xspf");
-        
+
         assertNotNull(url);
 
         Mockito.when(consumerContext.getUrl()).thenReturn(url);
@@ -62,11 +62,11 @@ public class XSPFConsumerTest {
         consumer.accept(connection);
 
         Mockito.verify(connectionHandler).consume(new URL("http://stream.futuremusic.fm:8000/mp3"));
-        Mockito.verify(connectionHandler).consume(new URL("http://szpila-radio.pl:8300/live.m3u"));        
+        Mockito.verify(connectionHandler).consume(new URL("http://szpila-radio.pl:8300/live.m3u"));
         Mockito.verify(connectionHandler).consume(new URL("http://stream.szpila-radio.pl:8300/listen1"));
         Mockito.verify(connectionHandler).consume(new URL("http://85.25.43.55/berlin.mp3"));
     }
-    
+
     @After
     public void validate() {
         Mockito.validateMockitoUsage();

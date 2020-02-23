@@ -27,18 +27,18 @@ import static org.hamcrest.MatcherAssert.*;
 public class MimeTypeTest {
 
     @Test
-    public void existanceOfAudioMpeg() throws IOException {
+    public void existanceOfAudioMpeg() {
         assertThat(MimeType.AUDIO_MPEG, notNullValue());
     }
 
     @Test
-    public void byContentTypeWithAudioMpeg() throws IOException {
+    public void byContentTypeWithAudioMpeg() {
         Optional<MimeType> mimeType = MimeType.byContentType("audio/mpeg");
         assertThat(mimeType, is(Optional.of(MimeType.AUDIO_MPEG)));
     }
 
     @Test
-    public void byContentTypeWithUnknown() throws IOException {
+    public void byContentTypeWithUnknown() {
         Optional<MimeType> mimeType = MimeType.byContentType("foo/bar");
         assertThat(mimeType, is(Optional.empty()));
     }

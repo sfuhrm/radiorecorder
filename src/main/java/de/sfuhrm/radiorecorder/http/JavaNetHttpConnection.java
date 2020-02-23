@@ -53,19 +53,19 @@ class JavaNetHttpConnection implements HttpConnection {
     public String getContentType() {
         return connection.getContentType();
     }
-    
+
     @Override
     public int getResponseCode() throws IOException {
         return connection.getResponseCode();
     }
-    
+
     @Override
     public String getResponseMessage() throws IOException {
         return connection.getResponseMessage();
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         connection.disconnect();
     }
 }

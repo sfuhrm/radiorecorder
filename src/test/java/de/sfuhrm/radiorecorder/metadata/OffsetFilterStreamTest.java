@@ -37,7 +37,7 @@ public class OffsetFilterStreamTest {
     InputStream inputStream;
 
     @Test
-    public void create() throws IOException {
+    public void create() {
         OffsetFilterStream ofs = new OffsetFilterStream(inputStream);
         assertEquals(0, ofs.getOffset());
         assertEquals(0, ofs.getMarked());
@@ -52,17 +52,17 @@ public class OffsetFilterStreamTest {
 
         int c = ofs.read();
         assertEquals(42, c);
-        
+
         assertEquals(1, ofs.getOffset());
         assertEquals(0, ofs.getMarked());
-        
+
         verify(inputStream).read();
     }
-    
+
     @Test
     public void readWithArray() throws IOException {
         byte[] array = new byte[16];
-        
+
         when(inputStream.read(any(), anyInt(), anyInt())).thenReturn(16);
         OffsetFilterStream ofs = new OffsetFilterStream(inputStream);
         assertEquals(0, ofs.getOffset());
@@ -70,17 +70,17 @@ public class OffsetFilterStreamTest {
 
         int c = ofs.read(array, 0, 16);
         assertEquals(16, c);
-        
+
         assertEquals(16, ofs.getOffset());
         assertEquals(0, ofs.getMarked());
-        
+
         verify(inputStream).read(array, 0, 16);
     }
-    
+
     @Test
     public void readWithArrayShortRead() throws IOException {
         byte[] array = new byte[16];
-        
+
         when(inputStream.read(any(), anyInt(), anyInt())).thenReturn(5);
         OffsetFilterStream ofs = new OffsetFilterStream(inputStream);
         assertEquals(0, ofs.getOffset());
@@ -88,13 +88,13 @@ public class OffsetFilterStreamTest {
 
         int c = ofs.read(array, 0, 16);
         assertEquals(5, c);
-        
+
         assertEquals(5, ofs.getOffset());
         assertEquals(0, ofs.getMarked());
-        
+
         verify(inputStream).read(array, 0, 16);
     }
-    
+
     @After
     public void validate() {
         validateMockitoUsage();

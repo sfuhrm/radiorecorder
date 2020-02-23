@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import lombok.Getter;
 
@@ -37,20 +38,20 @@ public class TemporaryFile implements AutoCloseable {
     public TemporaryFile() throws IOException {
         file = File.createTempFile("stfu", "tmp");
     }
-    
+
     public void write(String text, Charset charset) throws IOException {
         byte[] data = text.getBytes(charset);
         Files.write(file.toPath(), data);
     }
-    
+
     public void write(String data) throws IOException {
-        write(data, Charset.forName("UTF-8"));
+        write(data, StandardCharsets.UTF_8);
     }
-    
+
     public URL getURL() throws MalformedURLException {
         return file.toURI().toURL();
     }
-    
+
     public InputStream getInputStream() throws FileNotFoundException {
         return new FileInputStream(file);
     }

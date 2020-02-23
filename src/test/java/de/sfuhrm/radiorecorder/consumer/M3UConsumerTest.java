@@ -36,9 +36,9 @@ public class M3UConsumerTest {
 
     @Mock
     ConsumerContext consumerContext;
-    
+
     @Test
-    public void create() throws IOException {
+    public void create() {
         M3UConsumer consumer = new M3UConsumer(consumerContext);
         assertEquals(consumerContext, consumer.getContext());
     }
@@ -47,25 +47,25 @@ public class M3UConsumerTest {
     public void accept() throws IOException {
         try (TemporaryFile tmp = new TemporaryFile()) {
             tmp.write(TEST_STRING);
-            
+
             Mockito.when(consumerContext.getUrl()).thenReturn(tmp.getURL());
-            
+
             HttpConnection connection = Mockito.mock(HttpConnection.class);
             Mockito.when(connection.getURL()).thenReturn(tmp.getURL());
             //Mockito.when(connection.getContentType()).thenReturn("audio/x-scpls");
             Mockito.when(connection.getInputStream()).thenReturn(tmp.getInputStream());
-            
+
             ConnectionHandler connectionHandler = Mockito.mock(ConnectionHandler.class);
-                        
+
             M3UConsumer consumer = new M3UConsumer(consumerContext);
-            consumer.setConnectionHandler(connectionHandler);            
+            consumer.setConnectionHandler(connectionHandler);
             consumer.accept(connection);
-            
+
             Mockito.verify(connectionHandler).consume(new URL("http://streamexample.com:80"));
             Mockito.verify(connectionHandler).consume(new URL("http://example.com/song.mp3"));
         }
     }
-    
+
     @After
     public void validate() {
         Mockito.validateMockitoUsage();

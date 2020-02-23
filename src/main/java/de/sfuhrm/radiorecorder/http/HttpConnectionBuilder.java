@@ -47,5 +47,5 @@ public interface HttpConnectionBuilder extends AutoCloseable {
     HttpConnection build() throws IOException;
 
     @Override
-    void close() throws IOException;
+    void close();
 }

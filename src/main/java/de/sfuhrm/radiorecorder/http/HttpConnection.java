@@ -36,7 +36,7 @@ public interface HttpConnection extends AutoCloseable {
      * values being header field values. If a header field is given multiple
      * times the value list will contain all values.
      */
-    Map<String, List<String>> getHeaderFields() throws IOException;
+    Map<String, List<String>> getHeaderFields();
 
     /** Get the input stream reading the HTTP response body.
      */
@@ -46,7 +46,7 @@ public interface HttpConnection extends AutoCloseable {
      * @return the content type, for example "audio/mpeg", or
      * {@code null} if not sent by the server.
      */
-    String getContentType() throws IOException;
+    String getContentType();
 
     /** Get the HTTP server response code.
      * @return the numerical response code, for example 200 for "OK".
