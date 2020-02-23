@@ -116,6 +116,32 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
         return false;
     }
 
+    private void openUnnamedFileAndInputStream(Optional<MimeType> contentType) {
+        File f = getNumberFile(contentType);
+        file = Optional.of(f);
+        try {
+            outputStream = Optional.of(new FileOutputStream(f));
+        } catch (FileNotFoundException ex) {
+            throw new RadioException(false, ex);
+        }
+        log.info("Copying from url {} to file {}, type {}",
+                getContext().getUrl().toExternalForm(),
+                f,
+                contentType);
+    }
+
+    private void closeOldFileAndRepoenWithNewMetadata(Optional<MimeType> contentType) throws IOException {
+        log.debug("Meta data changed");
+        metaDataChanged = false;
+        closeStreamIfOpen(outputStream, file, contentType);
+
+        file = getFileFromMetaData(contentType);
+        log.debug("New file {}", file);
+        outputStream = file.isPresent()
+                ? Optional.of(new FileOutputStream(file.get()))
+                : Optional.empty();
+    }
+
     @Override
     protected void __accept(HttpConnection t, InputStream inputStream) {
         Runnable cleanup = () -> cleanup(getContext().isSongNames());
@@ -132,17 +158,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
             Optional<MimeType> contentType = MimeType.byContentType(t.getContentType());
 
             if (!getContext().isSongNames()) {
-                File f = getNumberFile(contentType);
-                file = Optional.of(f);
-                try {
-                    outputStream = Optional.of(new FileOutputStream(f));
-                } catch (FileNotFoundException ex) {
-                    throw new RadioException(false, ex);
-                }
-                log.info("Copying from url {} to file {}, type {}",
-                        getContext().getUrl().toExternalForm(),
-                        f,
-                        contentType);
+                openUnnamedFileAndInputStream(contentType);
             }
 
             int len;
@@ -152,16 +168,8 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
                     if (needToAbort(file)) {
                         return;
                     }
-                    if (metaDataChanged) {
-                        log.debug("Meta data changed");
-                        metaDataChanged = false;
-                        closeStreamIfOpen(outputStream, file, contentType);
-
-                        file = getFileFromMetaData(contentType);
-                        log.debug("New file {}", file);
-                        outputStream = file.isPresent()
-                                ? Optional.of(new FileOutputStream(file.get()))
-                                : Optional.empty();
+                    if (metaDataChanged && getContext().isSongNames()) {
+                        closeOldFileAndRepoenWithNewMetadata(contentType);
                     }
 
                     if (outputStream.isPresent()) {
