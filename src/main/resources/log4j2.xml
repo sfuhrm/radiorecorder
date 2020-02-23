@@ -29,5 +29,8 @@
     <Root level="ERROR">
       <AppenderRef ref="console" />
     </Root>
+    <Logger name="de.sfuhrm" level="INFO">
+      <AppenderRef ref="rollingFile" />
+    </Logger>
   </Loggers>
 </Configuration>
