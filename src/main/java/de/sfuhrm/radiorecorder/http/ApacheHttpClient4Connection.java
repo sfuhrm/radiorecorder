@@ -30,16 +30,16 @@ import org.apache.http.impl.client.CloseableHttpClient;
 
 
 /**
- * Wrapper for a Apache HttpClient based connection.
+ * Wrapper for a Apache HttpClient4 based connection.
  * @author Stephan Fuhrmann
  */
-class ApacheHttpConnection implements HttpConnection {
+class ApacheHttpClient4Connection implements HttpConnection {
 
     private final CloseableHttpClient client;
     private final CloseableHttpResponse response;
     private final URI uri;
 
-    ApacheHttpConnection(CloseableHttpClient client, CloseableHttpResponse connection, URI uri) {
+    ApacheHttpClient4Connection(CloseableHttpClient client, CloseableHttpResponse connection, URI uri) {
         this.client = client;
         this.response = connection;
         this.uri = uri;

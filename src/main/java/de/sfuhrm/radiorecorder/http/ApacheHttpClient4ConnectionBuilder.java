@@ -29,12 +29,12 @@ import org.apache.http.impl.client.HttpClientBuilder;
  * @author Stephan Fuhrmann
  */
 @Slf4j
-class ApacheHttpConnectionBuilder implements HttpConnectionBuilder {
+class ApacheHttpClient4ConnectionBuilder implements HttpConnectionBuilder {
 
     private final RequestConfig.Builder configBuilder;
     private final RequestBuilder requestBuilder;
 
-    ApacheHttpConnectionBuilder(URL url) throws URISyntaxException {
+    ApacheHttpClient4ConnectionBuilder(URL url) throws URISyntaxException {
         configBuilder = RequestConfig.custom();
         requestBuilder = RequestBuilder.get(url.toURI());
 
@@ -64,7 +64,7 @@ class ApacheHttpConnectionBuilder implements HttpConnectionBuilder {
     @Override
     public HttpConnection build() throws IOException {
         CloseableHttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(configBuilder.build()).build();
-        return new ApacheHttpConnection(client, client.execute(requestBuilder.build()), requestBuilder.getUri());
+        return new ApacheHttpClient4Connection(client, client.execute(requestBuilder.build()), requestBuilder.getUri());
     }
 
     @Override

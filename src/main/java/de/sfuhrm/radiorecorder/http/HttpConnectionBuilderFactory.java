@@ -17,7 +17,6 @@ package de.sfuhrm.radiorecorder.http;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.glassfish.jersey.internal.util.Producer;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -35,7 +34,7 @@ public class HttpConnectionBuilderFactory {
         JAVA_NET(url -> new JavaNetHttpConnectionBuilder(url)),
         APACHE_CLIENT_4(url -> {
             try {
-                return new ApacheHttpConnectionBuilder(url);
+                return new ApacheHttpClient4ConnectionBuilder(url);
             } catch (URISyntaxException e) {
                 throw new RuntimeException(e);
             }
