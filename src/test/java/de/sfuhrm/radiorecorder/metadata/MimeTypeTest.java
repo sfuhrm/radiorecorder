@@ -15,7 +15,6 @@
  */
 package de.sfuhrm.radiorecorder.metadata;
 
-import java.io.IOException;
 import java.util.Optional;
 import org.junit.Test;
 import static org.hamcrest.CoreMatchers.*;
@@ -27,7 +26,7 @@ import static org.hamcrest.MatcherAssert.*;
 public class MimeTypeTest {
 
     @Test
-    public void existanceOfAudioMpeg() {
+    public void existenceOfAudioMpeg() {
         assertThat(MimeType.AUDIO_MPEG, notNullValue());
     }
 

@@ -130,7 +130,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
                 contentType);
     }
 
-    private void closeOldFileAndRepoenWithNewMetadata(Optional<MimeType> contentType) throws IOException {
+    private void closeOldFileAndReopenWithNewMetadata(Optional<MimeType> contentType) throws IOException {
         log.debug("Meta data changed");
         metaDataChanged = false;
         closeStreamIfOpen(outputStream, file, contentType);
@@ -169,7 +169,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
                         return;
                     }
                     if (metaDataChanged && getContext().isSongNames()) {
-                        closeOldFileAndRepoenWithNewMetadata(contentType);
+                        closeOldFileAndReopenWithNewMetadata(contentType);
                     }
 
                     if (outputStream.isPresent()) {
@@ -275,7 +275,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
     private void initFileNumber() throws IOException {
         final Pattern integerPattern = Pattern.compile("[0-9]+");
 
-        // this works for both songnamed files and number files
+        // this works for both songname files and number files
         final OptionalInt maxFileNumber = Files.list(getContext().getDirectory().toPath())
                 .filter(p -> Files.isRegularFile(p))
                 .map(p -> p.getFileName().toString())
@@ -313,16 +313,16 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
     private Optional<File> getFileFromMetaData(Optional<MimeType> contentType) {
         Optional<File> result = Optional.empty();
         if (metaData != null) {
-            File f = null;
+            File file;
             do {
                 String unknown = "unknown";
                 String fileName = String.format("%03d.%s - %s%s", fileNumber++,
                         sanitizeFileName(metaData.getArtist().orElse(unknown)),
                         sanitizeFileName(metaData.getTitle().orElse(unknown)),
                         suffixFromContentType(contentType));
-                f = new File(getContext().getDirectory(), fileName);
-            } while (f.exists() && f.length() != 0);
-            result = Optional.of(f);
+                file = new File(getContext().getDirectory(), fileName);
+            } while (file.exists() && file.length() != 0);
+            result = Optional.of(file);
         }
         return result;
     }

@@ -46,7 +46,7 @@ public class ConnectionHandler {
         this.builderFactory = new HttpConnectionBuilderFactory(consumerContext.getHttpClient());
     }
 
-    /** Configure the timeout for the conncetion.
+    /** Configure the timeout for the connection.
      * @param builder the connection to configure.
      */
     protected void configureTimeout(HttpConnectionBuilder builder) throws IOException {

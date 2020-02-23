@@ -110,9 +110,7 @@ public class Params {
         } catch (CmdLineException ex) {
             log.warn("Error in parsing", ex);
             System.err.println(ex.getMessage());
-            if (cmdLineParser != null) {
-                cmdLineParser.printUsage(System.err);
-            }
+            cmdLineParser.printUsage(System.err);
         }
         return null;
     }

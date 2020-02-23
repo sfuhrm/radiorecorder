@@ -42,7 +42,7 @@ public interface HttpConnectionBuilder extends AutoCloseable {
 
     /** Constructs a connection from this builder.
      * The connection is usually being opened by this method.
-     * @return a readly open HTTP connection.
+     * @return an open HTTP connection.
      */
     HttpConnection build() throws IOException;
 

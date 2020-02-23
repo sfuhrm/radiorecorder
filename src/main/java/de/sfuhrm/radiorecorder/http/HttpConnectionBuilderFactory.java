@@ -18,7 +18,6 @@ package de.sfuhrm.radiorecorder.http;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.function.Function;
@@ -31,7 +30,7 @@ import java.util.function.Function;
 public class HttpConnectionBuilderFactory {
 
     public enum HttpClientType {
-        JAVA_NET(url -> new JavaNetHttpConnectionBuilder(url)),
+        JAVA_NET(JavaNetHttpConnectionBuilder::new),
         APACHE_CLIENT_4(url -> {
             try {
                 return new ApacheHttpClient4ConnectionBuilder(url);
@@ -57,7 +56,7 @@ public class HttpConnectionBuilderFactory {
         }
     }
 
-    private HttpClientType httpClientType;
+    private final HttpClientType httpClientType;
 
     public HttpConnectionBuilderFactory(@NonNull HttpClientType httpClientType) {
         log.debug("Using client {}", httpClientType);

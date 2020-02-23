@@ -24,14 +24,14 @@ import lombok.Setter;
 /**
  * Filter input stream keeping track of the byte offset from the
  * beginning.
- * @see #getOffset() 
+ * @see #getOffset()
  * @author Stephan Fuhrmann
  */
 class OffsetFilterStream extends FilterInputStream {
-    
+
     @Getter @Setter
     private long offset;
-    
+
     @Getter @Setter
     private long marked;
 
@@ -58,9 +58,9 @@ class OffsetFilterStream extends FilterInputStream {
     }
 
     @Override
-    public synchronized void mark(int readlimit) {
+    public synchronized void mark(int readLimit) {
         marked = offset;
-        super.mark(readlimit);
+        super.mark(readLimit);
     }
 
     @Override
