@@ -1,9 +1,0 @@
-#! /bin/bash
-
-if [ "x$JAVA_HOME" = "x" ]; then
-	export JAVA_HOME=$(cd $(dirname $(readlink -f "/etc/alternatives/java"))/../..; pwd)
-fi
-
-JAR=/usr/share/radiorecorder/*.jar
-java -jar $JAR $@
-
