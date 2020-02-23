@@ -36,6 +36,11 @@
       <version>4.5.11</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.httpcomponents.client5</groupId>
+      <artifactId>httpclient5</artifactId>
+      <version>5.0</version>
+    </dependency>
+    <dependency>
       <groupId>su.litvak.chromecast</groupId>
       <artifactId>api-v2</artifactId>
       <version>0.11.2</version>

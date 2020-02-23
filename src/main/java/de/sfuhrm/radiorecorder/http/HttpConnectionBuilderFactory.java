@@ -38,6 +38,13 @@ public class HttpConnectionBuilderFactory {
             } catch (URISyntaxException e) {
                 throw new RuntimeException(e);
             }
+        }),
+        APACHE_CLIENT_5(url -> {
+            try {
+                return new ApacheHttpClient5ConnectionBuilder(url);
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
         });
 
         private final Function<URL, HttpConnectionBuilder> builder;

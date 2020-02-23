@@ -15,28 +15,30 @@
  */
 package de.sfuhrm.radiorecorder.http;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
+import org.apache.hc.core5.util.Timeout;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.RequestBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 
 /**
- * Builder for a Apache HttpClient v4 based connection.
+ * Builder for a Apache HttpClient v5 based connection.
  * @author Stephan Fuhrmann
  */
 @Slf4j
-class ApacheHttpClient4ConnectionBuilder implements HttpConnectionBuilder {
+class ApacheHttpClient5ConnectionBuilder implements HttpConnectionBuilder {
 
     private final RequestConfig.Builder configBuilder;
-    private final RequestBuilder requestBuilder;
+    private final ClassicRequestBuilder requestBuilder;
 
-    ApacheHttpClient4ConnectionBuilder(URL url) throws URISyntaxException {
+    ApacheHttpClient5ConnectionBuilder(URL url) throws URISyntaxException {
         configBuilder = RequestConfig.custom();
-        requestBuilder = RequestBuilder.get(url.toURI());
+        requestBuilder = ClassicRequestBuilder.get(url.toURI());
 
         log.debug("Request for uri {}", requestBuilder.getUri());
     }
@@ -45,14 +47,14 @@ class ApacheHttpClient4ConnectionBuilder implements HttpConnectionBuilder {
     @Override
     public void setConnectTimeout(int timeout) {
         log.debug("Connect timeout is {}", timeout);
-        configBuilder.setConnectTimeout(timeout);
-        configBuilder.setConnectionRequestTimeout(timeout);
+        configBuilder.setConnectTimeout(Timeout.ofMilliseconds(timeout));
+        configBuilder.setConnectionRequestTimeout(Timeout.ofMilliseconds(timeout));
     }
 
     @Override
     public void setReadTimeout(int timeout) {
         log.debug("Read timeout is {}", timeout);
-        configBuilder.setSocketTimeout(timeout);
+        configBuilder.setResponseTimeout(Timeout.ofMilliseconds(timeout));
     }
 
     @Override
@@ -64,7 +66,7 @@ class ApacheHttpClient4ConnectionBuilder implements HttpConnectionBuilder {
     @Override
     public HttpConnection build() throws IOException {
         CloseableHttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(configBuilder.build()).build();
-        return new ApacheHttpClient4Connection(client, client.execute(requestBuilder.build()), requestBuilder.getUri());
+        return new ApacheHttpClient5Connection(client, client.execute(requestBuilder.build()), requestBuilder.getUri());
     }
 
     @Override
