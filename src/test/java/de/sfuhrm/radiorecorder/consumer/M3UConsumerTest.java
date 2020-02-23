@@ -20,7 +20,10 @@ import de.sfuhrm.radiorecorder.ConsumerContext;
 import de.sfuhrm.radiorecorder.http.HttpConnection;
 import java.io.IOException;
 import java.net.URL;
+
+import de.sfuhrm.radiorecorder.http.HttpConnectionBuilderFactory;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
@@ -36,6 +39,11 @@ public class M3UConsumerTest {
 
     @Mock
     ConsumerContext consumerContext;
+
+    @Before
+    public void init() {
+        Mockito.when(consumerContext.getHttpClient()).thenReturn(HttpConnectionBuilderFactory.HttpClientType.JAVA_NET);
+    }
 
     @Test
     public void create() {

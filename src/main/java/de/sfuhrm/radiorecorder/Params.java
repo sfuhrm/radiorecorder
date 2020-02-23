@@ -18,8 +18,12 @@ package de.sfuhrm.radiorecorder;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+
+import de.sfuhrm.radiorecorder.http.HttpConnectionBuilder;
+import de.sfuhrm.radiorecorder.http.HttpConnectionBuilderFactory;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.glassfish.jersey.internal.util.Producer;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -28,54 +32,57 @@ import org.kohsuke.args4j.Option;
 /**
  * The command line parameters as a POJO.
  * Must be created using {@link #parse(java.lang.String[]) }.
- * @see #parse(java.lang.String[]) 
+ * @see #parse(java.lang.String[])
  * @author Stephan Fuhrmann
  */
 @Slf4j
 public class Params {
-    
+
     @Getter
     @Option(name = "-help", aliases = {"-h"}, usage = "Show this command line help.", help = true)
     private boolean help;
-    
+
     @Getter
     @Option(name = "-directory", aliases = {"-d"}, usage = "Write to this directory.", metaVar = "DIR")
     private File directory;
-    
+
     @Getter
     @Option(name = "-use-songnames", aliases = {"-S"}, usage = "Use songnames from retrieved metadata information. Will create one file per detected song.")
     private boolean songNames;
-    
+
     @Getter
     @Option(name = "-min-free", aliases = {"-M"}, usage = "Minimum of free megs on target drive.", metaVar = "MEGS")
     private long minimumFree = 512;
-    
+
     @Getter
     @Option(name = "-reconnect", aliases = {"-r"}, usage = "Automatically reconnect after connection loss.")
     private boolean reconnect;
-    
+
     @Getter
     @Option(name = "-play", aliases = {"-p"}, usage = "Play live instead of recording to a file.")
     private boolean play;
-    
+
     @Getter
     @Option(name = "-list-cast", aliases = {"-L"}, usage = "List chromecast devices.")
     private boolean listCast;
-    
+
     @Getter
     @Option(name = "-cast", aliases = {"-c"}, usage = "Stream to the given chrome cast device.")
-    private String castReceiver;    
-    
+    private String castReceiver;
+
     @Getter
     @Option(name = "-timeout", aliases = {"-T"}, usage = "Connect/read timeout in seconds.", metaVar = "SECS")
     private int timeout = 60;
-    
-      
+
+    @Getter
+    @Option(name = "-client", aliases = {"-C"}, usage = "Specify HTTP client to use.", metaVar = "CLIENT")
+    private HttpConnectionBuilderFactory.HttpClientType httpClientType = HttpConnectionBuilderFactory.HttpClientType.APACHE_CLIENT_4;
+
     @Getter
     @Argument(usage = "URLs of the internet radio station(s) or station name for lookup at http://www.radio-browser.info/", metaVar = "URLORNAME", required = true)
     private List<String> arguments;
-    
-    /** Parse the command line options. 
+
+    /** Parse the command line options.
      * @param args the command line args as passed to the main method of the
      * program.
      * @return the parsed command line options or {@code null} if
@@ -89,18 +96,18 @@ public class Params {
             if (log.isDebugEnabled()) {
                 log.debug("Args: {}", Arrays.toString(args));
             }
-            
+
             Params result = new Params();
             result.directory = new File(System.getProperty("user.home"));
-            
+
             cmdLineParser = new CmdLineParser(result);
             cmdLineParser.parseArgument(args);
-            
+
             if (result.help) {
                 cmdLineParser.printUsage(System.err);
                 return null;
             }
-                        
+
             return result;
         } catch (CmdLineException ex) {
             log.warn("Error in parsing", ex);

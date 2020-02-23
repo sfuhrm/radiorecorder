@@ -43,7 +43,7 @@ public class ConnectionHandler {
 
     public ConnectionHandler(ConsumerContext consumerContext) {
         this.consumerContext = Objects.requireNonNull(consumerContext);
-        this.builderFactory = new HttpConnectionBuilderFactory();
+        this.builderFactory = new HttpConnectionBuilderFactory(consumerContext.getHttpClient());
     }
 
     /** Configure the timeout for the conncetion.

@@ -18,6 +18,8 @@ package de.sfuhrm.radiorecorder;
 import java.io.File;
 import java.net.URL;
 import java.util.Objects;
+
+import de.sfuhrm.radiorecorder.http.HttpConnectionBuilderFactory;
 import lombok.Getter;
 
 /**
@@ -27,26 +29,26 @@ import lombok.Getter;
  * @author Stephan Fuhrmann
  */
 public class ConsumerContext {
-    
+
     @Getter
     private final int id;
-    
+
     @Getter
     private final URL url;
 
     @Getter
     private final File directory;
-    
+
     private final Params params;
-    
+
     public ConsumerContext(int id, URL url, File directory, Params params) {
         this.id = id;
         this.url = Objects.requireNonNull(url);
         this.directory = Objects.requireNonNull(directory);
         this.params = Objects.requireNonNull(params);
     }
-    
-    /** Get the read/connect timeout in millis. 
+
+    /** Get the read/connect timeout in millis.
      * @return the timeout in milliseconds.
      */
     public int getTimeout() {
@@ -59,24 +61,29 @@ public class ConsumerContext {
     public long getMinFree() {
         return params.getMinimumFree() * 1024 * 1024;
     }
-    
+
     /** Whether to play or store. */
     public boolean isPlaying() {
         return params.isPlay();
     }
-    
+
     /** Whether to name the files after the metadata retrieved. */
     public boolean isSongNames() {
         return params.isSongNames();
     }
-    
+
     /** Reconnect forever. */
     public boolean isReconnect() {
         return params.isReconnect();
     }
-    
+
     /** The cast device to cast to. */
     public String getCastReceiver() {
         return params.getCastReceiver();
+    }
+
+    /** The client type to use. */
+    public HttpConnectionBuilderFactory.HttpClientType getHttpClient() {
+        return params.getHttpClientType();
     }
 }

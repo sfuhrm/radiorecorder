@@ -20,7 +20,10 @@ import de.sfuhrm.radiorecorder.ConsumerContext;
 import de.sfuhrm.radiorecorder.http.HttpConnection;
 import java.io.IOException;
 import java.net.URL;
+
+import de.sfuhrm.radiorecorder.http.HttpConnectionBuilderFactory;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
@@ -36,9 +39,14 @@ public class PLSConsumerTest {
 
     @Mock
     ConsumerContext consumerContext;
-    
+
+    @Before
+    public void init() {
+        Mockito.when(consumerContext.getHttpClient()).thenReturn(HttpConnectionBuilderFactory.HttpClientType.JAVA_NET);
+    }
+
     @Test
-    public void create() throws IOException {
+    public void create() {
         PLSConsumer consumer = new PLSConsumer(consumerContext);
         assertEquals(consumerContext, consumer.getContext());
     }
@@ -47,25 +55,25 @@ public class PLSConsumerTest {
     public void accept() throws IOException {
         try (TemporaryFile tmp = new TemporaryFile()) {
             tmp.write(TEST_STRING);
-            
+
             Mockito.when(consumerContext.getUrl()).thenReturn(tmp.getURL());
-            
+
             HttpConnection connection = Mockito.mock(HttpConnection.class);
             Mockito.when(connection.getURL()).thenReturn(tmp.getURL());
             //Mockito.when(connection.getContentType()).thenReturn("audio/x-scpls");
             Mockito.when(connection.getInputStream()).thenReturn(tmp.getInputStream());
-            
+
             ConnectionHandler connectionHandler = Mockito.mock(ConnectionHandler.class);
-                        
+
             PLSConsumer consumer = new PLSConsumer(consumerContext);
-            consumer.setConnectionHandler(connectionHandler);            
+            consumer.setConnectionHandler(connectionHandler);
             consumer.accept(connection);
-            
+
             Mockito.verify(connectionHandler).consume(new URL("http://streamexample.com:80"));
             Mockito.verify(connectionHandler).consume(new URL("http://example.com/song.mp3"));
         }
     }
-    
+
     @After
     public void validate() {
         Mockito.validateMockitoUsage();

@@ -15,25 +15,50 @@
  */
 package de.sfuhrm.radiorecorder.http;
 
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import org.glassfish.jersey.internal.util.Producer;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.function.Function;
 
 /**
  * Configures an URLConnection.
  * @author Stephan Fuhrmann
  */
+@Slf4j
 public class HttpConnectionBuilderFactory {
 
-    public HttpConnectionBuilderFactory() {
+    public enum HttpClientType {
+        JAVA_NET(url -> new JavaNetHttpConnectionBuilder(url)),
+        APACHE_CLIENT_4(url -> {
+            try {
+                return new ApacheHttpConnectionBuilder(url);
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        private final Function<URL, HttpConnectionBuilder> builder;
+
+        HttpClientType(@NonNull Function<URL, HttpConnectionBuilder> inBuilder) {
+            this.builder = inBuilder;
+        }
+        HttpConnectionBuilder builder(@NonNull URL url) {
+            return builder.apply(url);
+        }
+    }
+
+    private HttpClientType httpClientType;
+
+    public HttpConnectionBuilderFactory(@NonNull HttpClientType httpClientType) {
+        log.debug("Using client {}", httpClientType);
+        this.httpClientType = httpClientType;
     }
 
     public HttpConnectionBuilder newInstance(URL url) throws IOException {
-        try {
-            //        return new JavaNetHttpConnectionBuilder(url);
-            return new ApacheHttpConnectionBuilder(url);
-        } catch (URISyntaxException ex) {
-            throw new IOException(ex);
-        }
+        return httpClientType.builder(url);
     }
 }
