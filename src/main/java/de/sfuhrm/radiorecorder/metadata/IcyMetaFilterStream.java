@@ -39,7 +39,11 @@ class IcyMetaFilterStream extends OffsetFilterStream {
     private final int metaInterval;
 
     /** Pattern for meta data String. */
-    private final Pattern metaPattern;
+    private final Pattern streamTitlePattern;
+
+    /** Pattern for meta data String. */
+    private final Pattern streamUrlPattern;
+
 
     @Getter
     private String lastMetaData;
@@ -50,7 +54,8 @@ class IcyMetaFilterStream extends OffsetFilterStream {
     IcyMetaFilterStream(int icyMetaInterval, InputStream inputStream) {
         super(inputStream);
         this.metaInterval = icyMetaInterval;
-        metaPattern = Pattern.compile("StreamTitle='(.*)';");
+        streamTitlePattern = Pattern.compile("StreamTitle='(([^']|('[^;]))*)';");
+        streamUrlPattern = Pattern.compile("StreamURL='(([^']|('[^;]))*)';");
     }
 
     private static int indexOf(byte[] array, byte findMe) {
@@ -79,8 +84,8 @@ class IcyMetaFilterStream extends OffsetFilterStream {
         int firstZero = indexOf(metaData, (byte)0);
         int stringLen = firstZero != -1 ? firstZero : length;
         String meta = new String(metaData,0, stringLen, StandardCharsets.UTF_8);
-        Matcher matcher = metaPattern.matcher(meta);
-        if (matcher.matches()) {
+        Matcher matcher = streamTitlePattern.matcher(meta);
+        if (matcher.find()) {
             String currentMetaData = matcher.group(1);
 
             if (!currentMetaData.equals(lastMetaData)) {
@@ -93,6 +98,13 @@ class IcyMetaFilterStream extends OffsetFilterStream {
                 log.warn("No metadata found in stream, but had {} bytes (got: {})", length, meta);
             }
         }
+
+        matcher = streamUrlPattern.matcher(meta);
+        if (matcher.find()) {
+            String streamUrl = matcher.group(1);
+            log.info("Stream URL: {}", streamUrl);
+        }
+
         setOffset(0);
     }
 
