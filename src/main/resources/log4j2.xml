@@ -1,13 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN" name="RadioRecorder">
+<Configuration status="ERROR" name="RadioRecorder">
+  <Properties>
+    <Property name="LOG">${sys:LOG_DIR:-/tmp}</Property>
+  </Properties>
   <Appenders>
     <Console name="console" target="SYSTEM_OUT">
       <PatternLayout pattern="%p: %m%n%throwable{1}" />
     </Console>
+    <RollingFile
+            name="rollingFile"
+            fileName="${LOG}/application.log"
+            filePattern="${LOG}/application.%i.log.gz"
+            ignoreExceptions="false">
+      <PatternLayout>
+        <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %m%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="10MB" />
+      </Policies>
+      <DefaultRolloverStrategy max="5" />
+    </RollingFile>
   </Appenders>
 
   <Loggers>
-    <Root level="WARN">
+    <Logger name="de.sfuhrm" level="INFO" additivity="false">
+      <AppenderRef ref="rollingFile" />
+    </Logger>
+    <Root level="ERROR">
       <AppenderRef ref="console" />
     </Root>
   </Loggers>
