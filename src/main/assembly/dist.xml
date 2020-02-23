@@ -28,6 +28,14 @@
       </includes>
     </fileSet>
     <fileSet>
+      <directory>src/main/assembly</directory>
+      <outputDirectory>man/man1</outputDirectory>
+      <fileMode>0644</fileMode>
+      <includes>
+        <include>*.1</include>
+      </includes>
+    </fileSet>
+    <fileSet>
       <directory>target</directory>
       <outputDirectory>lib</outputDirectory>
       <excludes>
