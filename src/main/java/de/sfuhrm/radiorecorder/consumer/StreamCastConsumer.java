@@ -42,7 +42,7 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<Htt
 
     /** The ID of the default media receiver app.
      */
-    public final static String APP_ID = "CC1AD845";
+    public static final String APP_ID = "CC1AD845";
 
     /** Async communication of the chromecast discovered. */
     private final ArrayBlockingQueue<ChromeCast> arrayBlockingQueue;

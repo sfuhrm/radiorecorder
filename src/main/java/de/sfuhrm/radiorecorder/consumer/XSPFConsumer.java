@@ -43,8 +43,8 @@ import org.xml.sax.InputSource;
 @Slf4j
 public class XSPFConsumer extends AbstractConsumer implements Consumer<HttpConnection> {
 
-    public final static String NS = "http://xspf.org/ns/0/";
-    public final static String PREFIX = "x";
+    public static final String NS = "http://xspf.org/ns/0/";
+    public static final String PREFIX = "x";
 
     public XSPFConsumer(ConsumerContext context) {
         super(context);

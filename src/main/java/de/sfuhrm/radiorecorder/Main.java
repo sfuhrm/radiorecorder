@@ -23,7 +23,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -45,8 +44,8 @@ import su.litvak.chromecast.api.v2.ChromeCastsListener;
 @Slf4j
 public class Main {
 
-    public final static String GITHUB_URL = "https://github.com/sfuhrm/radiorecorder";
-    public final static String PROJECT = "Radio Recorder";
+    public static final String GITHUB_URL = "https://github.com/sfuhrm/radiorecorder";
+    public static final String PROJECT = "Radio Recorder";
 
     /** Id for {@link ConsumerContext}. */
     private static int nextId = 1;
@@ -88,7 +87,7 @@ public class Main {
     private static class MyListener implements ChromeCastsListener {
         @Override
         public void newChromeCastDiscovered(ChromeCast chromeCast) {
-            System.out.printf("%s - %s\n", chromeCast.getTitle(), chromeCast.getModel());
+            System.out.printf("%s - %s%n", chromeCast.getTitle(), chromeCast.getModel());
         }
 
         @Override

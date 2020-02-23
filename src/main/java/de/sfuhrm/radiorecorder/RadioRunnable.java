@@ -25,7 +25,7 @@ import org.slf4j.MDC;
 @Slf4j
 public class RadioRunnable implements Runnable {
 
-    public final static int BUFFER_SIZE = 8192;
+    public static final int BUFFER_SIZE = 8192;
     private final ConsumerContext consumerContext;
     private final ConnectionHandler configurator;
 

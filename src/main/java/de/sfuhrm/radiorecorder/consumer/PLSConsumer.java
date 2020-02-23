@@ -45,7 +45,7 @@ public class PLSConsumer extends AbstractConsumer implements Consumer<HttpConnec
                 .lines()
                 .filter(l -> l.startsWith("File"))
                 .filter(l -> l.contains("="))
-                .map(l -> l.substring(l.indexOf("=") + 1))
+                .map(l -> l.substring(l.indexOf('=') + 1))
                 .filter(l -> l.startsWith("http"))
                 .collect(Collectors.toList());
     }

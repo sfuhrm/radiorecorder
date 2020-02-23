@@ -19,11 +19,9 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-import de.sfuhrm.radiorecorder.http.HttpConnectionBuilder;
 import de.sfuhrm.radiorecorder.http.HttpConnectionBuilderFactory;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.glassfish.jersey.internal.util.Producer;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;

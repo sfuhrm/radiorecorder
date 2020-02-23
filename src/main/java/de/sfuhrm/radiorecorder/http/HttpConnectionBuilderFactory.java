@@ -64,7 +64,7 @@ public class HttpConnectionBuilderFactory {
         this.httpClientType = httpClientType;
     }
 
-    public HttpConnectionBuilder newInstance(URL url) throws IOException {
+    public HttpConnectionBuilder newInstance(URL url) {
         return httpClientType.builder(url);
     }
 }

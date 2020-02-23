@@ -35,25 +35,25 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class StreamMetaData {
-    
+
     private OffsetFilterStream offsetFilterStream;
     private IcyMetaFilterStream icyMetaFilterStream;
-    
-    private final static String ICY_METAINT = "icy-metaint";
-    private final static String ICY_NAME = "icy-name";
-    private final static String ICY_URL = "icy-url";
-    
+
+    private static final String ICY_METAINT = "icy-metaint";
+    private static final String ICY_NAME = "icy-name";
+    private static final String ICY_URL = "icy-url";
+
     @Getter @Setter
     private Consumer<MetaData> metaDataConsumer = l -> {};
-    
+
     /** Current meta data. */
     private MetaData metaData = new MetaData();
-    
+
     public InputStream openStream(HttpConnection connection) throws IOException {
         InputStream result;
         offsetFilterStream = new OffsetFilterStream(connection.getInputStream());
         result = offsetFilterStream;
-        
+
         Map<String,List<String>> headers = connection.getHeaderFields();
         if (headers.containsKey(ICY_NAME)) {
             metaData.setStationName(Optional.of(headers.get(ICY_NAME).get(0)));
@@ -61,7 +61,7 @@ public class StreamMetaData {
         if (headers.containsKey(ICY_URL)) {
             metaData.setStationUrl(Optional.of(headers.get(ICY_URL).get(0)));
         }
-        
+
         if (headers.containsKey(ICY_METAINT)) {
             log.debug("Found Icy Meta Interval header: {}", headers.containsKey(ICY_METAINT));
             int metaInterval = Integer.parseInt(headers.get(ICY_METAINT).get(0));
@@ -77,14 +77,14 @@ public class StreamMetaData {
                     target.setTitle(Optional.of(m.group(2)));
                 } else {
                     target.setArtist(Optional.empty());
-                    target.setTitle(Optional.empty());                    
+                    target.setTitle(Optional.empty());
                 }
                 metaData = target;
                 metaDataConsumer.accept(target);
             });
             result = icyMetaFilterStream;
         }
-        
+
         return result;
     }
 }

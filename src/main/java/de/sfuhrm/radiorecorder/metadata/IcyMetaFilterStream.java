@@ -18,7 +18,6 @@ package de.sfuhrm.radiorecorder.metadata;
 import de.sfuhrm.radiorecorder.ConnectionHandler;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
