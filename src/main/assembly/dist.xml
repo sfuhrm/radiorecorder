@@ -12,16 +12,16 @@
   <fileSets>
     <fileSet>
       <directory>${project.basedir}</directory>
-      <outputDirectory></outputDirectory>
+      <outputDirectory>${assembly.dir}</outputDirectory>
       <includes>
         <include>README.md</include>
         <include>MAINTAINERS</include>
-        <include>LICENSE.txt</include>
+        <include>LICENSE</include>
       </includes>
     </fileSet>
     <fileSet>
       <directory>src/main/assembly</directory>
-      <outputDirectory>man/man1</outputDirectory>
+      <outputDirectory>${assembly.dir}/man/man1</outputDirectory>
       <fileMode>0644</fileMode>
       <includes>
         <include>*.1</include>
@@ -29,23 +29,15 @@
     </fileSet>
     <fileSet>
       <directory>src/main/assembly</directory>
-      <outputDirectory>bin</outputDirectory>
+      <outputDirectory>${assembly.dir}/bin</outputDirectory>
       <fileMode>0755</fileMode>
       <includes>
         <include>*.sh</include>
       </includes>
     </fileSet>
     <fileSet>
-      <directory>src/main/assembly</directory>
-      <outputDirectory>man/man1</outputDirectory>
-      <fileMode>0644</fileMode>
-      <includes>
-        <include>*.1</include>
-      </includes>
-    </fileSet>
-    <fileSet>
       <directory>target</directory>
-      <outputDirectory>lib</outputDirectory>
+      <outputDirectory>${assembly.dir}/lib</outputDirectory>
       <excludes>
         <exclude>*-javadoc.jar</exclude>
         <exclude>*-sources.jar</exclude>
@@ -56,7 +48,7 @@
     </fileSet>
     <fileSet>
       <directory>src/main/resources</directory>
-      <outputDirectory>etc</outputDirectory>
+      <outputDirectory>${assembly.dir}/etc</outputDirectory>
       <includes>
         <include>log4j2*</include>
       </includes>
@@ -64,7 +56,7 @@
   </fileSets>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/lib</outputDirectory>
+      <outputDirectory>${assembly.dir}/lib</outputDirectory>
       <unpack>false</unpack>
       <scope>runtime</scope>
     </dependencySet>
