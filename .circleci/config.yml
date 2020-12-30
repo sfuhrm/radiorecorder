@@ -59,6 +59,8 @@ jobs:
       - run:
           name: Create Debian Package
           command: bash src/jpackage/deb.sh
+      - store_artifacts:
+          path: target/debian
 
 workflows:
   version: 2
