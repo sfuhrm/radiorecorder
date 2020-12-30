@@ -1,6 +1,7 @@
 Radio Recorder
 ===================
 [![Circle CI Status](https://img.shields.io/circleci/build/github/sfuhrm/radiorecorder?style=plastic)](https://app.circleci.com/pipelines/github/sfuhrm/radiorecorder)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/df246907b8e04e6c94012127f683e709)](https://www.codacy.com/gh/sfuhrm/radiorecorder/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=sfuhrm/radiorecorder&amp;utm_campaign=Badge_Grade)
 [![ReleaseDate](https://img.shields.io/github/release-date/sfuhrm/radiorecorder)](https://github.com/sfuhrm/radiorecorder/releases)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
