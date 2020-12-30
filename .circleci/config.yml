@@ -61,6 +61,10 @@ jobs:
           command: bash src/jpackage/debian.sh
       - store_artifacts:
           path: target/debian
+      - store_artifacts:
+          path: target/radiorecorder-*.tar.*
+      - store_artifacts:
+          path: target/radiorecorder-*.zip
 
 workflows:
   version: 2
