@@ -28,22 +28,22 @@
     <dependency>
       <groupId>de.sfuhrm</groupId>
       <artifactId>radiobrowser4j</artifactId>
-      <version>2.0.0</version>
+      <version>2.0.4</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
-      <version>4.5.11</version>
+      <version>4.5.13</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents.client5</groupId>
       <artifactId>httpclient5</artifactId>
-      <version>5.0</version>
+      <version>5.0.3</version>
     </dependency>
     <dependency>
       <groupId>su.litvak.chromecast</groupId>
       <artifactId>api-v2</artifactId>
-      <version>0.11.2</version>
+      <version>0.11.3</version>
       <exclusions>
         <exclusion>
           <groupId>com.fasterxml.jackson.core</groupId>
@@ -59,12 +59,12 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
-      <version>2.10.2</version>
+      <version>2.12.0</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.10.2</version>
+      <version>2.12.0</version>
     </dependency>
     <!-- /for su.litvak.chromecast -->
     <dependency>
@@ -90,7 +90,7 @@
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-slf4j-impl</artifactId>
-      <version>2.13.0</version>
+      <version>2.14.0</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -110,7 +110,7 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.12</version>
+      <version>1.18.16</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
