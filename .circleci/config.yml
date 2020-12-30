@@ -58,7 +58,7 @@ jobs:
           command: mvn clean package
       - run:
           name: Create Debian Package
-          command: bash src/jpackage/deb.sh
+          command: bash src/jpackage/debian.sh
       - store_artifacts:
           path: target/debian
 
