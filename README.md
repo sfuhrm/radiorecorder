@@ -16,9 +16,16 @@ Some of the features are:
 
 ## Downloading & installation
 
-The current version can be downloaded for Debian and Fedora systems here:
+The current version can be downloaded for Debian systems here:
 
 https://github.com/sfuhrm/radiorecorder/releases
+
+The Debian package can be downloaded and installed like this:
+
+```shell
+wget https://github.com/sfuhrm/radiorecorder/releases/download/radiorecorder-1.3.1/radiorecorder_1.3.1-1_amd64.deb
+apt install ./radiorecorder_1.3.1-1_amd64.deb
+```
 
 ## Usage
 
@@ -42,14 +49,7 @@ The program is a command line only program. It supports multiple parameters:
                            create one file per detected song. (default: false)
 ### Debian package
 
-The Debian package can be installed like this:
-
-```shell
-wget https://github.com/sfuhrm/radiorecorder/releases/download/radiorecorder-1.3.1/radiorecorder_1.3.1-1_amd64.deb
-apt install ./radiorecorder_1.3.1-1_amd64.deb
-```
-
-and the installed executable can be executed like this:
+The installed executable can be executed like this:
 
 ```shell
 /opt/radiorecorder/bin/radiorecorder -p synthradio
