@@ -1,5 +1,7 @@
 VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)
 
+rm -fr target/debian
+mkdir -p target/debian
 jpackage \
 --name radiorecorder \
 --type deb \
@@ -12,3 +14,4 @@ jpackage \
 --input target/radiorecorder-${VERSION}-app/radiorecorder-${VERSION} \
 --linux-deb-maintainer s@sfuhrm.de \
 --linux-shortcut
+--dest target/debian
