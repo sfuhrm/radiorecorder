@@ -13,5 +13,4 @@ jpackage \
 --license-file LICENSE \
 --input target/radiorecorder-${VERSION}-app/radiorecorder-${VERSION} \
 --linux-deb-maintainer s@sfuhrm.de \
---linux-shortcut \
 --dest target/debian
