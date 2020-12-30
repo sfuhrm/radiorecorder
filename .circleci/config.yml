@@ -42,6 +42,23 @@ jobs:
     docker:
       - image: circleci/openjdk:15-jdk-buster
     <<: *shared
+  jpackage:
+    docker:
+      - image: circleci/openjdk:15-jdk-buster
+    working_directory: ~/repo
+    environment:
+      JVM_OPTS: -Xmx1g
+      TERM: dumb
+    steps:
+      - checkout
+      - restore_cache:
+          key: maven-{{ checksum "pom.xml" }}
+      - run:
+          name: Maven Build and test
+          command: mvn clean package
+      - run:
+          name: Create Debian Package
+          command: bash src/jpackage/deb.sh
 
 workflows:
   version: 2
@@ -52,3 +69,4 @@ workflows:
       - jdk13
       - jdk14
       - jdk15
+      - jpackage
