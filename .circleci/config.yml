@@ -62,9 +62,7 @@ jobs:
       - store_artifacts:
           path: target/debian
       - store_artifacts:
-          path: target/radiorecorder-*.tar.*
-      - store_artifacts:
-          path: target/radiorecorder-*.zip
+          path: target
 
 workflows:
   version: 2
