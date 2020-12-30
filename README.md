@@ -33,20 +33,33 @@ apt install ./radiorecorder_1.3.1-1_amd64.deb
 
 The program is a command line only program. It supports multiple parameters:
 
-     URLORNAME           : URLs of the internet radio station(s) or station name
-                           for lookup at http://www.radio-browser.info/
-     -cast (-c) VAL      : Stream to the given chrome cast device.
-     -directory (-d) DIR : Write to this directory. (default: USER-HOME)
-     -help (-h)          : Show this command line help. (default: true)
-     -list-cast (-L)     : List chromecast devices. (default: false)
-     -min-free (-M) MEGS : Minimum of free megs on target drive. (default: 512)
-     -play (-p)          : Play live instead of recording to a file. (default:
-                           false)
-     -reconnect (-r)     : Automatically reconnect after connection loss. (default:
-                           false)
-     -timeout (-T) SECS  : Connect/read timeout in seconds. (default: 60)
-     -use-songnames (-S) : Use songnames from retrieved metadata information. Will
-                           create one file per detected song. (default: false)
+```
+ URLORNAME                              : URLs of the internet radio station(s)
+                                          or station name for lookup at
+                                          http://www.radio-browser.info/
+ -cast (-c) VAL                         : Stream to the given chrome cast
+                                          device.
+ -client (-C) [JAVA_NET |               : Specify HTTP client to use. (default:
+ APACHE_CLIENT_4 | APACHE_CLIENT_5]       APACHE_CLIENT_4)
+ -directory (-d) DIR                    : Write to this directory. (default:
+                                          /home/fury)
+ -help (-h)                             : Show this command line help.
+                                          (default: true)
+ -list-cast (-L)                        : List chromecast devices. (default:
+                                          false)
+ -min-free (-M) MEGS                    : Minimum of free megs on target drive.
+                                          (default: 512)
+ -play (-p)                             : Play live instead of recording to a
+                                          file. (default: false)
+ -reconnect (-r)                        : Automatically reconnect after
+                                          connection loss. (default: false)
+ -timeout (-T) SECS                     : Connect/read timeout in seconds.
+                                          (default: 60)
+ -use-songnames (-S)                    : Use songnames from retrieved metadata
+                                          information. Will create one file per
+                                          detected song. (default: false)
+```
+
 ### Debian package
 
 The installed executable can be executed like this:
