@@ -22,6 +22,8 @@ https://github.com/sfuhrm/radiorecorder/releases
 
 ## Usage
 
+### Command line options
+
 The program is a command line only program. It supports multiple parameters:
 
      URLORNAME           : URLs of the internet radio station(s) or station name
@@ -38,7 +40,20 @@ The program is a command line only program. It supports multiple parameters:
      -timeout (-T) SECS  : Connect/read timeout in seconds. (default: 60)
      -use-songnames (-S) : Use songnames from retrieved metadata information. Will
                            create one file per detected song. (default: false)
+### Debian package
 
+The Debian package can be installed like this:
+
+```shell
+wget https://github.com/sfuhrm/radiorecorder/releases/download/radiorecorder-1.3.1/radiorecorder_1.3.1-1_amd64.deb
+apt install ./radiorecorder_1.3.1-1_amd64.deb
+```
+
+and the installed executable can be executed like this:
+
+```shell
+/opt/radiorecorder/bin/radiorecorder -p synthradio
+```
 
 ## License
 
