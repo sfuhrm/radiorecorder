@@ -1,6 +1,6 @@
 Radio Recorder
 ===================
-![Travis CI Status](https://travis-ci.org/sfuhrm/radiorecorder.svg?branch=master)
+[![Circle CI Status](https://img.shields.io/circleci/build/github/sfuhrm/radiorecorder?style=plastic)](https://app.circleci.com/pipelines/github/sfuhrm/radiorecorder)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 A command line internet radio player and recorder.
