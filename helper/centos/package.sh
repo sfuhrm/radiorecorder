@@ -1,12 +1,6 @@
 MAVEN_VERSION=$(cat circle_maven_version.txt)
 RPM_VERSION=$(echo ${MAVEN_VERSION} | cut -d"-" -f1)
 
-curl --location https://github.com/AdoptOpenJDK/openjdk14-binaries/releases/download/jdk-14.0.2%2B12/OpenJDK14U-jdk_x64_linux_hotspot_14.0.2_12.tar.gz --output - |
-tar -xzvf-
-PATH=$PWD/jdk-14.0.2+12/bin:$PATH
-
-yum install --assumeyes rpm-build
-
 jpackage \
 --name radiorecorder \
 --type rpm \
