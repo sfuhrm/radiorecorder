@@ -1,76 +1,196 @@
-version: 2
-shared: &shared
-  working_directory: ~/repo
-  environment:
-    JVM_OPTS: -Xmx1g
-    TERM: dumb
-  steps:
-    - checkout
-    - restore_cache:
-        key: maven-{{ checksum "pom.xml" }}
-    - run:
-        name: Maven Get Dependencies
-        command: mvn dependency:go-offline --fail-never
-    - save_cache:
-        paths:
-          - ~/.m2
-        key: maven-{{ checksum "pom.xml" }}
-    - run:
-        name: Maven Build and test
-        command: mvn clean package
-    - run:
-        name: Maven Install
-        command: mvn install
+version: 2.1
+
 jobs:
-  jdk8:
+  build:
     docker:
-      - image: circleci/openjdk:8-jdk-buster
-    <<: *shared
-  jdk11:
-    docker:
-      - image: circleci/openjdk:11-jdk-buster
-    <<: *shared
-  jdk13:
-    docker:
-      - image: circleci/openjdk:13-jdk-buster
-    <<: *shared
-  jdk14:
-    docker:
-      - image: circleci/openjdk:14-jdk-buster
-    <<: *shared
-  jdk15:
-    docker:
-      - image: circleci/openjdk:15-jdk-buster
-    <<: *shared
-  jpackage:
-    docker:
-      - image: circleci/openjdk:15-jdk-buster
-    working_directory: ~/repo
-    environment:
-      JVM_OPTS: -Xmx1g
-      TERM: dumb
+      - image: circleci/openjdk:11-jdk-stretch
+
     steps:
       - checkout
+
+      - run: |
+          echo "$(git tag -l --points-at HEAD)" > ~/circle_tag.txt
+
+      - run: |
+          mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout > ~/circle_maven_version.txt
+
       - restore_cache:
-          key: maven-{{ checksum "pom.xml" }}
+          key: circleci-maven-{{ checksum "pom.xml" }}
+
+      - run: mvn dependency:go-offline
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: circleci-maven-{{ checksum "pom.xml" }}
+
+      - run: mvn package
+
+      - store_test_results:
+          path: target/surefire-reports
+
+      - persist_to_workspace:
+          root: ~/
+          paths: circle_tag.txt
+
+      - persist_to_workspace:
+          root: ~/
+          paths: circle_maven_version.txt
+
+      - persist_to_workspace:
+          root: .
+          paths: target
+
+  build-windows-installer:
+    machine:
+      image: "windows-server-2019-vs2019:stable"
+      resource_class: "windows.medium"
+      shell: bash.exe
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - circle-packages-{{ checksum ".circleci/config.yml" }}
+
       - run:
-          name: Maven Build and test
-          command: mvn clean package
+          name: Install nuget dependencies
+          command: |
+            nuget install WiX.Toolset -Version 3.9.1208.0
+
       - run:
-          name: Create Debian Package
-          command: bash src/jpackage/debian.sh
+          name: Install chocolatey dependencies
+          command: |
+            choco install wget
+
+      - run:
+          name: Install JDK with jpackage in it
+          command: ./helper/win64/download_jdk.sh
+
+      - save_cache:
+          paths:
+            - jdk-14
+          key: circle-packages-{{ checksum ".circleci/config.yml" }}
+
+      - attach_workspace:
+          at: ./
+
+      - run:
+          name: Build installer
+          command: |
+            export PATH=/c/Users/circleci/project/Wix.Toolset.3.9.1208.0/tools/wix:$PATH
+            ./helper/win64/package.sh
+
       - store_artifacts:
-          path: target/debian
+          path: .\target\jpackage-app
+
+      - run:
+          name: Copy installer to stripped name
+          command: |
+            cp ./target/jpackage-app/radiorecorder-$(cat circle_win_version.txt).msi ./target/jpackage-app/radiorecorder.msi
+
+      - run:
+          name: Test installer
+          shell: powershell.exe
+          command: |
+            Start-Process msiexec.exe -Wait -ArgumentList '/I C:\Users\circleci\project\target\jpackage-app\radiorecorder.msi /quiet /L*V msilog.txt'
+            if(![System.IO.File]::Exists('C:\Program Files\radiorecorder\radiorecorder.exe')){throw (New-Object System.IO.FileNotFoundException("Installed file not found!"))}
+
       - store_artifacts:
-          path: target
+          path: msilog.log
+          destination: msilog.log
+
+      - persist_to_workspace:
+          root: ~/
+          paths: project\target\jpackage-app
+
+
+  build-debian-package:
+    docker:
+      - image: "debian:10"
+        auth:
+          username: $DOCKERHUB_USER
+          password: $DOCKERHUB_PASSWORD
+    steps:
+      - checkout
+
+      - attach_workspace:
+          at: ./
+
+      - run:
+          name: Build installer
+          command: |
+            ./helper/debian/package.sh
+
+      - store_artifacts:
+          path: ./target/jpackage-app
+
+      - run:
+          name: Test installer
+          command: |
+            apt install ./target/jpackage-app/*.deb
+            if [ ! -f /opt/radiorecorder/bin/radiorecorder ]; then echo "File not found!"; exit 1; fi
+
+      - persist_to_workspace:
+          root: .
+          paths: ./target/jpackage-app
+
+  build-centos-package:
+    docker:
+      - image: "centos:7"
+        auth:
+          username: $DOCKERHUB_USER
+          password: $DOCKERHUB_PASSWORD
+    steps:
+      - checkout
+
+      - attach_workspace:
+          at: ./
+
+      - run:
+          name: Build installer
+          command: |
+            ./helper/centos/package.sh
+
+      - store_artifacts:
+          path: ./target/jpackage-app
+
+      - run:
+          name: Test installer
+          command: |
+            yum install --assumeyes ./target/jpackage-app/*.rpm
+            if [ ! -f /opt/radiorecorder/bin/radiorecorder ]; then echo "File not found!"; exit 1; fi
+
+      - persist_to_workspace:
+          root: .
+          paths: ./target/jpackage-app
+
+release-filter: &release-filter
+  filters:
+    # ignore any commit on any branch by default
+    branches:
+      ignore: /DISABLED.*/
+    # only act on version tags
+    tags:
+      only: /^v\d+\.\d+\.\d+$/
 
 workflows:
   version: 2
-  work:
+  build_release:
     jobs:
-      - jdk8
-      - jdk11
-      - jdk13
-      - jdk14
-      - jdk15
-      - jpackage
+      - build:
+          filters:
+            tags:
+              only: /.*/
+      - build-windows-installer:
+          <<: *release-filter
+          requires:
+            - build
+      - build-debian-package:
+          <<: *release-filter
+          requires:
+            - build
+      - build-centos-package:
+          <<: *release-filter
+          requires:
+            - build
