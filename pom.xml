@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>de.sfuhrm</groupId>
   <artifactId>radiorecorder</artifactId>
   <version>1.3.2-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
   <name>Radio Recorder</name>
   <description>Records and plays internet radio streams</description>
-  <packaging>jar</packaging>
   <url>https://github.com/sfuhrm/radiorecorder</url>
   <licenses>
     <license>
@@ -16,11 +18,7 @@
       <comments>A business-friendly OSS license</comments>
     </license>
   </licenses>
-  <scm>
-    <url>https://github.com/sfuhrm/radiorecorder</url>
-    <connection>scm:git:https://github.com/sfuhrm/radiorecorder.git</connection>
-    <tag>HEAD</tag>
-  </scm>
+
   <developers>
     <developer>
       <id>stephan</id>
@@ -28,12 +26,20 @@
       <email>s@sfuhrm.de</email>
     </developer>
   </developers>
+
+  <scm>
+    <url>https://github.com/sfuhrm/radiorecorder</url>
+    <connection>scm:git:https://github.com/sfuhrm/radiorecorder.git</connection>
+    <tag>HEAD</tag>
+  </scm>
+
   <properties>
     <assembly.dir>${project.artifactId}-${project.version}</assembly.dir>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
+
   <dependencies>
     <dependency>
       <groupId>de.sfuhrm</groupId>
@@ -136,6 +142,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
   <build>
     <plugins>
       <plugin>
