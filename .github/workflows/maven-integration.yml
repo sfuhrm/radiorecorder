@@ -44,7 +44,7 @@ jobs:
         name: binary
     - name: Extract build
       run: |
-        tar -xzvf radiorecorder-${{ steps.version.outputs.version }}-bin.tar.gz
+        tar -xzvf radiorecorder-${{ needs.build.outputs.version }}-bin.tar.gz
     - name: Install docker compose
       run: |
         sudo apt-get update && sudo apt-get install --yes docker-compose
@@ -66,7 +66,7 @@ jobs:
           ARGS=$ARGS" -proxy http://localhost:3128/ "
         fi
         echo "Args: $ARGS"
-        radiorecorder-${{ steps.version.outputs.version }}-bin/radiorecorder-${{ steps.version.outputs.version }}/bin/radiorecorder.sh $ARGS
+        radiorecorder-${{ needs.build.outputs.version }}-bin/radiorecorder-${{ needs.build.outputs.version }}/bin/radiorecorder.sh $ARGS
     - name: Stop the proxy
       working-directory: ./.github/docker-compose
       run: |
