@@ -46,7 +46,8 @@ jobs:
           tar -xzvf radiorecorder-${{ needs.build.outputs.version }}-bin.tar.gz
       - name: Setup container
         run: |
-          cat /etc/etc/debian_version
+          ls -al
+          cat /etc/debian_version
           apt-get update
           apt-get install -y --no-install-recommends curl openssh-client git fakeroot curl binutils
           mkdir ${{ env.JAVA_HOME }}
