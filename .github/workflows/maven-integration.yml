@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK
@@ -18,6 +20,14 @@ jobs:
         java-version: 8
     - name: Build with Maven
       run: mvn -B package --file pom.xml
+    - name: Extract current maven version
+      run: echo "::set-output name=version::$(mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)"
+      id: version
+      shell: bash
+    - uses: actions/upload-artifact@v2
+      with:
+        name: binary
+        path: target/radiorecorder-${{ steps.version.outputs.version }}-bin.tar.gz
   run:
     needs: build
     runs-on: ubuntu-latest
@@ -28,6 +38,13 @@ jobs:
         proxy: [ NO, YES ]
     steps:
     - uses: actions/checkout@v2
+    - name: Download build
+      uses: actions/download-artifact@v2
+      with:
+        name: binary
+    - name: Extract build
+      run: |
+        tar -xzvf radiorecorder-${{ steps.version.outputs.version }}-bin.tar.gz
     - name: Install docker compose
       run: |
         sudo apt-get update && sudo apt-get install --yes docker-compose
@@ -49,7 +66,7 @@ jobs:
           ARGS=$ARGS" -proxy http://localhost:3128/ "
         fi
         echo "Args: $ARGS"
-        target/radiorecorder-*-bin/radiorecorder-*/bin/radiorecorder.sh $ARGS
+        radiorecorder-${{ steps.version.outputs.version }}-bin/radiorecorder-${{ steps.version.outputs.version }}/bin/radiorecorder.sh $ARGS
     - name: Stop the proxy
       working-directory: ./.github/docker-compose
       run: |
