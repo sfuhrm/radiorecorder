@@ -5,9 +5,3 @@ services:
     image: datadog/squid:latest
     ports:
       - "3128:3128"
-    volumes:
-      - "log:/var/log/squid"
-
-volumes:
-  log:
-    external: true

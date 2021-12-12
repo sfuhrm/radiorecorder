@@ -72,7 +72,11 @@ jobs:
     - name: Show proxy logs and stop the proxy
       working-directory: ./.github/docker-compose
       run: |
+        echo "Access log:"
+        docker exec squid cat /var/log/squid/access.log
+        echo "Container log:"
         docker-compose logs
+        echo "Shutting down"
         docker-compose down
       if: matrix.proxy == 'YES'
     - name: Test first mp3 file
