@@ -1,6 +1,8 @@
 Radio Recorder
 ===================
 [![Circle CI Status](https://img.shields.io/circleci/build/github/sfuhrm/radiorecorder?style=plastic)](https://app.circleci.com/pipelines/github/sfuhrm/radiorecorder)
+[![Dependency Check](https://github.com/sfuhrm/radiorecorder/actions/workflows/dependency-check.yml/badge.svg)](https://github.com/sfuhrm/radiorecorder/actions/workflows/dependency-check.yml)
+[![Integration Test](https://github.com/sfuhrm/radiorecorder/actions/workflows/maven-integration.yml/badge.svg)](https://github.com/sfuhrm/radiorecorder/actions/workflows/maven-integration.yml)
 [![ReleaseDate](https://img.shields.io/github/release-date/sfuhrm/radiorecorder)](https://github.com/sfuhrm/radiorecorder/releases)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
