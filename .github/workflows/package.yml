@@ -42,7 +42,7 @@ jobs:
           name: binary
       - name: Extract build
         run: |
-          tar -xzvf radiorecorder-${{ needs.build.outputs.version }}-bin.tar.gz
+          tar -xzvf radiorecorder-${{ needs.build.outputs.version }}-app.tar.gz
       - name: Setup container
         run: |
           echo "List of current dir:"
