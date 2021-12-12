@@ -36,7 +36,7 @@ jobs:
           echo "File ${FIRST_MPEG} is too short: ${FILE_SIZE}"
           exit 2
         else
-          echo "File size of ${FIRST_MPEG}: ${FIRST_MPEG}"
+          echo "File size of ${FIRST_MPEG}: ${FILE_SIZE}"
         fi
 
         FILE_TYPE="$(file --brief --mime ${FIRST_MPEG})"
