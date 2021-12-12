@@ -15,41 +15,55 @@
  */
 package de.sfuhrm.radiorecorder.http;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 /**
- * Configures an HttpConnection. The connection can be created
- * after construction.
- * @see #build() {@code build()} for building a HttpConnection
+ * Stores builder properties.
  * @author Stephan Fuhrmann
  */
-public interface HttpConnectionBuilder {
+@Slf4j
+class AbstractHttpConnectionBuilder {
+    protected Optional<Integer> connectTimeout = Optional.empty();
+    protected Optional<Integer> readTimeout = Optional.empty();
+    protected Map<String, String> requestProperties = new HashMap<>();
+    protected Optional<URL> proxy = Optional.empty();
+
     /** Configures the timeout for connecting to the server.
      * @param timeout the timeout in milliseconds.
      */
-    void setConnectTimeout(int timeout);
+    public void setConnectTimeout(int timeout) {
+        log.debug("Connect timeout: {}", timeout);
+        connectTimeout = Optional.of(timeout);
+    }
 
     /** Configures the timeout for reading from the server.
      * @param timeout the timeout in milliseconds.
      */
-    void setReadTimeout(int timeout);
+    public void setReadTimeout(int timeout) {
+        log.debug("Read timeout: {}", timeout);
+        readTimeout = Optional.of(timeout);
+    }
 
     /** Adds a HTTP request header field to the request.
      * @param key the header field name, for example "User-Agent".
      * @param value the header field value.
      */
-    void setRequestProperty(String key, String value);
+    public void setRequestProperty(String key, String value) {
+        log.debug("Request property: {} = {}", key, value);
+        requestProperties.put(key, value);
+    }
 
     /** Sets the HTTP/HTTPS proxy to use.
      * @param proxy the URL of the proxy to use.
      */
-    void setProxy(URL proxy);
-
-    /** Constructs a connection from this builder.
-     * The connection is usually being opened by this method.
-     * @return an open HTTP connection.
-     * @throws IOException if building the connection with the given parameters failed.
-     */
-    HttpConnection build() throws IOException;
+    public void setProxy(URL proxy) {
+        log.debug("Proxy: {}", proxy.toExternalForm());
+        this.proxy = Optional.of(proxy);
+    }
 }

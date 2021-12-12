@@ -54,6 +54,15 @@ public class ConnectionHandler {
         builder.setReadTimeout(consumerContext.getTimeout());
     }
 
+    /** Configure the proxy for the connection.
+     * @param builder the connection to configure.
+     */
+    protected void configureProxy(HttpConnectionBuilder builder) throws IOException {
+        if (consumerContext.getProxy() != null) {
+            builder.setProxy(consumerContext.getProxy());
+        }
+    }
+
     /** Set headers to motivate Icecast servers to send meta data.
      * @param builder the connection to configure.
      * @see <a href="https://anton.logvinenko.name/en/blog/how-to-get-title-from-audio-stream-with-python.html">ID3 and icecast</a>
@@ -73,11 +82,13 @@ public class ConnectionHandler {
         configureIcecast(builder);
         configureTimeout(builder);
         configureClient(builder);
+        configureProxy(builder);
     }
 
     /** Opens the url using a configured connection. */
     private HttpConnection openConnection(URL url) throws RadioException {
-        try (HttpConnectionBuilder builder = builderFactory.newInstance(url)) {
+        try {
+            HttpConnectionBuilder builder = builderFactory.newInstance(url);
             configure(builder);
             return builder.build();
         } catch (IOException ex) {

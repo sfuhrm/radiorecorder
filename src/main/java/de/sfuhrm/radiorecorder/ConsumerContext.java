@@ -97,4 +97,9 @@ public class ConsumerContext {
     public HttpConnectionBuilderFactory.HttpClientType getHttpClient() {
         return params.getHttpClientType();
     }
+
+    /** The HTTP proxy to use or NULL. */
+    public URL getProxy() {
+        return params.getProxy();
+    }
 }

@@ -17,7 +17,14 @@ package de.sfuhrm.radiorecorder.http;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.SocketAddress;
 import java.net.URL;
+import java.net.URLConnection;
+import java.util.HashMap;
+import java.util.Map;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -25,46 +32,36 @@ import lombok.extern.slf4j.Slf4j;
  * @author Stephan Fuhrmann
  */
 @Slf4j
-class JavaNetHttpConnectionBuilder implements HttpConnectionBuilder {
+class JavaNetHttpConnectionBuilder extends AbstractHttpConnectionBuilder implements HttpConnectionBuilder {
     private final URL url;
-    private HttpURLConnection connection;
 
     JavaNetHttpConnectionBuilder(URL url) {
         this.url = url;
     }
 
-    private HttpURLConnection connection() throws IOException {
-        if (connection == null) {
-            connection = (HttpURLConnection)url.openConnection();
-        }
-        return connection;
-    }
-
-    @Override
-    public void setConnectTimeout(int timeout) throws IOException {
-        log.debug("Connect timeout is {}", timeout);
-        connection().setConnectTimeout(timeout);
-    }
-
-    @Override
-    public void setReadTimeout(int timeout) throws IOException {
-        log.debug("Read timeout is {}", timeout);
-        connection().setReadTimeout(timeout);
-    }
-
-    @Override
-    public void setRequestProperty(String key, String value) throws IOException {
-        log.debug("Request property {} => {}", key, value);
-        connection().setRequestProperty(key, value);
-    }
-
     @Override
     public HttpConnection build() throws IOException {
-        return new JavaNetHttpConnection(connection());
-    }
 
-    @Override
-    public void close() {
-        connection.disconnect();
+        Proxy proxyToUse = Proxy.NO_PROXY;
+
+        if (proxy.isPresent()) {
+            proxyToUse = new Proxy(Proxy.Type.HTTP,
+                    new InetSocketAddress(proxy.get().getHost(), proxy.get().getPort()));
+        }
+        HttpURLConnection connection = (HttpURLConnection)url.openConnection(proxyToUse);
+
+        if (readTimeout.isPresent()) {
+            connection.setReadTimeout(readTimeout.get());
+        }
+
+        if (connectTimeout.isPresent()) {
+            connection.setConnectTimeout(connectTimeout.get());
+        }
+
+        if (! requestProperties.isEmpty()) {
+            requestProperties.forEach(connection::setRequestProperty);
+        }
+
+        return new JavaNetHttpConnection(connection);
     }
 }

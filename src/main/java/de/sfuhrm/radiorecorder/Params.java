@@ -16,6 +16,7 @@
 package de.sfuhrm.radiorecorder;
 
 import java.io.File;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
@@ -83,6 +84,10 @@ public class Params {
     @Getter
     @Option(name = "-client", aliases = {"-C"}, usage = "Specify HTTP client to use.", metaVar = "CLIENT")
     private HttpConnectionBuilderFactory.HttpClientType httpClientType = HttpConnectionBuilderFactory.HttpClientType.APACHE_CLIENT_5;
+
+    @Getter
+    @Option(name = "-proxy", aliases = {"-P"}, usage = "The HTTP/HTTPS proxy to use.", metaVar = "URL")
+    private URL proxy;
 
     @Getter
     @Argument(usage = "URLs of the internet radio station(s) or station name for lookup at http://www.radio-browser.info/", metaVar = "URLORNAME", required = true)

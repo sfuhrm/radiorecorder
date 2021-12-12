@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 import org.apache.hc.core5.util.Timeout;
 
@@ -31,7 +32,7 @@ import java.net.URL;
  * @author Stephan Fuhrmann
  */
 @Slf4j
-class ApacheHttpClient5ConnectionBuilder implements HttpConnectionBuilder {
+class ApacheHttpClient5ConnectionBuilder extends AbstractHttpConnectionBuilder implements HttpConnectionBuilder {
 
     private final RequestConfig.Builder configBuilder;
     private final ClassicRequestBuilder requestBuilder;
@@ -43,34 +44,23 @@ class ApacheHttpClient5ConnectionBuilder implements HttpConnectionBuilder {
         log.debug("Request for uri {}", requestBuilder.getUri());
     }
 
-
-    @Override
-    public void setConnectTimeout(int timeout) {
-        log.debug("Connect timeout is {}", timeout);
-        configBuilder.setConnectTimeout(Timeout.ofMilliseconds(timeout));
-        configBuilder.setConnectionRequestTimeout(Timeout.ofMilliseconds(timeout));
-    }
-
-    @Override
-    public void setReadTimeout(int timeout) {
-        log.debug("Read timeout is {}", timeout);
-        configBuilder.setResponseTimeout(Timeout.ofMilliseconds(timeout));
-    }
-
-    @Override
-    public void setRequestProperty(String key, String value) {
-        log.debug("Request property {} => {}", key, value);
-        requestBuilder.addHeader(key, value);
-    }
-
     @Override
     public HttpConnection build() throws IOException {
+        if (connectTimeout.isPresent()) {
+            configBuilder.setConnectTimeout(Timeout.ofMilliseconds(connectTimeout.get()));
+            configBuilder.setConnectionRequestTimeout(Timeout.ofMilliseconds(connectTimeout.get()));
+        }
+
+        readTimeout.ifPresent(integer -> configBuilder.setResponseTimeout(Timeout.ofMilliseconds(integer)));
+        if (! requestProperties.isEmpty()) {
+            requestProperties
+                    .forEach(requestBuilder::addHeader);
+        }
+        if (proxy.isPresent()) {
+            HttpHost proxyHost = new HttpHost(proxy.get().getProtocol(), proxy.get().getHost(), proxy.get().getPort());
+            configBuilder.setProxy(proxyHost);
+        }
         CloseableHttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(configBuilder.build()).build();
         return new ApacheHttpClient5Connection(client, client.execute(requestBuilder.build()), requestBuilder.getUri());
-    }
-
-    @Override
-    public void close() {
-        // nothing to close here
     }
 }

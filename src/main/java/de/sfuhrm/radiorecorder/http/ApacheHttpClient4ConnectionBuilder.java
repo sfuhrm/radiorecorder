@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -29,7 +30,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
  * @author Stephan Fuhrmann
  */
 @Slf4j
-class ApacheHttpClient4ConnectionBuilder implements HttpConnectionBuilder {
+class ApacheHttpClient4ConnectionBuilder extends AbstractHttpConnectionBuilder implements HttpConnectionBuilder {
 
     private final RequestConfig.Builder configBuilder;
     private final RequestBuilder requestBuilder;
@@ -41,34 +42,23 @@ class ApacheHttpClient4ConnectionBuilder implements HttpConnectionBuilder {
         log.debug("Request for uri {}", requestBuilder.getUri());
     }
 
-
-    @Override
-    public void setConnectTimeout(int timeout) {
-        log.debug("Connect timeout is {}", timeout);
-        configBuilder.setConnectTimeout(timeout);
-        configBuilder.setConnectionRequestTimeout(timeout);
-    }
-
-    @Override
-    public void setReadTimeout(int timeout) {
-        log.debug("Read timeout is {}", timeout);
-        configBuilder.setSocketTimeout(timeout);
-    }
-
-    @Override
-    public void setRequestProperty(String key, String value) {
-        log.debug("Request property {} => {}", key, value);
-        requestBuilder.addHeader(key, value);
-    }
-
     @Override
     public HttpConnection build() throws IOException {
+        if (connectTimeout.isPresent()) {
+            configBuilder.setConnectTimeout(connectTimeout.get());
+            configBuilder.setConnectionRequestTimeout(connectTimeout.get());
+        }
+        readTimeout.ifPresent(configBuilder::setSocketTimeout);
+        if (! requestProperties.isEmpty()) {
+            requestProperties
+                    .forEach(requestBuilder::addHeader);
+        }
+        if (proxy.isPresent()) {
+            HttpHost proxyHost = new HttpHost(proxy.get().getHost(), proxy.get().getPort(), proxy.get().getProtocol());
+            configBuilder.setProxy(proxyHost);
+        }
+
         CloseableHttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(configBuilder.build()).build();
         return new ApacheHttpClient4Connection(client, client.execute(requestBuilder.build()), requestBuilder.getUri());
-    }
-
-    @Override
-    public void close() {
-        // nothing to close here
     }
 }
