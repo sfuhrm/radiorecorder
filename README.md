@@ -17,16 +17,18 @@ Some of the features are:
 
 ## Downloading & installation
 
-The current version can be downloaded for Debian systems here:
+The current version can be downloaded for Debian, CentOS and Windows systems here:
 
 https://github.com/sfuhrm/radiorecorder/releases
 
 The Debian package can be downloaded and installed like this:
 
 ```shell
-wget https://github.com/sfuhrm/radiorecorder/releases/download/radiorecorder-1.3.1/radiorecorder_1.3.1-1_amd64.deb
-apt install ./radiorecorder_1.3.1-1_amd64.deb
+wget https://github.com/sfuhrm/radiorecorder/releases/download/radiorecorder-1.4.0/radiorecorder_1.4.0-1_amd64.deb
+apt install ./radiorecorder_1.4.0-1_amd64.deb
 ```
+
+after that, the executable is in `/opt/radiorecorder/bin/radiorecorder`.
 
 ## Usage
 
@@ -38,14 +40,18 @@ The program is a command line only program. It supports multiple parameters:
  URLORNAME                              : URLs of the internet radio station(s)
                                           or station name for lookup at
                                           http://www.radio-browser.info/
+ -abort-after KB                        : Abort after writing the given amount
+                                          of kilobytes to target drive.
  -cast (-c) VAL                         : Stream to the given chrome cast
                                           device.
  -client (-C) [JAVA_NET |               : Specify HTTP client to use. (default:
- APACHE_CLIENT_4 | APACHE_CLIENT_5]       APACHE_CLIENT_4)
+ APACHE_CLIENT_4 | APACHE_CLIENT_5]       APACHE_CLIENT_5)
  -directory (-d) DIR                    : Write to this directory. (default:
                                           /home/fury)
  -help (-h)                             : Show this command line help.
-                                          (default: true)
+                                          (default: false)
+ -limit (-l) COUNT                      : Limit of stations to download in
+                                          parallel. (default: 10)
  -list-cast (-L)                        : List chromecast devices. (default:
                                           false)
  -min-free (-M) MEGS                    : Minimum of free megs on target drive.
