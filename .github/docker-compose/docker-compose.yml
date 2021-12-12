@@ -1,0 +1,7 @@
+version: "3.3"
+services:
+  squid:
+    container_name: squid
+    image: datadog/squid:latest
+    ports:
+      - "3128:3128"
