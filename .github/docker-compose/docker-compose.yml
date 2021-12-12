@@ -10,3 +10,4 @@ services:
 
 volumes:
   log:
+    external: true
