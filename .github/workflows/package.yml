@@ -1,0 +1,54 @@
+name: Package
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'adopt'
+        java-version: 8
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml
+    - name: Extract current maven version
+      run: echo "::set-output name=version::$(mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)"
+      id: version
+      shell: bash
+    - uses: actions/upload-artifact@v2
+      with:
+        name: binary
+        path: target/radiorecorder-${{ steps.version.outputs.version }}-bin.tar.gz
+  debian:
+    needs: build
+    runs-on: ubuntu-latest
+    container: debian:10
+    env:
+      JDK_URL: https://github.com/AdoptOpenJDK/openjdk15-binaries/releases/download/jdk-15.0.1%2B9/OpenJDK15U-jdk_x64_linux_hotspot_15.0.1_9.tar.gz
+      JAVA_HOME: /usr/lib/jdk
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download build
+        uses: actions/download-artifact@v2
+        with:
+          name: binary
+      - name: Extract build
+        run: |
+          tar -xzvf radiorecorder-${{ needs.build.outputs.version }}-bin.tar.gz
+      - name: Setup container
+        run: |
+          cat /etc/etc/debian_version
+          apt-get update
+          apt-get install -y --no-install-recommends curl openssh-client git fakeroot curl binutils
+          mkdir ${{ env.JAVA_HOME }}
+          curl --insecure --location ${{ env.JDK_URL }} --output - | \
+          tar -xzf- --strip-components 1 --directory ${{ env.JAVA_HOME }}
