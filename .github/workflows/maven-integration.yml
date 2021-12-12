@@ -25,7 +25,7 @@ jobs:
       run: target/radiorecorder-*-bin/radiorecorder-*/bin/radiorecorder.sh -abort-after 100 deutschlandfunk -d deutschlandfunk
     - name: Output mime type of first mp3
       run: |
-        if [ "$(file --brief --mime $(ls deutschlandfunk/*/*.mp3 | head -n1))" == "Xaudio/mpeg; charset=binary" ]; then
+        if [ "$(file --brief --mime $(ls deutschlandfunk/*/*.mp3 | head -n1))" != "Xaudio/mpeg; charset=binary" ]; then
           echo "File type is wrong: $(file --mime $(ls deutschlandfunk/*/*.mp3 | head -n1))"
           exit 1
         fi
