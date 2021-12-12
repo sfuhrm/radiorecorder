@@ -71,3 +71,7 @@ jobs:
             --linux-app-category sound \
             --dest jpackage-app \
             --verbose
+      - uses: actions/upload-artifact@v2
+        with:
+          name: debian
+          path: jpackage-app/*
