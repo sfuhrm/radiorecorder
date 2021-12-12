@@ -24,7 +24,7 @@ jobs:
       run: mvn -B package --file pom.xml
     - name: Run created binary
       run: target/radiorecorder-*-bin/radiorecorder-*/bin/radiorecorder.sh -client ${{ matrix.client }} -abort-after 100 deutschlandfunk -d deutschlandfunk
-    - name: Output mime type of first mp3
+    - name: Test first mp3 file
       run: |
         FIRST_MPEG=$(ls deutschlandfunk/*/*.mp3 | head -n1)
         if [ ! -f "${FIRST_MPEG}" ]; then
