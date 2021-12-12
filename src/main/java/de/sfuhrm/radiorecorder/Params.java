@@ -74,7 +74,7 @@ public class Params {
 
     @Getter
     @Option(name = "-client", aliases = {"-C"}, usage = "Specify HTTP client to use.", metaVar = "CLIENT")
-    private HttpConnectionBuilderFactory.HttpClientType httpClientType = HttpConnectionBuilderFactory.HttpClientType.APACHE_CLIENT_4;
+    private HttpConnectionBuilderFactory.HttpClientType httpClientType = HttpConnectionBuilderFactory.HttpClientType.APACHE_CLIENT_5;
 
     @Getter
     @Argument(usage = "URLs of the internet radio station(s) or station name for lookup at http://www.radio-browser.info/", metaVar = "URLORNAME", required = true)
