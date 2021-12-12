@@ -30,6 +30,7 @@ jobs:
         client: [ JAVA_NET, APACHE_CLIENT_4, APACHE_CLIENT_5 ]
         proxy: [ NO, YES ]
     steps:
+    - uses: actions/checkout@v2
     - name: Install docker compose
       run: |
         sudo apt-get update && sudo apt-get install --yes docker-compose
