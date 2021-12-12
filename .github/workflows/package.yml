@@ -54,7 +54,8 @@ jobs:
           curl --insecure --location ${{ env.JDK_URL }} --output - | \
           tar -xzf- --strip-components 1 --directory ${{ env.JAVA_HOME }}
       - name: Build package
-        run: |          
+        run: |
+          APPDIR=$(pwd)/radiorecorder-${{ needs.build.outputs.version }}
           ${{ env.JAVA_HOME }}/bin/jpackage \
             --name radiorecorder \
             --type deb \
@@ -62,10 +63,10 @@ jobs:
             --copyright "Stephan Fuhrmann" \
             --vendor "Stephan Fuhrmann" \
             --description "Records and plays internet radio streams" \
-            --license-file radiorecorder-${{ needs.build.outputs.version }}/LICENSE \
+            --license-file ${APPDIR}/LICENSE \
             --main-jar lib/radiorecorder-${{ needs.build.outputs.version }}.jar \
             --main-class de.sfuhrm.radiorecorder.Main \
-            --input radiorecorder-${{ needs.build.outputs.version }} \
+            --input ${APPDIR} \
             --linux-deb-maintainer s@sfuhrm.de \
             --linux-app-category sound \
             --dest jpackage-app \
