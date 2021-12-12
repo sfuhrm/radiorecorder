@@ -28,8 +28,8 @@
   </developers>
 
   <scm>
-    <url>https://github.com/sfuhrm/radiorecorder</url>
-    <connection>scm:git:https://github.com/sfuhrm/radiorecorder.git</connection>
+    <url>git@github.com:sfuhrm/radiorecorder.git</url>
+    <connection>scm:git:git@github.com:sfuhrm/radiorecorder.git</connection>
     <tag>HEAD</tag>
   </scm>
 
