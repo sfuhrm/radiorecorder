@@ -12,6 +12,7 @@ jobs:
     strategy:
       matrix:
         java: [ 8, 11, 17 ]
+        client: [ JAVA_NET, APACHE_CLIENT_4, APACHE_CLIENT_5 ]
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK ${{ matrix.java }}
@@ -22,7 +23,7 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
     - name: Run created binary
-      run: target/radiorecorder-*-bin/radiorecorder-*/bin/radiorecorder.sh -abort-after 100 deutschlandfunk -d deutschlandfunk
+      run: target/radiorecorder-*-bin/radiorecorder-*/bin/radiorecorder.sh -client ${{ matrix.client }} -abort-after 100 deutschlandfunk -d deutschlandfunk
     - name: Output mime type of first mp3
       run: |
         FIRST_MPEG=$(ls deutschlandfunk/*/*.mp3 | head -n1)
