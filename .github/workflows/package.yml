@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     container: debian:10
     env:
-      JDK_URL: https://github.com/AdoptOpenJDK/openjdk15-binaries/releases/download/jdk-15.0.1%2B9/OpenJDK15U-jdk_x64_linux_hotspot_15.0.1_9.tar.gz
+      JDK_URL: https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.1%2B12/OpenJDK17U-jdk_x64_linux_hotspot_17.0.1_12.tar.gz
       JAVA_HOME: /usr/lib/jdk
     steps:
       - name: Download build
@@ -65,7 +65,7 @@ jobs:
             --copyright "Stephan Fuhrmann" \
             --vendor "Stephan Fuhrmann" \
             --description "Records and plays internet radio streams" \
-            --license-file radiorecorder-${VERSION}/LICENSE \
+            --license-file LICENSE \
             --main-jar lib/radiorecorder-${{ needs.build.outputs.version }}.jar \
             --main-class de.sfuhrm.radiorecorder.Main \
             --input radiorecorder-${VERSION} \
