@@ -27,7 +27,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: binary
-        path: target/radiorecorder-${{ steps.version.outputs.version }}-app.tar.gz
+        path: target/radiorecorder-${{ steps.version.outputs.version }}-app
   debian:
     needs: build
     runs-on: ubuntu-latest
@@ -40,9 +40,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: binary
-      - name: Extract build
-        run: |
-          tar -xzvf radiorecorder-${{ needs.build.outputs.version }}-app.tar.gz
       - name: Setup container
         run: |
           echo "List of current dir:"
