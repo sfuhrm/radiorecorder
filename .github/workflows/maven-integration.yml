@@ -48,7 +48,7 @@ jobs:
     - name: Install docker compose
       run: |
         sudo apt-get update && sudo apt-get install --yes docker-compose
-      if: proxy == 'YES'
+      if: matrix.proxy == 'YES'
     - name: Set up JDK ${{ matrix.java }}
       uses: actions/setup-java@v2
       with:
@@ -60,11 +60,11 @@ jobs:
         pwd
         ls -al
         docker-compose up --detach
-      if: proxy == 'YES'
+      if: matrix.proxy == 'YES'
     - name: Run created binary
       run: |
         ARGS="-client ${{ matrix.client }} -abort-after 100 deutschlandfunk -d deutschlandfunk"
-        if [ "${{ matrix.java }}" = "YES" ]; then
+        if [ "${{ matrix.proxy }}" = "YES" ]; then
           ARGS=$ARGS" -proxy http://localhost:3128/ "
         fi
         echo "Args: $ARGS"
@@ -74,7 +74,7 @@ jobs:
       run: |
         docker-compose logs
         docker-compose down
-      if: proxy == 'YES'
+      if: matrix.proxy == 'YES'
     - name: Test first mp3 file
       run: |
         FIRST_MPEG=$(ls deutschlandfunk/*/*.mp3 | head -n1)
