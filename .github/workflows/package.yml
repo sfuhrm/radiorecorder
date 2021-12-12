@@ -36,7 +36,6 @@ jobs:
       JDK_URL: https://github.com/AdoptOpenJDK/openjdk15-binaries/releases/download/jdk-15.0.1%2B9/OpenJDK15U-jdk_x64_linux_hotspot_15.0.1_9.tar.gz
       JAVA_HOME: /usr/lib/jdk
     steps:
-      - uses: actions/checkout@v2
       - name: Download build
         uses: actions/download-artifact@v2
         with:
@@ -47,7 +46,7 @@ jobs:
       - name: Setup container
         run: |
           echo "List of current dir:"
-          ls -al
+          ls -alR
           echo "Debian version:"
           cat /etc/debian_version
           echo "Updating"
@@ -57,6 +56,8 @@ jobs:
           mkdir ${{ env.JAVA_HOME }}
           curl --insecure --location ${{ env.JDK_URL }} --output - | \
           tar -xzf- --strip-components 1 --directory ${{ env.JAVA_HOME }}
+      - name: Build package
+        run: |          
           ${{ env.JAVA_HOME }}/bin/jpackage \
             --name radiorecorder \
             --type deb \
