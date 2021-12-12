@@ -26,19 +26,24 @@ jobs:
     - name: Output mime type of first mp3
       run: |
         FIRST_MPEG=$(ls deutschlandfunk/*/*.mp3 | head -n1)
-        if [ ! -f "${FIRST_MPEG}"]; then
+        if [ ! -f "${FIRST_MPEG}" ]; then
           echo "Not a file: ${FIRST_MPEG}"
           exit 1
         fi
 
         FILE_SIZE=$(stat --printf %s ${FIRST_MPEG})
-        if [ "${FILE_SIZE}" -lt 100000 ]; then
+        if [ ${FILE_SIZE} -lt 100000 ]; then
           echo "File ${FIRST_MPEG} is too short: ${FILE_SIZE}"
-          exit 1
+          exit 2
+        else
+          echo "File size of ${FIRST_MPEG}: ${FIRST_MPEG}"
         fi
 
-        if [ "$(file --brief --mime ${FIRST_MPEG})" != "Xaudio/mpeg; charset=binary" ]; then
+        FILE_TYPE="$(file --brief --mime ${FIRST_MPEG})"
+        if [ "${FILE_TYPE}" != "audio/mpeg; charset=binary" ]; then
           echo "File type is wrong: $(file --mime $(ls deutschlandfunk/*/*.mp3 | head -n1))"
-          exit 1
+          exit 3
+        else
+          echo "File type of ${FIRST_MPEG}: ${FILE_TYPE}"
         fi
 
