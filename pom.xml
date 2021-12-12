@@ -176,7 +176,6 @@
         <configuration>
           <descriptors>
             <descriptor>src/main/assembly/dist.xml</descriptor>
-            <descriptor>src/main/assembly/app.xml</descriptor>
           </descriptors>
         </configuration>
         <executions>
