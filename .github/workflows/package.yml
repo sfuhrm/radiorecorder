@@ -64,7 +64,7 @@ jobs:
             --copyright "Stephan Fuhrmann" \
             --vendor "Stephan Fuhrmann" \
             --description "Records and plays internet radio streams" \
-            --license-file LICENSE \
+            --license-file radiorecorder-${VERSION}/LICENSE \
             --main-jar lib/radiorecorder-${{ needs.build.outputs.version }}.jar \
             --main-class de.sfuhrm.radiorecorder.Main \
             --input radiorecorder-${VERSION} \
