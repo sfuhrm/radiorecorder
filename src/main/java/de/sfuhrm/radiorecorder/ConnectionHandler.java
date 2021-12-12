@@ -112,7 +112,8 @@ public class ConnectionHandler {
                 }
                 log.info("Reconnecting.");
             }
-            try (HttpConnection connection = openConnection(url)) {
+            try {
+                HttpConnection connection = openConnection(url);
                 Consumer<HttpConnection> consumer = consumerFromContentType(consumerContext, connection.getContentType());
                 consumer.accept(connection);
                 first = false;
@@ -120,9 +121,6 @@ public class ConnectionHandler {
             } catch (RadioException re) {
                 loop &= re.isRetryable();
                 log.debug("Retrying after {}? retryable={}, will retry={}", re.getMessage(), re.isRetryable(), loop);
-            } catch (IOException ex) {
-                // IOE from the implicit close of the try-with-resources-call
-                log.debug("Retrying after {}? retryable={}, will retry={}", ex.getMessage(), true, loop);
             }
         } while (loop);
     }

@@ -15,6 +15,7 @@
  */
 package de.sfuhrm.radiorecorder;
 
+import de.sfuhrm.radiobrowser4j.EndpointDiscovery;
 import de.sfuhrm.radiobrowser4j.Paging;
 import de.sfuhrm.radiobrowser4j.RadioBrowser;
 import java.io.File;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 
 import de.sfuhrm.radiobrowser4j.SearchMode;
 import de.sfuhrm.radiobrowser4j.Station;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import su.litvak.chromecast.api.v2.ChromeCast;
 import su.litvak.chromecast.api.v2.ChromeCasts;
@@ -57,8 +59,12 @@ public class Main {
      */
     private static Collection<String> sanitize(List<String> urls, Params params) {
         Set<String> result = new HashSet<>();
-        RadioBrowser browser = new RadioBrowser(params.getTimeout() * 1000, GITHUB_URL);
-
+        RadioBrowser browser = new RadioBrowser("https://de1.api.radio-browser.info/",
+                params.getTimeout() * 1000,
+                GITHUB_URL,
+                params.getProxy() != null ? params.getProxy().toExternalForm() : null,
+                null,
+                null);
         int limit = params.getStationLimit();
         for (String urlString : urls) {
             try {
