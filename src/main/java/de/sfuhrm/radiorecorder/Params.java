@@ -49,6 +49,10 @@ public class Params {
     private boolean songNames;
 
     @Getter
+    @Option(name = "-limit", aliases = {"-l"}, usage = "Limit of stations to download in parallel.", metaVar = "COUNT")
+    private int stationLimit = 10;
+
+    @Getter
     @Option(name = "-min-free", aliases = {"-M"}, usage = "Minimum of free megs on target drive.", metaVar = "MEGS")
     private long minimumFreeMegs = 512;
 

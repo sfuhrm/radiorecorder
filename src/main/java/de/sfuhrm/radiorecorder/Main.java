@@ -59,7 +59,7 @@ public class Main {
         Set<String> result = new HashSet<>();
         RadioBrowser browser = new RadioBrowser(params.getTimeout() * 1000, GITHUB_URL);
 
-        int limit = 10;
+        int limit = params.getStationLimit();
         for (String urlString : urls) {
             try {
                 new URL(urlString); // parse the url
