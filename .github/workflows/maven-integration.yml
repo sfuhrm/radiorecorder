@@ -25,7 +25,19 @@ jobs:
       run: target/radiorecorder-*-bin/radiorecorder-*/bin/radiorecorder.sh -abort-after 100 deutschlandfunk -d deutschlandfunk
     - name: Output mime type of first mp3
       run: |
-        if [ "$(file --brief --mime $(ls deutschlandfunk/*/*.mp3 | head -n1))" != "Xaudio/mpeg; charset=binary" ]; then
+        FIRST_MPEG=$(ls deutschlandfunk/*/*.mp3 | head -n1)
+        if [ ! -f "${FIRST_MPEG}"]; then
+          echo "Not a file: ${FIRST_MPEG}"
+          exit 1
+        fi
+
+        FILE_SIZE=$(stat --printf %s ${FIRST_MPEG})
+        if [ "${FILE_SIZE}" -lt 100000 ]; then
+          echo "File ${FIRST_MPEG} is too short: ${FILE_SIZE}"
+          exit 1
+        fi
+
+        if [ "$(file --brief --mime ${FIRST_MPEG})" != "Xaudio/mpeg; charset=binary" ]; then
           echo "File type is wrong: $(file --mime $(ls deutschlandfunk/*/*.mp3 | head -n1))"
           exit 1
         fi
