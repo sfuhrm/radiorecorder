@@ -18,6 +18,7 @@ package de.sfuhrm.radiorecorder;
 import java.io.File;
 import java.net.URL;
 import java.util.Objects;
+import java.util.Optional;
 
 import de.sfuhrm.radiorecorder.http.HttpConnectionBuilderFactory;
 import lombok.Getter;
@@ -59,7 +60,17 @@ public class ConsumerContext {
      * @return minimum number of free bytes on disk.
      */
     public long getMinFree() {
-        return params.getMinimumFree() * 1024 * 1024;
+        return params.getMinimumFreeMegs() * 1024 * 1024;
+    }
+
+    /** Get the amount of bytes after which to abort.
+     * @return optional maximum of bytes after which to abort writing to write to disk.
+     */
+    public Optional<Long> getAbortAfter() {
+        if (params.getAbortAfterKilo() == null) {
+            return Optional.empty();
+        }
+        return Optional.of(params.getAbortAfterKilo() * 1024);
     }
 
     /** Whether to play or store. */

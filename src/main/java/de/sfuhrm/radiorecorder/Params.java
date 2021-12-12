@@ -50,7 +50,11 @@ public class Params {
 
     @Getter
     @Option(name = "-min-free", aliases = {"-M"}, usage = "Minimum of free megs on target drive.", metaVar = "MEGS")
-    private long minimumFree = 512;
+    private long minimumFreeMegs = 512;
+
+    @Getter
+    @Option(name = "-abort-after", usage = "Abort after writing the given amount of kilobytes to target drive.", metaVar = "KB")
+    private Long abortAfterKilo;
 
     @Getter
     @Option(name = "-reconnect", aliases = {"-r"}, usage = "Automatically reconnect after connection loss.")

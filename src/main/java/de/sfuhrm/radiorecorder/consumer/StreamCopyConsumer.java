@@ -98,13 +98,26 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
     }
 
     /**
-     * Check whether aborting is necessary because of full file system.
+     * Check whether aborting is necessary because of restrictions to
+     * file system or maximum write size.
      *
      * @see ConsumerContext#getMinFree()
+     * @see ConsumerContext#getAbortAfter()
      */
     private boolean needToAbort(Optional<File> currentFile) throws IOException {
         if (currentFile.isPresent()) {
             File f = currentFile.get();
+
+            if (getContext().getAbortAfter().isPresent()) {
+                if (f.length() > getContext().getAbortAfter().get()) {
+                    log.warn("Aborting due to maximum file size of {} exceeded: {} file size, {} is the abort-after size",
+                            f,
+                            f.length(),
+                            getContext().getAbortAfter().get());
+                    return true;
+                }
+            }
+
             FileStore fileStore = Files.getFileStore(f.toPath());
             long free = fileStore.getUsableSpace();
             long required = getContext().getMinFree();
