@@ -27,7 +27,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: binary
-        path: target/radiorecorder-${{ steps.version.outputs.version }}-bin.tar.gz
+        path: target/radiorecorder-${{ steps.version.outputs.version }}-app.tar.gz
   debian:
     needs: build
     runs-on: ubuntu-latest
