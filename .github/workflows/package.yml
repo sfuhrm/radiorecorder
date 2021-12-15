@@ -28,7 +28,7 @@ jobs:
       with:
         name: build
         path: target/radiorecorder-${{ steps.version.outputs.version }}-app
-  jpackage:
+  jpackage_linux:
     needs: build
     strategy:
       matrix:
@@ -37,24 +37,10 @@ jobs:
             container: debian:10
             jpkg_type: deb
             style: debian
-            extra_args: >
-              --license-file ${APPDIR}/LICENSE
-              --linux-deb-maintainer s@sfuhrm.de
-              --linux-app-category sound
           - os: ubuntu-latest
             container: centos:8
             jpkg_type: rpm
             style: redhat
-            extra_args: >
-              --license-file ${APPDIR}/LICENSE
-              --linux-deb-maintainer s@sfuhrm.de
-              --linux-app-category sound
-          - os: macos-latest
-            container: sickcodes/docker-osx:latest
-            jpkg_type: dmg
-            style: macos
-            extra_args: >
-              --license-file ${APPDIR}/LICENSE
     runs-on: ${{ matrix.os }}
     container: ${{ matrix.container }}
     env:
@@ -105,7 +91,52 @@ jobs:
             --input ${APPDIR} \
             --dest jpackage-app \
             --verbose \
-            ${{ matrix.extra_args }}
+            --license-file ${APPDIR}/LICENSE \
+            --linux-deb-maintainer s@sfuhrm.de \
+            --linux-app-category sound
+      - uses: actions/upload-artifact@v2
+        with:
+          name: package
+          path: jpackage-app/*
+  jpackage_macos:
+    needs: build
+    runs-on: macos-latest
+    env:
+      JDK_URL: https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.1%2B12/OpenJDK17U-jdk_x64_mac_hotspot_17.0.1_12.tar.gz
+      JAVA_HOME: /usr/lib/jdk
+      PACKAGE_VERSION: ${{ needs.build.outputs.version }}
+    steps:
+      - name: Download build
+        uses: actions/download-artifact@v2
+        with:
+          name: build
+      - name: Setup JDK
+        run: |
+          mkdir ${{ env.JAVA_HOME }}
+          curl --insecure --location ${{ env.JDK_URL }} --output - | \
+          tar -xzf- --strip-components 1 --directory ${{ env.JAVA_HOME }}
+      - name: Build package
+        run: |
+          if [ ${{ matrix.style }} == "redhat" ]; then
+            PACKAGE_VERSION=$(echo ${PACKAGE_VERSION} | cut -d"-" -f1)
+            echo "Fixing RPM version to ${PACKAGE_VERSION}"
+          fi
+          APPDIR=$(pwd)/radiorecorder-${{ needs.build.outputs.version }}
+          ${{ env.JAVA_HOME }}/bin/jpackage \
+            --name radiorecorder \
+            --type ${{ matrix.jpkg_type }} \
+            --app-version ${PACKAGE_VERSION} \
+            --copyright "Stephan Fuhrmann" \
+            --vendor "Stephan Fuhrmann" \
+            --description "Records and plays internet radio streams" \
+            --main-jar lib/radiorecorder-${{ needs.build.outputs.version }}.jar \
+            --main-class de.sfuhrm.radiorecorder.Main \
+            --input ${APPDIR} \
+            --dest jpackage-app \
+            --verbose \
+            --license-file ${APPDIR}/LICENSE \
+            --linux-deb-maintainer s@sfuhrm.de \
+            --linux-app-category sound
       - uses: actions/upload-artifact@v2
         with:
           name: package
