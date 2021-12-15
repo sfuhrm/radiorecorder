@@ -93,7 +93,7 @@ jobs:
           ${{ env.JAVA_HOME }}/bin/jpackage \
             --name radiorecorder \
             --type ${{ matrix.jpkg_type }} \
-            --app-version ${{ env.PACKAGE_VERSION }} \
+            --app-version ${PACKAGE_VERSION} \
             --copyright "Stephan Fuhrmann" \
             --vendor "Stephan Fuhrmann" \
             --description "Records and plays internet radio streams" \
