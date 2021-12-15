@@ -131,9 +131,7 @@ jobs:
             --input ${APPDIR} \
             --dest jpackage-app \
             --verbose \
-            --license-file ${APPDIR}/LICENSE \
-            --linux-deb-maintainer s@sfuhrm.de \
-            --linux-app-category sound
+            --license-file ${APPDIR}/LICENSE
       - uses: actions/upload-artifact@v2
         with:
           name: package
