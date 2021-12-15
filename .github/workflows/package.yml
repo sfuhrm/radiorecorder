@@ -119,8 +119,8 @@ jobs:
       - name: Build package
         run: |
           APPDIR=$(pwd)/radiorecorder-${{ needs.build.outputs.version }}
-#          PACKAGE_VERSION=$(echo ${PACKAGE_VERSION} | cut -d"-" -f1)
-#            --app-version ${PACKAGE_VERSION} \
+          #          PACKAGE_VERSION=$(echo ${PACKAGE_VERSION} | cut -d"-" -f1)
+          #            --app-version ${PACKAGE_VERSION} \
           ${{ env.JAVA_HOME }}/Contents/Home/bin/jpackage \
             --name radiorecorder \
             --type ${{ matrix.jpkg_type }} \
