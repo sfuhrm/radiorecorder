@@ -30,6 +30,8 @@ jobs:
         path: target/radiorecorder-${{ steps.version.outputs.version }}-app
   jpackage_linux:
     needs: build
+    outputs:
+      packagename: ${{ steps.packagename.outputs.packagename }}
     strategy:
       matrix:
         include:
@@ -94,10 +96,14 @@ jobs:
             --license-file ${APPDIR}/LICENSE \
             --linux-deb-maintainer s@sfuhrm.de \
             --linux-app-category sound
+      - name: Extract package name
+        run: echo "::set-output name=packagename::$(cd jpackage-app; ls)"
+        id: packagename
+        shell: bash
       - uses: actions/upload-artifact@v2
         with:
-          name: package
-          path: jpackage-app/*
+          name: ${{ steps.packagename.outputs.packagename }}
+          path: jpackage-app/${{ steps.packagename.outputs.packagename }}
   jpackage_macos:
     needs: build
     strategy:
