@@ -117,10 +117,6 @@ jobs:
           tar -xzf- --strip-components 1 --directory ${{ env.JAVA_HOME }}
       - name: Build package
         run: |
-          if [ ${{ matrix.style }} == "redhat" ]; then
-            PACKAGE_VERSION=$(echo ${PACKAGE_VERSION} | cut -d"-" -f1)
-            echo "Fixing RPM version to ${PACKAGE_VERSION}"
-          fi
           APPDIR=$(pwd)/radiorecorder-${{ needs.build.outputs.version }}
           ${{ env.JAVA_HOME }}/bin/jpackage \
             --name radiorecorder \
