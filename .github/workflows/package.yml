@@ -115,7 +115,7 @@ jobs:
           mkdir ${{ env.JAVA_HOME }}
           curl --insecure --location ${{ env.JDK_URL }} --output - | \
           tar -xzf- --strip-components 1 --directory ${{ env.JAVA_HOME }}
-          ls -al /tmp/jdk/bin
+          ls -alR /tmp/jdk
       - name: Build package
         run: |
           APPDIR=$(pwd)/radiorecorder-${{ needs.build.outputs.version }}
