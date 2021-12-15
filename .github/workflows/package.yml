@@ -79,6 +79,8 @@ jobs:
           echo "List of current dir:"
           ls -alR
           yum install --assumeyes rpm-build git openssh-clients
+          # yum doesn't like dashes
+          export PACKAGE_VERSION=$(echo ${PACKAGE_VERSION} | cut -d"-" -f1)
         if: matrix.style == 'redhat'
       - name: Setup JDK
         run: |
@@ -91,7 +93,7 @@ jobs:
           ${{ env.JAVA_HOME }}/bin/jpackage \
             --name radiorecorder \
             --type ${{ matrix.jpkg_type }} \
-            --app-version ${{ needs.build.outputs.version }} \
+            --app-version ${{ env.PACKAGE_VERSION }} \
             --copyright "Stephan Fuhrmann" \
             --vendor "Stephan Fuhrmann" \
             --description "Records and plays internet radio streams" \
