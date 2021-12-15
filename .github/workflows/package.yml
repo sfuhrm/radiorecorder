@@ -103,7 +103,7 @@ jobs:
     runs-on: macos-latest
     env:
       JDK_URL: https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.1%2B12/OpenJDK17U-jdk_x64_mac_hotspot_17.0.1_12.tar.gz
-      JAVA_HOME: /usr/lib/jdk
+      JAVA_HOME: /tmp/jdk
       PACKAGE_VERSION: ${{ needs.build.outputs.version }}
     steps:
       - name: Download build
