@@ -42,11 +42,6 @@ jobs:
               --linux-deb-maintainer s@sfuhrm.de
               --linux-app-category sound
           - os: ubuntu-latest
-            container: debian:10
-            jpkg_type: app-image
-            style: debian
-            extra_args: ""
-          - os: ubuntu-latest
             container: centos:8
             jpkg_type: rpm
             style: redhat
@@ -54,6 +49,12 @@ jobs:
               --license-file ${APPDIR}/LICENSE
               --linux-deb-maintainer s@sfuhrm.de
               --linux-app-category sound
+          - os: macos-latest
+            container: sickcodes/docker-osx:latest
+            jpkg_type: dmg
+            style: macos
+            extra_args: >
+              --license-file ${APPDIR}/LICENSE
     runs-on: ${{ matrix.os }}
     container: ${{ matrix.container }}
     env:
