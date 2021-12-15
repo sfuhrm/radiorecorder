@@ -2,9 +2,9 @@ name: Package
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, merge_os ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, merge_os ]
 
 jobs:
   build:
