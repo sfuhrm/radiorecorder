@@ -28,7 +28,7 @@ jobs:
       with:
         name: build
         path: target/radiorecorder-${{ steps.version.outputs.version }}-app
-  debian:
+  jpackage:
     needs: build
     strategy:
       matrix:
@@ -37,7 +37,9 @@ jobs:
             container: debian:10
             jpkg_type: deb
             style: debian
-            extra_args: --license-file ${APPDIR}/LICENSE
+            extra_args: >
+              --license-file ${APPDIR}/LICENSE
+              --linux-deb-maintainer s@sfuhrm.de
           - os: ubuntu-latest
             container: debian:10
             jpkg_type: app-image
@@ -47,7 +49,9 @@ jobs:
             container: centos:8
             jpkg_type: rpm
             style: redhat
-            extra_args: --license-file ${APPDIR}/LICENSE
+            extra_args: >
+              --license-file ${APPDIR}/LICENSE
+              --linux-deb-maintainer s@sfuhrm.de
     runs-on: ${{ matrix.os }}
     container: ${{ matrix.container }}
     env:
@@ -92,7 +96,6 @@ jobs:
             --main-jar lib/radiorecorder-${{ needs.build.outputs.version }}.jar \
             --main-class de.sfuhrm.radiorecorder.Main \
             --input ${APPDIR} \
-            --linux-deb-maintainer s@sfuhrm.de \
             --linux-app-category sound \
             --dest jpackage-app \
             --verbose \
