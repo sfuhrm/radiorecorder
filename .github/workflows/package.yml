@@ -37,19 +37,23 @@ jobs:
             container: debian:10
             jpkg_type: deb
             style: debian
+            extra_args: --license-file ${APPDIR}/LICENSE
           - os: ubuntu-latest
             container: debian:10
             jpkg_type: app-image
             style: debian
+            extra_args: ""
           - os: ubuntu-latest
             container: centos:8
             jpkg_type: rpm
             style: redhat
+            extra_args: --license-file ${APPDIR}/LICENSE
     runs-on: ${{ matrix.os }}
     container: ${{ matrix.container }}
     env:
       JDK_URL: https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.1%2B12/OpenJDK17U-jdk_x64_linux_hotspot_17.0.1_12.tar.gz
       JAVA_HOME: /usr/lib/jdk
+      PACKAGE_VERSION: ${{ needs.build.outputs.version }}
     steps:
       - name: Download build
         uses: actions/download-artifact@v2
@@ -85,14 +89,14 @@ jobs:
             --copyright "Stephan Fuhrmann" \
             --vendor "Stephan Fuhrmann" \
             --description "Records and plays internet radio streams" \
-            --license-file ${APPDIR}/LICENSE \
             --main-jar lib/radiorecorder-${{ needs.build.outputs.version }}.jar \
             --main-class de.sfuhrm.radiorecorder.Main \
             --input ${APPDIR} \
             --linux-deb-maintainer s@sfuhrm.de \
             --linux-app-category sound \
             --dest jpackage-app \
-            --verbose
+            --verbose \
+            ${{ matrix.extra_args }}
       - uses: actions/upload-artifact@v2
         with:
           name: package
