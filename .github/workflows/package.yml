@@ -100,6 +100,11 @@ jobs:
           path: jpackage-app/*
   jpackage_macos:
     needs: build
+    strategy:
+      matrix:
+        include:
+          - jpkg_type: dmg
+          - jpkg_type: pkg
     runs-on: macos-latest
     env:
       JDK_URL: https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.1%2B12/OpenJDK17U-jdk_x64_mac_hotspot_17.0.1_12.tar.gz
@@ -122,7 +127,7 @@ jobs:
           PACKAGE_VERSION=$(echo ${PACKAGE_VERSION} | cut -d"-" -f1)
           ${{ env.JAVA_HOME }}/Contents/Home/bin/jpackage \
             --name radiorecorder \
-            --type dmg \
+            --type ${{ matrix.jpkg_type }} \
             --app-version ${PACKAGE_VERSION} \
             --copyright "Stephan Fuhrmann" \
             --vendor "Stephan Fuhrmann" \
