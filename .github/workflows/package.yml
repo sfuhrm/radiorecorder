@@ -36,12 +36,15 @@ jobs:
           - os: ubuntu-latest
             container: debian:10
             jpkg_type: deb
+            style: debian
           - os: ubuntu-latest
             container: debian:10
             jpkg_type: app-image
+            style: debian
           - os: ubuntu-latest
             container: centos:8
             jpkg_type: rpm
+            style: redhat
     runs-on: ${{ matrix.os }}
     container: ${{ matrix.container }}
     env:
@@ -60,13 +63,13 @@ jobs:
           cat /etc/debian_version
           apt-get update
           apt-get install -y --no-install-recommends curl openssh-client git fakeroot curl binutils
-        if: matrix.container == "debian:10"
+        if: matrix.style == 'debian'
       - name: Setup CentOS container
         run: |
           echo "List of current dir:"
           ls -alR
           yum install --assumeyes rpm-build git openssh-clients
-        if: matrix.container == "centos:8"
+        if: matrix.style == 'redhat'
       - name: Setup JDK
         run: |
           mkdir ${{ env.JAVA_HOME }}
