@@ -30,8 +30,20 @@ jobs:
         path: target/radiorecorder-${{ steps.version.outputs.version }}-app
   debian:
     needs: build
-    runs-on: ubuntu-latest
-    container: debian:10
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            container: debian:10
+            jpkg_type: deb
+          - os: ubuntu-latest
+            container: debian:10
+            jpkg_type: app-image
+          - os: ubuntu-latest
+            container: centos:8
+            jpkg_type: rpm
+    runs-on: ${{ matrix.os }}
+    container: ${{ matrix.container }}
     env:
       JDK_URL: https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.1%2B12/OpenJDK17U-jdk_x64_linux_hotspot_17.0.1_12.tar.gz
       JAVA_HOME: /usr/lib/jdk
@@ -40,70 +52,33 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build
-      - name: Setup container
+      - name: Setup Debian container
         run: |
           echo "List of current dir:"
           ls -alR
           echo "Debian version:"
           cat /etc/debian_version
-          echo "Updating"
           apt-get update
-          echo "Installing"
           apt-get install -y --no-install-recommends curl openssh-client git fakeroot curl binutils
-          mkdir ${{ env.JAVA_HOME }}
-          curl --insecure --location ${{ env.JDK_URL }} --output - | \
-          tar -xzf- --strip-components 1 --directory ${{ env.JAVA_HOME }}
-      - name: Build package
-        run: |
-          APPDIR=$(pwd)/radiorecorder-${{ needs.build.outputs.version }}
-          ${{ env.JAVA_HOME }}/bin/jpackage \
-            --name radiorecorder \
-            --type deb \
-            --app-version ${{ needs.build.outputs.version }} \
-            --copyright "Stephan Fuhrmann" \
-            --vendor "Stephan Fuhrmann" \
-            --description "Records and plays internet radio streams" \
-            --license-file ${APPDIR}/LICENSE \
-            --main-jar lib/radiorecorder-${{ needs.build.outputs.version }}.jar \
-            --main-class de.sfuhrm.radiorecorder.Main \
-            --input ${APPDIR} \
-            --linux-deb-maintainer s@sfuhrm.de \
-            --linux-app-category sound \
-            --dest jpackage-app \
-            --verbose
-      - uses: actions/upload-artifact@v2
-        with:
-          name: package
-          path: jpackage-app/*
-  centos:
-    needs: build
-    runs-on: ubuntu-latest
-    container: centos:8
-    env:
-      JDK_URL: https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.1%2B12/OpenJDK17U-jdk_x64_linux_hotspot_17.0.1_12.tar.gz
-      JAVA_HOME: /usr/lib/jdk
-    steps:
-      - name: Download build
-        uses: actions/download-artifact@v2
-        with:
-          name: build
-      - name: Setup container
+        if: matrix.container == "debian:10"
+      - name: Setup CentOS container
         run: |
           echo "List of current dir:"
           ls -alR
-          echo "Installing"
           yum install --assumeyes rpm-build git openssh-clients
+        if: matrix.container == "centos:8"
+      - name: Setup JDK
+        run: |
           mkdir ${{ env.JAVA_HOME }}
           curl --insecure --location ${{ env.JDK_URL }} --output - | \
           tar -xzf- --strip-components 1 --directory ${{ env.JAVA_HOME }}
       - name: Build package
         run: |
           APPDIR=$(pwd)/radiorecorder-${{ needs.build.outputs.version }}
-          RPM_VERSION=$(echo ${{ needs.build.outputs.version }} | cut -d"-" -f1)
           ${{ env.JAVA_HOME }}/bin/jpackage \
             --name radiorecorder \
-            --type rpm \
-            --app-version ${RPM_VERSION} \
+            --type ${{ matrix.jpkg_type }} \
+            --app-version ${{ needs.build.outputs.version }} \
             --copyright "Stephan Fuhrmann" \
             --vendor "Stephan Fuhrmann" \
             --description "Records and plays internet radio streams" \
