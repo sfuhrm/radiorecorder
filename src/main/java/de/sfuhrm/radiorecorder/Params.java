@@ -70,7 +70,15 @@ public class Params {
     private boolean play;
 
     @Getter
-    @Option(name = "-list-cast", aliases = {"-L"}, usage = "List chromecast devices.")
+    @Option(name = "-mixer", aliases = {"-m"}, usage = "The mixer to use for playback.")
+    private String mixer;
+
+    @Getter
+    @Option(name = "-list-mixer", aliases = {"-X"}, usage = "List audio playback mixers.", help = true)
+    private boolean listMixers;
+
+    @Getter
+    @Option(name = "-list-cast", aliases = {"-L"}, usage = "List chromecast devices.", help = true)
     private boolean listCast;
 
     @Getter
