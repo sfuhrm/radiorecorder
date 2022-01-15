@@ -15,7 +15,6 @@
  */
 package de.sfuhrm.radiorecorder;
 
-import de.sfuhrm.radiobrowser4j.EndpointDiscovery;
 import de.sfuhrm.radiobrowser4j.Paging;
 import de.sfuhrm.radiobrowser4j.RadioBrowser;
 import java.io.File;
@@ -24,6 +23,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -32,11 +32,12 @@ import java.util.stream.Collectors;
 
 import de.sfuhrm.radiobrowser4j.SearchMode;
 import de.sfuhrm.radiobrowser4j.Station;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import su.litvak.chromecast.api.v2.ChromeCast;
 import su.litvak.chromecast.api.v2.ChromeCasts;
 import su.litvak.chromecast.api.v2.ChromeCastsListener;
+
+import javax.sound.sampled.AudioSystem;
 
 /**
  * The main class that gets executed from command line.
@@ -82,7 +83,6 @@ public class Main {
         return result;
     }
 
-
     private static ConsumerContext toConsumerContext(Params p, String url) throws MalformedURLException, UnsupportedEncodingException {
         URL myUrl = new URL(url);
         File dir = new File(p.getDirectory(), URLEncoder.encode(myUrl.getHost()+"/"+myUrl.getPath(), "UTF-8"));
@@ -119,6 +119,11 @@ public class Main {
             return;
         }
 
+        if (params.isListMixers()) {
+            listMixers();
+            return;
+        }
+
         if (params.getArguments() == null) {
             System.err.println("Please enter command line arguments (radio urls)");
             return;
@@ -139,5 +144,10 @@ public class Main {
                 log.warn("Could not start thread for url "+url, ex);
             }
         });
+    }
+
+    private static void listMixers() {
+        Arrays.stream(AudioSystem.getMixerInfo()).forEach(mi ->
+                System.out.println("Mixer name: " + mi.getName() + ", Description: " + mi.getDescription() + ", Vendor: " + mi.getVendor()));
     }
 }

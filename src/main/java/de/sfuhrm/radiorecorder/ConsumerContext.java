@@ -17,11 +17,16 @@ package de.sfuhrm.radiorecorder;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 
 import de.sfuhrm.radiorecorder.http.HttpConnectionBuilderFactory;
 import lombok.Getter;
+
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Line;
+import javax.sound.sampled.Mixer;
 
 /**
  * Immutable context common to all consumers.
@@ -91,6 +96,20 @@ public class ConsumerContext {
     /** The cast device to cast to. */
     public String getCastReceiver() {
         return params.getCastReceiver();
+    }
+
+    /** The mixer to play on. */
+    public Mixer.Info getMixerInfo() {
+        if (params.getMixer() != null) {
+            Optional<Mixer.Info> optionalInfo = Arrays.stream(AudioSystem.getMixerInfo()).filter(mi -> mi.getName().equals(params.getMixer())).findFirst();
+            if (optionalInfo.isEmpty()) {
+                System.err.println("No mixer info " + params.getMixer());
+            }
+            if (optionalInfo.isPresent()) {
+                return optionalInfo.get();
+            }
+        }
+        return null;
     }
 
     /** The client type to use. */
