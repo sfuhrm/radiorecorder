@@ -138,6 +138,7 @@ public class ConnectionHandler {
             case APPLICATION_OGG:
             case AUDIO_XWAV:
             case AUDIO_XMSWMA:
+            case AUDIO_AAC:
                 if (cc.getCastReceiver() != null) {
                     return new StreamCastConsumer(cc);
                 } else
