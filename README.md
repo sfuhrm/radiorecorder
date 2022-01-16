@@ -1,12 +1,14 @@
 Radio Recorder
 ===================
-[![Circle CI Status](https://img.shields.io/circleci/build/github/sfuhrm/radiorecorder?style=plastic)](https://app.circleci.com/pipelines/github/sfuhrm/radiorecorder)
+[![Java CI](https://github.com/sfuhrm/radiorecorder/actions/workflows/maven.yml/badge.svg)](https://github.com/sfuhrm/radiorecorder/actions/workflows/maven.yml)
 [![Dependency Check](https://github.com/sfuhrm/radiorecorder/actions/workflows/dependency-check.yml/badge.svg)](https://github.com/sfuhrm/radiorecorder/actions/workflows/dependency-check.yml)
 [![Integration Test](https://github.com/sfuhrm/radiorecorder/actions/workflows/maven-integration.yml/badge.svg)](https://github.com/sfuhrm/radiorecorder/actions/workflows/maven-integration.yml)
 [![ReleaseDate](https://img.shields.io/github/release-date/sfuhrm/radiorecorder)](https://github.com/sfuhrm/radiorecorder/releases)
+![Maven Central](https://img.shields.io/maven-central/v/de.sfuhrm/radiorecorder)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 A command line internet radio player and recorder.
+
 Some of the features are:
 * Display of the current song title played.
 * Live playback using Java Media Framework.
@@ -16,31 +18,66 @@ Some of the features are:
 * Parallel recording of multiple radio stations.
 * Integrated querying and resolving using the [Radio Browser](https://www.radio-browser.info/) internet radio database.
 
+Restrictions:
+* No AAC/AAC+ support.
+
 ## Downloading & installation
 
-The current version can be downloaded for Debian, CentOS and Windows systems here:
+The current version can be downloaded for Debian, CentOS and MacOS X systems here:
 
 https://github.com/sfuhrm/radiorecorder/releases
+
+### Releases
+
+Releases typically contain files named like this for downloading:
+
+* radiorecorder_xxx_amd64.deb: A Debian install archive with the program and the Java runtime included. 
+* radiorecorder-xxx.x86_64.rpm: A CentOS/RHEL install archive with the program and the Java runtime included. 
+* radiorecorder-xxx.pkg: A MacOS PKG installer with the program and the Java runtime included.
+* radiorecorder-xxx.dmg: A MacOS DMG installer with the program and the Java runtime included.
+* radiorecorder-xxx-bin.tar.bz2: A program-only archive in tar.bz2 format that requires a Java runtime installed on your system.
+* radiorecorder-xxx-bin.tar.gz: A program-only archive in tar.gz format that requires a Java runtime installed on your system.
+* radiorecorder-xxx-bin.zip: A program-only archive in ZIP format that requires a Java runtime installed on your system.
+
+You can chose whether you prefer an installation with the runtime as a package or care for the Java runtime yourself.
+The latter makes sense when you're on Windows, Aarch64, X86, or some other system with no dedicated installer.
+
+### Debian
 
 The Debian package can be downloaded and installed like this:
 
 ```shell
 wget https://github.com/sfuhrm/radiorecorder/releases/download/radiorecorder-1.4.0/radiorecorder_1.4.0-1_amd64.deb
-apt install ./radiorecorder_1.4.0-1_amd64.deb
+apt install ./radiorecorder_1.5.1-1_amd64.deb
 ```
 
 after that, the executable is in `/opt/radiorecorder/bin/radiorecorder`.
 
 ## Usage
 
+### Playback
+
+When playing, the usage can consist of the search and the play step:
+
+* Search the stations (i.e. `radiorecorder -list-station synthpop`)
+* Play a specific radio station of the list from above (`radiorecorder -play f9ab3256-33a7-41a3-ba57-646bf3750ae9`)
+
+### Recording
+
+When recording, the usage usually consists also of the two steps:
+
+* Search the stations (i.e. `radiorecorder -list-station synthpop`)
+* Record a specific radio station of the list from above (`radiorecorder -use-songnames -directory . f9ab3256-33a7-41a3-ba57-646bf3750ae9`)
+
 ### Command line options
 
 The program is a command line only program. It supports multiple parameters:
 
 ```
- URLORNAME                              : URLs of the internet radio station(s)
-                                          or station name for lookup at
-                                          http://www.radio-browser.info/
+ URL_OR_UUID_OR_NAME                    : URLs of the internet radio
+                                          station(s), (partial) station name
+                                          for lookup or the station UUID (see
+                                          option -list-station)
  -abort-after KB                        : Abort after writing the given amount
                                           of kilobytes to target drive.
  -cast (-c) VAL                         : Stream to the given chrome cast
@@ -50,15 +87,24 @@ The program is a command line only program. It supports multiple parameters:
  -directory (-d) DIR                    : Write to this directory. (default:
                                           /home/fury)
  -help (-h)                             : Show this command line help.
-                                          (default: false)
+                                          (default: true)
  -limit (-l) COUNT                      : Limit of stations to download in
                                           parallel. (default: 10)
- -list-cast (-L)                        : List chromecast devices. (default:
+ -list-cast (-L)                        : List chromecast devices, then exit.
+                                          (default: false)
+ -list-mixer (-X)                       : List audio playback mixers, then
+                                          exit. (default: false)
+ -list-station (-Z)                     : List matching radio stations limited
+                                          by '-limit', then exit. (default:
                                           false)
  -min-free (-M) MEGS                    : Minimum of free megs on target drive.
                                           (default: 512)
+ -mixer (-m) VAL                        : The mixer to use for playback. The
+                                          mixer parameter is the name from the
+                                          '-list-mixer' option output.
  -play (-p)                             : Play live instead of recording to a
                                           file. (default: false)
+ -proxy (-P) URL                        : The HTTP/HTTPS proxy to use.
  -reconnect (-r)                        : Automatically reconnect after
                                           connection loss. (default: false)
  -timeout (-T) SECS                     : Connect/read timeout in seconds.
@@ -68,17 +114,9 @@ The program is a command line only program. It supports multiple parameters:
                                           detected song. (default: false)
 ```
 
-### Debian package
-
-The installed executable can be executed like this:
-
-```shell
-/opt/radiorecorder/bin/radiorecorder -p synthradio
-```
-
 ## License
 
-Copyright 2017-2021 Stephan Fuhrmann
+Copyright 2017-2022 Stephan Fuhrmann
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
