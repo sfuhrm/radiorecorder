@@ -90,6 +90,7 @@ jobs:
             --description "Records and plays internet radio streams" \
             --main-jar lib/radiorecorder-${{ needs.build.outputs.version }}.jar \
             --main-class de.sfuhrm.radiorecorder.Main \
+            --install-dir /usr \
             --input ${APPDIR} \
             --dest jpackage-app \
             --verbose \
@@ -142,6 +143,7 @@ jobs:
             --description "Records and plays internet radio streams" \
             --main-jar lib/radiorecorder-${{ needs.build.outputs.version }}.jar \
             --main-class de.sfuhrm.radiorecorder.Main \
+            --install-dir /usr \
             --input ${APPDIR} \
             --dest jpackage-app \
             --verbose \

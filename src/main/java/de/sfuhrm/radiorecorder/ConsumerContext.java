@@ -102,11 +102,10 @@ public class ConsumerContext {
     public Mixer.Info getMixerInfo() {
         if (params.getMixer() != null) {
             Optional<Mixer.Info> optionalInfo = Arrays.stream(AudioSystem.getMixerInfo()).filter(mi -> mi.getName().equals(params.getMixer())).findFirst();
-            if (optionalInfo.isEmpty()) {
-                System.err.println("No mixer info " + params.getMixer());
-            }
             if (optionalInfo.isPresent()) {
                 return optionalInfo.get();
+            } else {
+                System.err.println("No mixer info " + params.getMixer());
             }
         }
         return null;
