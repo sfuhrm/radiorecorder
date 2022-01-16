@@ -24,10 +24,27 @@ jobs:
       run: echo "::set-output name=version::$(mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)"
       id: version
       shell: bash
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: radiorecorder-${{ steps.packagename.outputs.packagename }}-bin.tar.gz
+        path: target/radiorecorder-${{ steps.packagename.outputs.packagename }}-bin.tar.gz
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: radiorecorder-${{ steps.packagename.outputs.packagename }}-bin.tar.bz2
+        path: target/radiorecorder-${{ steps.packagename.outputs.packagename }}-bin.tar.bz2
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: radiorecorder-${{ steps.packagename.outputs.packagename }}-bin.zip
+        path: target/radiorecorder-${{ steps.packagename.outputs.packagename }}-bin.zip
+
     - uses: actions/upload-artifact@v2
       with:
         name: build
         path: target/radiorecorder-${{ steps.version.outputs.version }}-app
+
   jpackage_linux:
     needs: build
     outputs:
