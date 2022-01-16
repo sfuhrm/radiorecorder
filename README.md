@@ -8,6 +8,7 @@ Radio Recorder
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 A command line internet radio player and recorder.
+
 Some of the features are:
 * Display of the current song title played.
 * Live playback using Java Media Framework.
@@ -16,6 +17,9 @@ Some of the features are:
 * Writing of ID3 tags (ID3v1 and ID3V2.4).
 * Parallel recording of multiple radio stations.
 * Integrated querying and resolving using the [Radio Browser](https://www.radio-browser.info/) internet radio database.
+
+Restrictions:
+* No AAC/AAC+ support.
 
 ## Downloading & installation
 
