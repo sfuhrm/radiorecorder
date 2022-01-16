@@ -66,6 +66,7 @@ jobs:
             --license-file ${APPDIR}/LICENSE \
             --main-jar lib/radiorecorder-${{ needs.build.outputs.version }}.jar \
             --main-class de.sfuhrm.radiorecorder.Main \
+            --install-dir /usr \
             --input ${APPDIR} \
             --linux-deb-maintainer s@sfuhrm.de \
             --linux-app-category sound \
@@ -110,6 +111,7 @@ jobs:
             --license-file ${APPDIR}/LICENSE \
             --main-jar lib/radiorecorder-${{ needs.build.outputs.version }}.jar \
             --main-class de.sfuhrm.radiorecorder.Main \
+            --install-dir /usr \
             --input ${APPDIR} \
             --linux-deb-maintainer s@sfuhrm.de \
             --linux-app-category sound \
