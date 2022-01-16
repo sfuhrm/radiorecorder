@@ -15,7 +15,6 @@
  */
 package de.sfuhrm.radiorecorder;
 
-import de.sfuhrm.radiobrowser4j.ListParameter;
 import de.sfuhrm.radiobrowser4j.Paging;
 import de.sfuhrm.radiobrowser4j.RadioBrowser;
 import java.io.File;
@@ -24,22 +23,23 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import de.sfuhrm.radiobrowser4j.SearchMode;
 import de.sfuhrm.radiobrowser4j.Station;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import su.litvak.chromecast.api.v2.ChromeCast;
 import su.litvak.chromecast.api.v2.ChromeCasts;
 import su.litvak.chromecast.api.v2.ChromeCastsListener;
 
 import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Mixer;
 
 /**
  * The main class that gets executed from command line.
@@ -70,8 +70,8 @@ public class Main {
      * @param params the command line.
      * @return the sanitized URLs.
      */
-    private static Collection<Station> sanitize(List<String> urls, Params params) {
-        Set<Station> result = new HashSet<>();
+    private static List<Station> sanitize(List<String> urls, Params params) {
+        List<Station> result = new ArrayList<>();
 
         RadioBrowser radioBrowser = newRadioBrowser(params);
         int limit = params.getStationLimit();
@@ -109,10 +109,22 @@ public class Main {
         return new ConsumerContext(nextId++, myUrl, dir, p);
     }
 
+    @Value
+    private static class CastItem {
+        String title;
+        String model;
+        String address;
+        String appTitle;
+    }
+
     private static class MyListener implements ChromeCastsListener {
+        private List<CastItem> discovered = new ArrayList<>();
         @Override
         public void newChromeCastDiscovered(ChromeCast chromeCast) {
-            System.out.printf("%s - %s%n", chromeCast.getTitle(), chromeCast.getModel());
+            CastItem castItem = new CastItem(chromeCast.getTitle(), chromeCast.getModel(), chromeCast.getAddress(), chromeCast.getAppTitle());
+            synchronized (discovered) {
+                discovered.add(castItem);
+            }
         }
 
         @Override
@@ -121,10 +133,26 @@ public class Main {
     }
 
     private static void listCastDevices() throws InterruptedException, IOException {
-        ChromeCasts.registerListener(new MyListener());
+        int castSearchMillis = 5000;
+
+        System.err.printf("Please wait %dms while discovering devices...%n", castSearchMillis);
+        MyListener instance = new MyListener();
+        ChromeCasts.registerListener(instance);
         ChromeCasts.startDiscovery();
-        Thread.sleep(5000);
+        Thread.sleep(castSearchMillis);
         ChromeCasts.stopDiscovery();
+
+        if (instance.discovered.isEmpty()) {
+            System.out.println(NO_RESULTS);
+            return;
+        }
+
+        ListHelper<CastItem> helper = new ListHelper<>(instance.discovered);
+        helper.addColumn("Title", i -> i.getTitle());
+        helper.addColumn("Model", i -> i.getModel());
+        helper.addColumn("Address", i -> i.getAddress());
+        helper.addColumn("App Title", i -> i.getAppTitle());
+        helper.print(System.out);
     }
 
     public static void main(String[] args) throws IOException, InterruptedException {
@@ -171,19 +199,37 @@ public class Main {
     }
 
     private static void listMixers() {
-        Arrays.stream(AudioSystem.getMixerInfo()).forEach(mi ->
-                System.out.println("Mixer name: " + mi.getName() + ", Description: " + mi.getDescription() + ", Vendor: " + mi.getVendor()));
+        List<Mixer.Info> infoList = Arrays.asList(AudioSystem.getMixerInfo());
+
+        if (infoList.isEmpty()) {
+            System.out.println(NO_RESULTS);
+            return;
+        }
+
+        ListHelper<Mixer.Info> helper = new ListHelper<>(infoList);
+        helper.addColumn("Name", i -> i.getName());
+        helper.addColumn("Description", i -> i.getDescription());
+        helper.addColumn("Vendor", i -> i.getVendor());
+        helper.print(System.out);
     }
 
     private static void listStations(List<String> names, Params params) {
-        for (Station station : sanitize(names, params)) {
-            System.out.printf("%-40s %s %d bps %-20s %s%n",
-                  station.getName(),
-                  station.getCodec(),
-                  station.getBitrate(),
-                  station.getTags(),
-                  station.getStationUUID()
-            );
+        List<Station> stations = sanitize(names, params);
+
+        if (stations.isEmpty()) {
+            System.out.println(NO_RESULTS);
+            return;
         }
+
+        ListHelper<Station> helper = new ListHelper<>(stations);
+        helper.addColumn("UUID", s -> s.getStationUUID().toString());
+        helper.addColumn("Name", s -> s.getName());
+        helper.addColumn("Codec", s -> s.getCodec());
+        helper.addColumn("BR", s -> String.format("%d", s.getBitrate()));
+        helper.addColumn("Tags", s -> s.getTags());
+
+        helper.print(System.out);
     }
+
+    private static String NO_RESULTS = "No results.";
 }
