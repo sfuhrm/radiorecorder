@@ -70,16 +70,21 @@ public class Params {
     private boolean play;
 
     @Getter
-    @Option(name = "-mixer", aliases = {"-m"}, usage = "The mixer to use for playback.")
+    @Option(name = "-mixer", aliases = {"-m"}, usage = "The mixer to use for playback. " +
+            "The mixer parameter is the name from the '-list-mixer' option output.")
     private String mixer;
 
     @Getter
-    @Option(name = "-list-mixer", aliases = {"-X"}, usage = "List audio playback mixers.", help = true)
+    @Option(name = "-list-mixer", aliases = {"-X"}, usage = "List audio playback mixers, then exit.", help = true)
     private boolean listMixers;
 
     @Getter
-    @Option(name = "-list-cast", aliases = {"-L"}, usage = "List chromecast devices.", help = true)
+    @Option(name = "-list-cast", aliases = {"-L"}, usage = "List chromecast devices, then exit.", help = true)
     private boolean listCast;
+
+    @Getter
+    @Option(name = "-list-station", aliases = {"-Z"}, usage = "List matching radio stations, then exit.", help = true)
+    private boolean listStation;
 
     @Getter
     @Option(name = "-cast", aliases = {"-c"}, usage = "Stream to the given chrome cast device.")

@@ -53,6 +53,16 @@ public class Main {
     /** Id for {@link ConsumerContext}. */
     private static int nextId = 1;
 
+    private static RadioBrowser newRadioBrowser(Params params) {
+        RadioBrowser browser = new RadioBrowser("https://de1.api.radio-browser.info/",
+                params.getTimeout() * 1000,
+                GITHUB_URL,
+                params.getProxy() != null ? params.getProxy().toExternalForm() : null,
+                null,
+                null);
+        return browser;
+    }
+
     /** Read the URLs or names given and resolve them using {@link RadioBrowser}.
      * @param urls the input urls from the command line.
      * @param params the command line.
@@ -60,12 +70,7 @@ public class Main {
      */
     private static Collection<String> sanitize(List<String> urls, Params params) {
         Set<String> result = new HashSet<>();
-        RadioBrowser browser = new RadioBrowser("https://de1.api.radio-browser.info/",
-                params.getTimeout() * 1000,
-                GITHUB_URL,
-                params.getProxy() != null ? params.getProxy().toExternalForm() : null,
-                null,
-                null);
+
         int limit = params.getStationLimit();
         for (String urlString : urls) {
             try {
@@ -73,7 +78,7 @@ public class Main {
                 result.add(urlString);
             } catch (MalformedURLException ex) {
                 log.debug("URL not valid "+urlString+", will try to lookup", ex);
-                List<Station> stations = browser.listStationsBy(
+                List<Station> stations = newRadioBrowser(params).listStationsBy(
                         Paging.at(0, limit),
                         SearchMode.BYNAME,
                         urlString);
@@ -119,6 +124,11 @@ public class Main {
             return;
         }
 
+        if (params.isListStation()) {
+            listStations(params.getArguments(), params);
+            return;
+        }
+
         if (params.isListMixers()) {
             listMixers();
             return;
@@ -149,5 +159,23 @@ public class Main {
     private static void listMixers() {
         Arrays.stream(AudioSystem.getMixerInfo()).forEach(mi ->
                 System.out.println("Mixer name: " + mi.getName() + ", Description: " + mi.getDescription() + ", Vendor: " + mi.getVendor()));
+    }
+
+    private static void listStations(List<String> names, Params params) {
+        for (String name : names) {
+            newRadioBrowser(params).listStationsBy(
+                    SearchMode.BYNAME,
+                    name).forEach(
+              station -> {
+                  System.out.printf("%-40s %s %d bps %-20s %s%n",
+                          station.getName(),
+                          station.getCodec(),
+                          station.getBitrate(),
+                          station.getTags(),
+                          station.getStationUUID()
+                  );
+              }
+            );
+        }
     }
 }
