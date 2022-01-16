@@ -3,6 +3,7 @@ name: Package
 on:
   push:
     branches: [ master, merge_os ]
+    tags: [ v* ]
   pull_request:
     branches: [ master, merge_os ]
 
