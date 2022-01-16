@@ -14,6 +14,7 @@ Some of the features are:
 * Recording of one file per song.
 * Writing of ID3 tags (ID3v1 and ID3V2.4).
 * Parallel recording of multiple radio stations.
+* Integrated querying and resolving using the [Radio Browser](https://www.radio-browser.info/) internet radio database.
 
 ## Downloading & installation
 
