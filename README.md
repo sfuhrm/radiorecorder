@@ -51,6 +51,20 @@ after that, the executable is in `/opt/radiorecorder/bin/radiorecorder`.
 
 ## Usage
 
+### Playback
+
+When playing, the usage can consist of the search and the play step:
+
+* Search the stations (i.e. `radiorecorder -list-station synthpop`)
+* Play a specific radio station of the list from above (`radiorecorder -play f9ab3256-33a7-41a3-ba57-646bf3750ae9`)
+
+### Recording
+
+When recording, the usage usually consists also of the two steps:
+
+* Search the stations (i.e. `radiorecorder -list-station synthpop`)
+* Record a specific radio station of the list from above (`radiorecorder -use-songnames -directory . f9ab3256-33a7-41a3-ba57-646bf3750ae9`)
+
 ### Command line options
 
 The program is a command line only program. It supports multiple parameters:
