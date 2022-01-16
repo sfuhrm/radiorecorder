@@ -27,18 +27,18 @@ jobs:
 
     - uses: actions/upload-artifact@v2
       with:
-        name: radiorecorder-${{ steps.packagename.outputs.packagename }}-bin.tar.gz
-        path: target/radiorecorder-${{ steps.packagename.outputs.packagename }}-bin.tar.gz
+        name: radiorecorder-${{ steps.version.outputs.version }}-bin.tar.gz
+        path: target/radiorecorder-${{ steps.version.outputs.version }}-bin.tar.gz
 
     - uses: actions/upload-artifact@v2
       with:
-        name: radiorecorder-${{ steps.packagename.outputs.packagename }}-bin.tar.bz2
-        path: target/radiorecorder-${{ steps.packagename.outputs.packagename }}-bin.tar.bz2
+        name: radiorecorder-${{ steps.version.outputs.version }}-bin.tar.bz2
+        path: target/radiorecorder-${{ steps.version.outputs.version }}-bin.tar.bz2
 
     - uses: actions/upload-artifact@v2
       with:
-        name: radiorecorder-${{ steps.packagename.outputs.packagename }}-bin.zip
-        path: target/radiorecorder-${{ steps.packagename.outputs.packagename }}-bin.zip
+        name: radiorecorder-${{ steps.version.outputs.version }}-bin.zip
+        path: target/radiorecorder-${{ steps.version.outputs.version }}-bin.zip
 
     - uses: actions/upload-artifact@v2
       with:
