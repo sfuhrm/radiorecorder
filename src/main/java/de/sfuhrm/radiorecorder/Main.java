@@ -15,6 +15,7 @@
  */
 package de.sfuhrm.radiorecorder;
 
+import de.sfuhrm.radiobrowser4j.ListParameter;
 import de.sfuhrm.radiobrowser4j.Paging;
 import de.sfuhrm.radiobrowser4j.RadioBrowser;
 import java.io.File;
@@ -28,6 +29,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import de.sfuhrm.radiobrowser4j.SearchMode;
@@ -68,21 +70,33 @@ public class Main {
      * @param params the command line.
      * @return the sanitized URLs.
      */
-    private static Collection<String> sanitize(List<String> urls, Params params) {
-        Set<String> result = new HashSet<>();
+    private static Collection<Station> sanitize(List<String> urls, Params params) {
+        Set<Station> result = new HashSet<>();
 
+        RadioBrowser radioBrowser = newRadioBrowser(params);
         int limit = params.getStationLimit();
         for (String urlString : urls) {
             try {
-                new URL(urlString); // parse the url
-                result.add(urlString);
+                URL url = new URL(urlString); // parse the url
+                Station s = new Station();
+                s.setName("User-Suppplied URL");
+                s.setUrl(url.toExternalForm());
+                result.add(s);
             } catch (MalformedURLException ex) {
-                log.debug("URL not valid "+urlString+", will try to lookup", ex);
-                List<Station> stations = newRadioBrowser(params).listStationsBy(
-                        Paging.at(0, limit),
-                        SearchMode.BYNAME,
-                        urlString);
-                result.addAll(stations.stream().map(Station::getUrl).collect(Collectors.toList()));
+                log.debug("Parameter not an URL: "+urlString, ex);
+                try {
+                    UUID uuid = UUID.fromString(urlString);
+                    List<Station> stations = radioBrowser.listStationsBy(SearchMode.BYUUID, uuid.toString()).collect(Collectors.toList());
+                    result.addAll(stations);
+                }
+                catch (IllegalArgumentException e) {
+                    log.debug("Parameter not an UUID: "+urlString, ex);
+                    List<Station> stations = radioBrowser.listStationsBy(
+                            Paging.at(0, limit),
+                            SearchMode.BYNAME,
+                            urlString);
+                    result.addAll(stations);
+                }
             }
         }
         return result;
@@ -139,19 +153,19 @@ public class Main {
             return;
         }
 
-        Collection<String> stations = sanitize(params.getArguments(), params);
+        Collection<Station> stations = sanitize(params.getArguments(), params);
         if (params.isPlay() && stations.size() > 1) {
             stations = stations.stream().limit(1).collect(Collectors.toList());
             System.err.println("Restricting to first station because playing.");
         }
-        stations.stream().forEach(url -> {
+        stations.stream().forEach(station -> {
             try {
-                System.err.println(url);
-                Runnable r = new RadioRunnable(toConsumerContext(params, url));
-                Thread t = new Thread(r, url);
+                System.err.println(station);
+                Runnable r = new RadioRunnable(toConsumerContext(params, station.getUrl()));
+                Thread t = new Thread(r, station.getUrl());
                 t.start();
             } catch (IOException ex) {
-                log.warn("Could not start thread for url "+url, ex);
+                log.warn("Could not start thread for station url "+station.getUrl(), ex);
             }
         });
     }
@@ -162,19 +176,13 @@ public class Main {
     }
 
     private static void listStations(List<String> names, Params params) {
-        for (String name : names) {
-            newRadioBrowser(params).listStationsBy(
-                    SearchMode.BYNAME,
-                    name).forEach(
-              station -> {
-                  System.out.printf("%-40s %s %d bps %-20s %s%n",
-                          station.getName(),
-                          station.getCodec(),
-                          station.getBitrate(),
-                          station.getTags(),
-                          station.getStationUUID()
-                  );
-              }
+        for (Station station : sanitize(names, params)) {
+            System.out.printf("%-40s %s %d bps %-20s %s%n",
+                  station.getName(),
+                  station.getCodec(),
+                  station.getBitrate(),
+                  station.getTags(),
+                  station.getStationUUID()
             );
         }
     }
