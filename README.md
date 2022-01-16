@@ -9,10 +9,10 @@ Radio Recorder
 A command line internet radio player and recorder.
 Some of the features are:
 * Display of the current song title played.
-* Playback using Java Media Framework.
-* Recording different files for different song titles.
+* Live playback using Java Media Framework.
+* Live Google Chromecast playback of radio streams.
+* Recording of one file per song.
 * Writing of ID3 tags (ID3v1 and ID3V2.4).
-* Chromecast replay of radio streams.
 * Parallel recording of multiple radio stations.
 
 ## Downloading & installation
