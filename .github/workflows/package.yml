@@ -27,17 +27,17 @@ jobs:
 
     - uses: actions/upload-artifact@v2
       with:
-        name: radiorecorder-${{ steps.version.outputs.version }}-bin.tar.gz
+        name: packages
         path: target/radiorecorder-${{ steps.version.outputs.version }}-bin.tar.gz
 
     - uses: actions/upload-artifact@v2
       with:
-        name: radiorecorder-${{ steps.version.outputs.version }}-bin.tar.bz2
+        name: packages
         path: target/radiorecorder-${{ steps.version.outputs.version }}-bin.tar.bz2
 
     - uses: actions/upload-artifact@v2
       with:
-        name: radiorecorder-${{ steps.version.outputs.version }}-bin.zip
+        name: packages
         path: target/radiorecorder-${{ steps.version.outputs.version }}-bin.zip
 
     - uses: actions/upload-artifact@v2
@@ -120,7 +120,7 @@ jobs:
         shell: bash
       - uses: actions/upload-artifact@v2
         with:
-          name: ${{ steps.packagename.outputs.packagename }}
+          name: packages
           path: jpackage-app/${{ steps.packagename.outputs.packagename }}
   jpackage_macos:
     needs: build
@@ -171,5 +171,5 @@ jobs:
         shell: bash
       - uses: actions/upload-artifact@v2
         with:
-          name: ${{ steps.packagename.outputs.packagename }}
+          name: packages
           path: jpackage-app/${{ steps.packagename.outputs.packagename }}
