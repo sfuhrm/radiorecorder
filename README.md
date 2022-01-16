@@ -4,7 +4,7 @@ Radio Recorder
 [![Dependency Check](https://github.com/sfuhrm/radiorecorder/actions/workflows/dependency-check.yml/badge.svg)](https://github.com/sfuhrm/radiorecorder/actions/workflows/dependency-check.yml)
 [![Integration Test](https://github.com/sfuhrm/radiorecorder/actions/workflows/maven-integration.yml/badge.svg)](https://github.com/sfuhrm/radiorecorder/actions/workflows/maven-integration.yml)
 [![ReleaseDate](https://img.shields.io/github/release-date/sfuhrm/radiorecorder)](https://github.com/sfuhrm/radiorecorder/releases)
-https://img.shields.io/maven-central/v/de.sfuhrm/radiorecorder
+![Maven Central](https://img.shields.io/maven-central/v/de.sfuhrm/radiorecorder)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 A command line internet radio player and recorder.
