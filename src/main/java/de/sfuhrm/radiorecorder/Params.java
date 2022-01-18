@@ -42,7 +42,7 @@ public class Params {
     private boolean help;
 
     @Getter
-    @Option(name = "-directory", aliases = {"-d"}, usage = "Write recorded stream files in a folder hierarchy in to this directory.", metaVar = "DIR")
+    @Option(name = "-directory", aliases = {"-d"}, usage = "Write recorded stream files to a folder hierarchy in this target directory.", metaVar = "DIR")
     private File directory;
 
     @Getter
