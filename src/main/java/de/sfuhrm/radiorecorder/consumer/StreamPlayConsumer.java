@@ -58,7 +58,7 @@ public class StreamPlayConsumer extends MetaDataConsumer implements Consumer<Htt
             Mixer.Info mixerInfo = getContext().getMixerInfo();
             try (SourceDataLine line = AudioSystem.getSourceDataLine(targetFormat, mixerInfo)) {
                 long bufferSize = line.getBufferSize();
-                log.info("Streaming from url {} to line {}, format {}, buffer size {}",
+                log.debug("Streaming from url {} to line {}, format {}, buffer size {}",
                         getContext().getUrl().toExternalForm(),
                         line.getLineInfo().toString(),
                         audioFileFormat,

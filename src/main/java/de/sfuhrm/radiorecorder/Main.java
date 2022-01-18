@@ -70,24 +70,25 @@ public class Main {
      * @param params the command line.
      * @return the sanitized URLs.
      */
-    private static List<Station> sanitize(List<String> urls, Params params) {
-        List<Station> result = new ArrayList<>();
+    private static List<Radio> sanitize(List<String> urls, Params params) {
+        List<Radio> result = new ArrayList<>();
 
         RadioBrowser radioBrowser = newRadioBrowser(params);
         int limit = params.getStationLimit();
         for (String urlString : urls) {
             try {
                 URL url = new URL(urlString); // parse the url
-                Station s = new Station();
+                Radio s = new Radio();
                 s.setName("User-Suppplied URL");
-                s.setUrl(url.toExternalForm());
+                s.setUrl(url);
                 result.add(s);
             } catch (MalformedURLException ex) {
                 log.debug("Parameter not an URL: "+urlString, ex);
                 try {
                     UUID uuid = UUID.fromString(urlString);
                     List<Station> stations = radioBrowser.listStationsBy(SearchMode.BYUUID, uuid.toString()).collect(Collectors.toList());
-                    result.addAll(stations);
+                    List<Radio> radios = stations.stream().map(Radio::fromStation).collect(Collectors.toList());
+                    result.addAll(radios);
                 }
                 catch (IllegalArgumentException e) {
                     log.debug("Parameter not an UUID: "+urlString, ex);
@@ -95,18 +96,19 @@ public class Main {
                             Paging.at(0, limit),
                             SearchMode.BYNAME,
                             urlString);
-                    result.addAll(stations);
+                    List<Radio> radios = stations.stream().map(Radio::fromStation).collect(Collectors.toList());
+                    result.addAll(radios);
                 }
             }
         }
         return result;
     }
 
-    private static ConsumerContext toConsumerContext(Params p, String url) throws MalformedURLException, UnsupportedEncodingException {
-        URL myUrl = new URL(url);
+    private static ConsumerContext toConsumerContext(Params p, Radio radio) throws MalformedURLException, UnsupportedEncodingException {
+        URL myUrl = radio.getUrl();
         File dir = new File(p.getDirectory(), URLEncoder.encode(myUrl.getHost()+"/"+myUrl.getPath(), "UTF-8"));
         dir.mkdirs();
-        return new ConsumerContext(nextId++, myUrl, dir, p);
+        return new ConsumerContext(nextId++, radio, dir, p);
     }
 
     @Value
@@ -181,19 +183,19 @@ public class Main {
             return;
         }
 
-        Collection<Station> stations = sanitize(params.getArguments(), params);
-        if (params.isPlay() && stations.size() > 1) {
-            stations = stations.stream().limit(1).collect(Collectors.toList());
+        Collection<Radio> radios = sanitize(params.getArguments(), params);
+        if (params.isPlay() && radios.size() > 1) {
+            radios = radios.stream().limit(1).collect(Collectors.toList());
             System.err.println("Restricting to first station because playing.");
         }
-        stations.stream().forEach(station -> {
+        radios.stream().forEach(radio -> {
             try {
-                System.err.println(station);
-                Runnable r = new RadioRunnable(toConsumerContext(params, station.getUrl()));
-                Thread t = new Thread(r, station.getUrl());
+                System.err.println(radio);
+                Runnable r = new RadioRunnable(toConsumerContext(params, radio));
+                Thread t = new Thread(r, "Radio " + radio.getUuid());
                 t.start();
             } catch (IOException ex) {
-                log.warn("Could not start thread for station url "+station.getUrl(), ex);
+                log.warn("Could not start thread for station url "+radio.getUrl(), ex);
             }
         });
     }
@@ -214,19 +216,19 @@ public class Main {
     }
 
     private static void listStations(List<String> names, Params params) {
-        List<Station> stations = sanitize(names, params);
+        List<Radio> radios = sanitize(names, params);
 
-        if (stations.isEmpty()) {
+        if (radios.isEmpty()) {
             System.out.println(NO_RESULTS);
             return;
         }
 
-        ListHelper<Station> helper = new ListHelper<>(stations);
-        helper.addColumn("UUID", s -> s.getStationUUID().toString());
+        ListHelper<Radio> helper = new ListHelper<>(radios);
+        helper.addColumn("UUID", s -> s.getUuid().toString());
         helper.addColumn("Name", s -> s.getName());
         helper.addColumn("Codec", s -> s.getCodec());
         helper.addColumn("BR", s -> String.format("%d", s.getBitrate()));
-        helper.addColumn("Tags", s -> s.getTags());
+        helper.addColumn("Tags", s -> s.getTags().toString());
 
         helper.print(System.out);
     }

@@ -137,7 +137,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
         } catch (FileNotFoundException ex) {
             throw new RadioException(false, ex);
         }
-        log.info("Copying from url {} to file {}, type {}",
+        log.debug("Copying from url {} to file {}, type {}",
                 getContext().getUrl().toExternalForm(),
                 f,
                 contentType);

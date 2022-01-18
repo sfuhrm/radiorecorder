@@ -32,7 +32,7 @@ class ConsoleMetaDataConsumer implements Consumer<MetaData> {
     public void accept(MetaData md) {
         StringBuilder builder = new StringBuilder();
 
-        log.info("New metadata: {}", md);
+        log.debug("New metadata: {}", md);
 
         Date now = new Date();
         DateFormat dateFormat = DateFormat.getTimeInstance(DateFormat.SHORT);

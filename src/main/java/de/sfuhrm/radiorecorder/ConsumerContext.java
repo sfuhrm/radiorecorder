@@ -16,6 +16,7 @@
 package de.sfuhrm.radiorecorder;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Objects;
@@ -40,6 +41,9 @@ public class ConsumerContext {
     private final int id;
 
     @Getter
+    private final Radio radio;
+
+    @Getter
     private final URL url;
 
     @Getter
@@ -47,9 +51,10 @@ public class ConsumerContext {
 
     private final Params params;
 
-    public ConsumerContext(int id, URL url, File directory, Params params) {
+    public ConsumerContext(int id, Radio radio, File directory, Params params) throws MalformedURLException {
         this.id = id;
-        this.url = Objects.requireNonNull(url);
+        this.radio = radio;
+        this.url = radio.getUrl();
         this.directory = Objects.requireNonNull(directory);
         this.params = Objects.requireNonNull(params);
     }
