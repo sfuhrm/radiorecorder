@@ -134,7 +134,9 @@ public class Params {
                 return null;
             }
 
-            if (!result.isPlay() && result.getDirectory() == null) {
+            boolean isList = result.isListCast() || result.isListStation() || result.isListMixers();
+
+            if (!result.isPlay() && !isList && result.getDirectory() == null) {
                 cmdLineParser.printUsage(System.err);
                 System.err.println("Not playing, need a target directory (-directory)!");
                 return null;
