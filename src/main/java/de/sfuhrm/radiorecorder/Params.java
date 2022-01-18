@@ -134,7 +134,7 @@ public class Params {
                 return null;
             }
 
-            if (result.isPlay() && result.getDirectory() == null) {
+            if (!result.isPlay() && result.getDirectory() == null) {
                 cmdLineParser.printUsage(System.err);
                 System.err.println("Not playing, need a target directory (-directory)!");
                 return null;
