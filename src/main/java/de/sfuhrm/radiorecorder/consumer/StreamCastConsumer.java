@@ -17,6 +17,7 @@ package de.sfuhrm.radiorecorder.consumer;
 
 import de.sfuhrm.radiorecorder.ConsumerContext;
 import de.sfuhrm.radiorecorder.Main;
+import de.sfuhrm.radiorecorder.Radio;
 import de.sfuhrm.radiorecorder.RadioException;
 import static de.sfuhrm.radiorecorder.RadioRunnable.BUFFER_SIZE;
 import de.sfuhrm.radiorecorder.http.HttpConnection;
@@ -95,10 +96,14 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<Htt
             chromeCast.connect();
             log.debug("Connected to chromecast {}", chromeCast);
 
+            Radio radio = getContext().getRadio();
             Application app = chromeCast.launchApp(APP_ID);
             chromeCast.setApplication(Main.PROJECT);
-            chromeCast.setName("My Name");
-            MediaStatus mediaStatus = chromeCast.load(Main.PROJECT, null, t.getURL().toExternalForm(), t.getContentType());
+            chromeCast.setName(radio.getName());
+            MediaStatus mediaStatus = chromeCast.load(Main.PROJECT + ": " + radio.getName(),
+                    radio.getFavIconUrl() != null ? radio.getFavIconUrl().toExternalForm() : null,
+                    t.getURL().toExternalForm(),
+                    t.getContentType());
 
             log.debug("Loaded content to chromecast {}", chromeCast.getTitle());
 

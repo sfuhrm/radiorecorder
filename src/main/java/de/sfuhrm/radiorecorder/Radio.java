@@ -19,7 +19,7 @@ import java.util.UUID;
 @Getter @Setter
 @Slf4j
 @ToString
-class Radio {
+public class Radio {
     /** The station name. */
     private String name;
 
