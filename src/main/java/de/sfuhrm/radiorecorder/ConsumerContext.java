@@ -46,16 +46,12 @@ public class ConsumerContext {
     @Getter
     private final URL url;
 
-    @Getter
-    private final File directory;
-
     private final Params params;
 
-    public ConsumerContext(int id, Radio radio, File directory, Params params) throws MalformedURLException {
+    public ConsumerContext(int id, Radio radio, Params params) throws MalformedURLException {
         this.id = id;
         this.radio = radio;
         this.url = radio.getUrl();
-        this.directory = Objects.requireNonNull(directory);
         this.params = Objects.requireNonNull(params);
     }
 
@@ -64,6 +60,13 @@ public class ConsumerContext {
      */
     public int getTimeout() {
         return params.getTimeout() * 1000;
+    }
+
+    /** Get the directory to write files to.
+     * @return directory to write files to.
+     */
+    public File getTargetDirectory() {
+        return params.getDirectory();
     }
 
     /** Get minimum free bytes.

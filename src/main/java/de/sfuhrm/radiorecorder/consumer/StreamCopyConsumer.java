@@ -24,6 +24,7 @@ import com.mpatric.mp3agic.NotSupportedException;
 import com.mpatric.mp3agic.UnsupportedTagException;
 import de.sfuhrm.radiorecorder.ConsumerContext;
 import de.sfuhrm.radiorecorder.Main;
+import de.sfuhrm.radiorecorder.Radio;
 import de.sfuhrm.radiorecorder.RadioException;
 import static de.sfuhrm.radiorecorder.RadioRunnable.BUFFER_SIZE;
 import de.sfuhrm.radiorecorder.http.HttpConnection;
@@ -34,6 +35,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.file.FileStore;
 import java.nio.file.Files;
 import java.nio.file.attribute.FileTime;
@@ -72,6 +76,9 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
      */
     private boolean metaDataChanged;
 
+    /** The directory to write files to. */
+    private File directory;
+
     /**
      * The current file being written to, if any.
      *
@@ -89,12 +96,26 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
     public StreamCopyConsumer(ConsumerContext consumerContext) {
         super(consumerContext);
 
+        directory = createDirectory(consumerContext);
         try {
             initFileNumber();
         } catch (IOException ex) {
             log.warn("File number finding problem", ex);
             fileNumber = 1;
         }
+    }
+
+    private File createDirectory(ConsumerContext context) {
+        File parent = context.getTargetDirectory();
+        String hostAndPath;
+        try {
+            hostAndPath = URLEncoder.encode(context.getRadio().getName(), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+        File dir = new File(parent, hostAndPath);
+        dir.mkdirs();
+        return dir;
     }
 
     /**
@@ -289,7 +310,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
         final Pattern integerPattern = Pattern.compile("[0-9]+");
 
         // this works for both songname files and number files
-        final OptionalInt maxFileNumber = Files.list(getContext().getDirectory().toPath())
+        final OptionalInt maxFileNumber = Files.list(directory.toPath())
                 .filter(p -> Files.isRegularFile(p))
                 .map(p -> p.getFileName().toString())
                 .filter(s -> s.contains("."))
@@ -312,7 +333,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
         do {
             String fileName = String.format("%03d%s", fileNumber,
                     suffixFromContentType(contentType));
-            f = new File(getContext().getDirectory(), fileName);
+            f = new File(directory, fileName);
             fileNumber++;
         } while (f.exists() && f.length() != 0);
         return f;
@@ -333,7 +354,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
                         sanitizeFileName(metaData.getArtist().orElse(unknown)),
                         sanitizeFileName(metaData.getTitle().orElse(unknown)),
                         suffixFromContentType(contentType));
-                file = new File(getContext().getDirectory(), fileName);
+                file = new File(directory, fileName);
             } while (file.exists() && file.length() != 0);
             result = Optional.of(file);
         }

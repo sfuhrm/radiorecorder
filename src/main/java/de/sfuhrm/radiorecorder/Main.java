@@ -105,10 +105,7 @@ public class Main {
     }
 
     private static ConsumerContext toConsumerContext(Params p, Radio radio) throws MalformedURLException, UnsupportedEncodingException {
-        URL myUrl = radio.getUrl();
-        File dir = new File(p.getDirectory(), URLEncoder.encode(myUrl.getHost()+"/"+myUrl.getPath(), "UTF-8"));
-        dir.mkdirs();
-        return new ConsumerContext(nextId++, radio, dir, p);
+        return new ConsumerContext(nextId++, radio, p);
     }
 
     @Value
