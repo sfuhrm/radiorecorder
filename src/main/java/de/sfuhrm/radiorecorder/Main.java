@@ -177,7 +177,11 @@ public class Main {
 
         if (params.getArguments() == null) {
             System.err.println("Please enter command line arguments (radio urls)");
-            return;
+            System.exit(1);
+        }
+        if (! params.isPlay() && params.getDirectory() == null) {
+            System.err.println("Not playing, but also no target directory given. Exiting.");
+            System.exit(1);
         }
 
         Collection<Radio> radios = sanitize(params.getArguments(), params);
@@ -185,6 +189,7 @@ public class Main {
             radios = radios.stream().limit(1).collect(Collectors.toList());
             System.err.println("Restricting to first station because playing.");
         }
+
         radios.stream().forEach(radio -> {
             try {
                 System.err.println(radio);

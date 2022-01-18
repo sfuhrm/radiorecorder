@@ -48,7 +48,7 @@ public abstract class AbstractConsumer implements Consumer<HttpConnection> {
     @Override
     public final void accept(HttpConnection u) {
         try {
-            log.debug("Source URL is {}, real URL is {} and directory is {}", getContext().getUrl(), u.getURL().toExternalForm(), getContext().getDirectory());
+            log.debug("Source URL is {}, real URL is {}", getContext().getUrl(), u.getURL().toExternalForm());
             log.debug("HTTP {} {}", u.getResponseCode(), u.getResponseMessage());
             if (log.isDebugEnabled()) {
                 log.debug("HTTP Response Header fields");

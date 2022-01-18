@@ -123,7 +123,6 @@ public class Params {
             }
 
             Params result = new Params();
-            result.directory = new File(System.getProperty("user.dir"));
 
             cmdLineParser = new CmdLineParser(result);
             cmdLineParser.parseArgument(args);

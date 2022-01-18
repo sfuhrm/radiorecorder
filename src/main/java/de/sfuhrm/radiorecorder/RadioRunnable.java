@@ -37,7 +37,7 @@ public class RadioRunnable implements Runnable {
     @Override
     public void run() {
         MDC.put("id", Integer.toString(consumerContext.getId()));
-        log.debug("URL is {} and directory is {}", consumerContext.getUrl(), consumerContext.getDirectory());
+        log.debug("Station UUID is {} and directory is {}", consumerContext.getRadio().getUuid());
         try {
             configurator.consume(consumerContext.getUrl());
         }
