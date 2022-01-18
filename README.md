@@ -80,12 +80,14 @@ The program is a command line only program. It supports multiple parameters:
                                           option -list-station)
  -abort-after KB                        : Abort after writing the given amount
                                           of kilobytes to target drive.
- -cast (-c) VAL                         : Stream to the given chrome cast
-                                          device.
+ -cast (-c) CASTDEVICE_TITLE            : Stream to the given chrome cast
+                                          device. Use cast device title from
+                                          '-list-cast'.
  -client (-C) [JAVA_NET |               : Specify HTTP client to use. (default:
  APACHE_CLIENT_4 | APACHE_CLIENT_5]       APACHE_CLIENT_5)
- -directory (-d) DIR                    : Write to this directory. (default:
-                                          /home/fury)
+ -directory (-d) DIR                    : Write recorded stream files to a
+                                          folder hierarchy in this target
+                                          directory.
  -help (-h)                             : Show this command line help.
                                           (default: true)
  -limit (-l) COUNT                      : Limit of stations to download in
@@ -99,7 +101,7 @@ The program is a command line only program. It supports multiple parameters:
                                           false)
  -min-free (-M) MEGS                    : Minimum of free megs on target drive.
                                           (default: 512)
- -mixer (-m) VAL                        : The mixer to use for playback. The
+ -mixer (-m) MIXER_NAME                 : The mixer to use for playback. The
                                           mixer parameter is the name from the
                                           '-list-mixer' option output.
  -play (-p)                             : Play live instead of recording to a
