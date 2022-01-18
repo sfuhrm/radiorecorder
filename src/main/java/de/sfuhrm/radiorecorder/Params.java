@@ -42,7 +42,7 @@ public class Params {
     private boolean help;
 
     @Getter
-    @Option(name = "-directory", aliases = {"-d"}, usage = "Write to this directory.", metaVar = "DIR")
+    @Option(name = "-directory", aliases = {"-d"}, usage = "Write recorded stream files in a folder hierarchy in to this directory.", metaVar = "DIR")
     private File directory;
 
     @Getter
@@ -71,7 +71,8 @@ public class Params {
 
     @Getter
     @Option(name = "-mixer", aliases = {"-m"}, usage = "The mixer to use for playback. " +
-            "The mixer parameter is the name from the '-list-mixer' option output.")
+            "The mixer parameter is the name from the '-list-mixer' option output.",
+            metaVar = "MIXER_NAME")
     private String mixer;
 
     @Getter
@@ -87,7 +88,8 @@ public class Params {
     private boolean listStation;
 
     @Getter
-    @Option(name = "-cast", aliases = {"-c"}, usage = "Stream to the given chrome cast device.")
+    @Option(name = "-cast", aliases = {"-c"}, usage = "Stream to the given chrome cast device. Use cast device title from '-list-cast'.",
+            metaVar = "CASTDEVICE_TITLE")
     private String castReceiver;
 
     @Getter
