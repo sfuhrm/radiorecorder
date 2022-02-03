@@ -37,13 +37,13 @@ https://github.com/sfuhrm/radiorecorder/releases
 
 Releases typically contain files named like this for downloading:
 
-* radiorecorder_xxx_amd64.deb: A Debian install archive with the program and the Java runtime included. 
-* radiorecorder-xxx.x86_64.rpm: A CentOS/RHEL install archive with the program and the Java runtime included. 
-* radiorecorder-xxx.pkg: A MacOS PKG installer with the program and the Java runtime included.
-* radiorecorder-xxx.dmg: A MacOS DMG installer with the program and the Java runtime included.
-* radiorecorder-xxx-bin.tar.bz2: A program-only archive in tar.bz2 format that requires a Java runtime installed on your system.
-* radiorecorder-xxx-bin.tar.gz: A program-only archive in tar.gz format that requires a Java runtime installed on your system.
-* radiorecorder-xxx-bin.zip: A program-only archive in ZIP format that requires a Java runtime installed on your system.
+* `radiorecorder_xxx_amd64.deb`: A Debian install archive with the program and the Java runtime included. 
+* `radiorecorder-xxx.x86_64.rpm`: A CentOS/RHEL install archive with the program and the Java runtime included. 
+* `radiorecorder-xxx.pkg`: A MacOS PKG installer with the program and the Java runtime included.
+* `radiorecorder-xxx.dmg`: A MacOS DMG installer with the program and the Java runtime included.
+* `radiorecorder-xxx-bin.tar.bz2`: A program-only archive in tar.bz2 format that requires a Java runtime installed on your system.
+* `radiorecorder-xxx-bin.tar.gz`: A program-only archive in tar.gz format that requires a Java runtime installed on your system.
+* `radiorecorder-xxx-bin.zip`: A program-only archive in ZIP format that requires a Java runtime installed on your system.
 
 You can chose whether you prefer an installation with the runtime as a package or care for the Java runtime yourself.
 The latter makes sense when you're on Windows, Aarch64, X86, or some other system with no dedicated installer.
