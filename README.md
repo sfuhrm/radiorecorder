@@ -17,9 +17,15 @@ Some of the features are:
 * Writing of ID3 tags (ID3v1 and ID3V2.4).
 * Parallel recording of multiple radio stations.
 * Integrated querying and resolving using the [Radio Browser](https://www.radio-browser.info/) internet radio database.
+* Stream formats:
+  * MP3
+  * OGG Vorbis
+
 
 Restrictions:
-* No AAC/AAC+ support.
+* Missing stream formats:
+  * AAC
+  * AAC+
 
 ## Downloading & installation
 
