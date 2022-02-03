@@ -86,27 +86,41 @@ public class ConsumerContext {
         return Optional.of(params.getAbortAfterKilo() * 1024);
     }
 
-    /** Whether to play or store. */
+    /** Whether to play or store.
+     * @return {@code true} if playing was requested on the command line,
+     * {@code false} otherwise.
+     * */
     public boolean isPlaying() {
         return params.isPlay();
     }
 
-    /** Whether to name the files after the metadata retrieved. */
+    /** Whether to name the files after the metadata retrieved.
+     * @return {@code true} if meta data naming was requested on the command line,
+     * {@code false} otherwise.
+     * */
     public boolean isSongNames() {
         return params.isSongNames();
     }
 
-    /** Reconnect forever. */
+    /** Reconnect forever.
+     * @return {@code true} if reconnecting was requested on the command line,
+     * {@code false} otherwise.
+     * */
     public boolean isReconnect() {
         return params.isReconnect();
     }
 
-    /** The cast device to cast to. */
+    /** The cast device to cast to.
+     * @return the name of the chrome cast receiver to play on.
+     * */
     public String getCastReceiver() {
         return params.getCastReceiver();
     }
 
-    /** The mixer to play on. */
+    /** The mixer to play on.
+     * @return the mixer info to play on, or {@code null} if
+     * the default is ok.
+     * */
     public Mixer.Info getMixerInfo() {
         if (params.getMixer() != null) {
             Optional<Mixer.Info> optionalInfo = Arrays.stream(AudioSystem.getMixerInfo()).filter(mi -> mi.getName().equals(params.getMixer())).findFirst();
@@ -119,12 +133,16 @@ public class ConsumerContext {
         return null;
     }
 
-    /** The client type to use. */
+    /** The client type to use.
+     * @return the HTTP client type requested in the command line.
+     * */
     public HttpConnectionBuilderFactory.HttpClientType getHttpClient() {
         return params.getHttpClientType();
     }
 
-    /** The HTTP proxy to use or NULL. */
+    /** The HTTP proxy to use or NULL.
+     * @return the HTTP proxy requested in the command line.
+     * */
     public URL getProxy() {
         return params.getProxy();
     }

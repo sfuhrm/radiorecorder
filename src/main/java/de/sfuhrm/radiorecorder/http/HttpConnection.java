@@ -28,6 +28,8 @@ import java.util.Map;
 public interface HttpConnection extends AutoCloseable {
 
     /** Get the URL being associated to this connection.
+     * @return the URL associated with this connection.
+     * @throws IOException if resolving the URL resulted in an error.
      */
     URL getURL() throws IOException;
 
@@ -39,6 +41,9 @@ public interface HttpConnection extends AutoCloseable {
     Map<String, List<String>> getHeaderFields();
 
     /** Get the input stream reading the HTTP response body.
+     * @return the input stream of the connection.
+     * @throws IOException if there's a problem getting or opening the
+     * input stream.
      */
     InputStream getInputStream() throws IOException;
 
@@ -50,12 +55,14 @@ public interface HttpConnection extends AutoCloseable {
 
     /** Get the HTTP server response code.
      * @return the numerical response code, for example 200 for "OK".
+     * @throws IOException if there is a problem getting the response code.
      * @see #getResponseMessage()
      */
     int getResponseCode() throws IOException;
 
     /** Get the HTTP server response status message.
      * @return the textual response message, for example "OK".
+     * @throws IOException if there is a problem getting the response message.
      * @see #getResponseCode()
      */
     String getResponseMessage() throws IOException;

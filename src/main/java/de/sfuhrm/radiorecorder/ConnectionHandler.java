@@ -49,7 +49,7 @@ public class ConnectionHandler {
     /** Configure the timeout for the connection.
      * @param builder the connection to configure.
      */
-    protected void configureTimeout(HttpConnectionBuilder builder) throws IOException {
+    protected void configureTimeout(HttpConnectionBuilder builder) {
         builder.setConnectTimeout(consumerContext.getTimeout());
         builder.setReadTimeout(consumerContext.getTimeout());
     }
@@ -57,7 +57,7 @@ public class ConnectionHandler {
     /** Configure the proxy for the connection.
      * @param builder the connection to configure.
      */
-    protected void configureProxy(HttpConnectionBuilder builder) throws IOException {
+    protected void configureProxy(HttpConnectionBuilder builder) {
         if (consumerContext.getProxy() != null) {
             builder.setProxy(consumerContext.getProxy());
         }
@@ -67,14 +67,14 @@ public class ConnectionHandler {
      * @param builder the connection to configure.
      * @see <a href="https://anton.logvinenko.name/en/blog/how-to-get-title-from-audio-stream-with-python.html">ID3 and icecast</a>
      */
-    protected void configureIcecast(HttpConnectionBuilder builder) throws IOException {
+    protected void configureIcecast(HttpConnectionBuilder builder) {
         builder.setRequestProperty("Icy-Metadata", "1");
     }
 
     /** Set headers for user client.
      * @param builder the connection to configure.
      */
-    protected void configureClient(HttpConnectionBuilder builder) throws IOException {
+    protected void configureClient(HttpConnectionBuilder builder) {
         builder.setRequestProperty("User-Agent", Main.PROJECT);
     }
 
@@ -98,7 +98,9 @@ public class ConnectionHandler {
 
     private static final long GRACE_PERIOD = 5000;
 
-    /** Consumes the given URL. */
+    /** Consumes the given URL.
+     * @param url the URL to process. Must be non-null.
+     * */
     public void consume(URL url) {
         boolean first = true;
         Objects.requireNonNull(url, "url must be non-null");
