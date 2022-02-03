@@ -32,7 +32,7 @@ import java.util.function.Consumer;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Handles a single {@link HttpConnection}.
+ * Handles a single {@link HttpConnection} to an internet radio.
  * @author Stephan Fuhrmann
  */
 @Slf4j
