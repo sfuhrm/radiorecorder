@@ -147,6 +147,7 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<Htt
             ChromeCasts.stopDiscovery();
             log.debug("Stopped discovery");
         } catch (IOException ex) {
+            log.warn("Problem disconnecting chromecast", ex);
         }
     }
 }
