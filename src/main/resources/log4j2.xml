@@ -25,12 +25,14 @@
   <Loggers>
     <Logger name="de.sfuhrm" level="INFO" additivity="false">
       <AppenderRef ref="rollingFile" />
+      <AppenderRef ref="console" />
     </Logger>
     <Logger name="de.sfuhrm.radiorecorder" level="INFO" additivity="false">
       <AppenderRef ref="rollingFile" />
       <AppenderRef ref="console" />
     </Logger>
-    <Root level="ERROR">
+    <Root level="WARN">
+      <AppenderRef ref="rollingFile" />
       <AppenderRef ref="console" />
     </Root>
   </Loggers>
