@@ -7,19 +7,6 @@
     <Console name="console" target="SYSTEM_OUT">
       <PatternLayout pattern="%p: %m%n%throwable{1}" />
     </Console>
-    <RollingFile
-            name="rollingFile"
-            fileName="${LOG}/radiorecorder.log"
-            filePattern="${LOG}/radiorecorder.%i.log.gz"
-            ignoreExceptions="false">
-      <PatternLayout>
-        <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %m%n</Pattern>
-      </PatternLayout>
-      <Policies>
-        <SizeBasedTriggeringPolicy size="10MB" />
-      </Policies>
-      <DefaultRolloverStrategy max="5" />
-    </RollingFile>
   </Appenders>
 
   <Loggers>
