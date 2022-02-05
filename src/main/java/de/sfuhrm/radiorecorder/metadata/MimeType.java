@@ -15,6 +15,7 @@
  */
 package de.sfuhrm.radiorecorder.metadata;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Stream;
 import lombok.Getter;
@@ -33,17 +34,31 @@ public enum MimeType {
     AUDIO_XSCPLS("audio/x-scpls", ".pls"),
     APPLICATION_OGG("application/ogg", ".ogg"),
     APPLICATION_PLS_XML("application/pls+xml", ".pls"),
-    AUDIO_AAC("audio/aac", ".m4a");
+    AUDIO_AAC(new String[] {"audio/aac", "audio/aacp", "audio/mp4"}, ".m4a");
 
     @Getter
-    private final String contentType;
+    private final String[] contentTypes;
 
     @Getter
     private final String suffix;
 
     MimeType(String contentType, String suffix) {
-        this.contentType = contentType;
+        this.contentTypes = new String[] { contentType };
         this.suffix = suffix;
+    }
+
+    MimeType(String[] contentTypes, String suffix) {
+        this.contentTypes = Arrays.copyOf(contentTypes, contentTypes.length);
+        this.suffix = suffix;
+    }
+
+    boolean matches(String contentTypeToMatch) {
+        for (String contentType : contentTypes) {
+            if (contentTypeToMatch.equalsIgnoreCase(contentType)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Finds the mime type by content type.
@@ -56,7 +71,7 @@ public enum MimeType {
             return Optional.empty();
         }
         return Stream.of(MimeType.values())
-                .filter(mt -> mt.contentType.equalsIgnoreCase(contentType))
+                .filter(mt -> mt.matches(contentType))
                 .findFirst();
     }
 }
