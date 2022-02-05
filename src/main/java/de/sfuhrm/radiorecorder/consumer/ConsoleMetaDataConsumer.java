@@ -44,7 +44,7 @@ class ConsoleMetaDataConsumer implements Consumer<MetaData> {
         md.getArtist().ifPresent(builder::append);
         md.getTitle().ifPresent(t -> builder.append(" - ").append(t));
 
-        System.err.println(builder.toString());
+        log.info("Track: {}", builder);
     }
 
 }

@@ -138,14 +138,13 @@ public class Params {
 
             if (!result.isPlay() && !isList && result.getDirectory() == null) {
                 cmdLineParser.printUsage(System.err);
-                System.err.println("Not playing, need a target directory (-directory)!");
+                log.error("Not playing, need a target directory (-directory)!");
                 return null;
             }
 
             return result;
         } catch (CmdLineException ex) {
             log.warn("Error in parsing", ex);
-            System.err.println(ex.getMessage());
             cmdLineParser.printUsage(System.err);
         }
         return null;

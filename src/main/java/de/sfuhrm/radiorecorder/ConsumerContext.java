@@ -24,6 +24,7 @@ import java.util.Optional;
 
 import de.sfuhrm.radiorecorder.http.HttpConnectionBuilderFactory;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Line;
@@ -35,6 +36,7 @@ import javax.sound.sampled.Mixer;
  * radio station.
  * @author Stephan Fuhrmann
  */
+@Slf4j
 public class ConsumerContext {
 
     @Getter
@@ -127,7 +129,7 @@ public class ConsumerContext {
             if (optionalInfo.isPresent()) {
                 return optionalInfo.get();
             } else {
-                System.err.println("No mixer info " + params.getMixer());
+                log.warn("No mixer info for command line mixer argument: {}. Falling back to default.", params.getMixer());
             }
         }
         return null;

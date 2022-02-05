@@ -134,7 +134,7 @@ public class Main {
     private static void listCastDevices() throws InterruptedException, IOException {
         int castSearchMillis = 5000;
 
-        System.err.printf("Please wait %dms while discovering devices...%n", castSearchMillis);
+        log.info("Please wait {}ms while discovering devices...", castSearchMillis);
         MyListener instance = new MyListener();
         ChromeCasts.registerListener(instance);
         ChromeCasts.startDiscovery();
@@ -142,7 +142,7 @@ public class Main {
         ChromeCasts.stopDiscovery();
 
         if (instance.discovered.isEmpty()) {
-            System.out.println(NO_RESULTS);
+            log.warn(NO_RESULTS);
             return;
         }
 
@@ -176,14 +176,18 @@ public class Main {
         }
 
         Collection<Radio> radios = sanitize(params.getArguments(), params);
+        if (params.isPlay() && radios.isEmpty()) {
+            log.warn("No search results for the search arguments: {}", params.getArguments());
+            return;
+        }
         if (params.isPlay() && radios.size() > 1) {
             radios = radios.stream().limit(1).collect(Collectors.toList());
-            System.err.println("Restricting to first station because playing.");
+            log.warn("Restricting to first station because playing.");
         }
 
         radios.stream().forEach(radio -> {
             try {
-                System.err.println(radio);
+                log.info("Starting radio: {}", radio);
                 Runnable r = new RadioRunnable(toConsumerContext(params, radio));
                 Thread t = new Thread(r, "Radio " + radio.getUuid());
                 t.start();
@@ -197,7 +201,7 @@ public class Main {
         List<Mixer.Info> infoList = Arrays.asList(AudioSystem.getMixerInfo());
 
         if (infoList.isEmpty()) {
-            System.out.println(NO_RESULTS);
+            log.warn(NO_RESULTS);
             return;
         }
 
@@ -212,7 +216,7 @@ public class Main {
         List<Radio> radios = sanitize(names, params);
 
         if (radios.isEmpty()) {
-            System.out.println(NO_RESULTS);
+            log.warn(NO_RESULTS);
             return;
         }
 

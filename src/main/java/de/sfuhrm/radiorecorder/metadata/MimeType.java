@@ -32,7 +32,8 @@ public enum MimeType {
     AUDIO_XMPEGURL("audio/x-mpegurl", ".m3u"),
     AUDIO_XSCPLS("audio/x-scpls", ".pls"),
     APPLICATION_OGG("application/ogg", ".ogg"),
-    APPLICATION_PLS_XML("application/pls+xml", ".pls");
+    APPLICATION_PLS_XML("application/pls+xml", ".pls"),
+    AUDIO_AAC("audio/aac", ".m4a");
 
     @Getter
     private final String contentType;
