@@ -85,6 +85,8 @@ jobs:
         run: |
           echo "List of current dir:"
           ls -alR
+          dnf --disablerepo '*' --enablerepo=extras swap centos-linux-repos centos-stream-repos
+          dnf distro-sync
           yum install --assumeyes rpm-build git openssh-clients
         if: matrix.style == 'redhat'
       - name: Setup JDK
