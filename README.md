@@ -20,12 +20,13 @@ Some of the features are:
 * Stream formats:
   * MP3
   * OGG Vorbis
+  * AAC/AAC+/MP4 (only for recording/chromecast playback)
 
 
 Restrictions:
 * Missing stream formats:
-  * AAC
-  * AAC+
+  * AAC (playback)
+  * AAC+ (playback)
 
 ## Downloading & installation
 
