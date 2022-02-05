@@ -10,7 +10,7 @@
   </Appenders>
 
   <Loggers>
-    <Logger name="de.sfuhrm" level="INFO" additivity="false">
+    <Logger name="de.sfuhrm" level="WARN" additivity="false">
       <AppenderRef ref="console" />
     </Logger>
     <Logger name="de.sfuhrm.radiorecorder" level="INFO" additivity="false">
