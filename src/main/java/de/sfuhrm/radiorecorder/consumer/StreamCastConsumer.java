@@ -51,6 +51,8 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<Htt
     /** The chrome cast discovered. */
     private ChromeCast chromeCast = null;
 
+    private MediaStatus lastMediaStatus;
+
     private class MyChromeCastsListener implements ChromeCastsListener {
 
         @Override
@@ -79,6 +81,27 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<Htt
         arrayBlockingQueue = new ArrayBlockingQueue<>(1);
     }
 
+    private boolean trackMediaStatusShallExit(MediaStatus mediaStatus) {
+        boolean result = false;
+        if (mediaStatus == null) {
+            return false;
+        }
+
+        if (lastMediaStatus == null || mediaStatus.playerState != lastMediaStatus.playerState) {
+            log.info("Player state changed to {}", mediaStatus.playerState);
+        }
+
+        if (mediaStatus != null && mediaStatus.playerState.equals(MediaStatus.PlayerState.IDLE)) {
+            log.info("Player state is {}. reason: {}",
+                    mediaStatus.playerState,
+                    mediaStatus.idleReason);
+            result = true;
+        }
+
+        lastMediaStatus = mediaStatus;
+        return result;
+    }
+
     @Override
     protected void __accept(HttpConnection t, InputStream inputStream) {
         try {
@@ -87,14 +110,13 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<Htt
             ChromeCasts.registerListener(new MyChromeCastsListener());
             ChromeCasts.startDiscovery();
 
-            System.err.println("Waiting for discovery");
-            log.debug("Waiting for chromecast {} to be discovered", getContext().getCastReceiver());
+            log.info("Waiting for chromecast {} to be discovered", getContext().getCastReceiver());
             chromeCast = arrayBlockingQueue.take();
 
-            log.debug("Found chromecast {}", chromeCast);
+            log.info("Found chromecast {}", chromeCast);
 
             chromeCast.connect();
-            log.debug("Connected to chromecast {}", chromeCast);
+            log.info("Connected to chromecast {}", chromeCast);
 
             Radio radio = getContext().getRadio();
             Application app = chromeCast.launchApp(APP_ID);
@@ -104,6 +126,11 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<Htt
                     radio.getFavIconUrl() != null ? radio.getFavIconUrl().toExternalForm() : null,
                     t.getURL().toExternalForm(),
                     t.getContentType());
+            boolean shallExit;
+            shallExit = trackMediaStatusShallExit(mediaStatus);
+            if (shallExit) {
+                return;
+            }
 
             log.debug("Loaded content to chromecast {}", chromeCast.getTitle());
 
@@ -114,12 +141,18 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<Htt
             Runtime.getRuntime().addShutdownHook(shutdown);
 
             try {
-            // this is a second stream just to display the meta data
-            while (-1 != (length = inputStream.read(buffer))) {
-                log.trace("Read {} bytes", length);
-            }
-            Runtime.getRuntime().removeShutdownHook(shutdown);
-            }
+                // this is a second stream just to display the meta data
+                while (-1 != (length = inputStream.read(buffer))) {
+                    log.trace("Read {} bytes", length);
+
+                    mediaStatus = chromeCast.getMediaStatus();
+                    shallExit = trackMediaStatusShallExit(mediaStatus);
+                    if (shallExit) {
+                        return;
+                    }
+                }
+                Runtime.getRuntime().removeShutdownHook(shutdown);
+                }
             catch (IOException ioe) {
                 log.warn("Error reading stream", ioe);
                 throw new RadioException(true, ioe);
