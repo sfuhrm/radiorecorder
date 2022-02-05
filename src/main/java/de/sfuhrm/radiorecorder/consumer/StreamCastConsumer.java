@@ -19,19 +19,21 @@ import de.sfuhrm.radiorecorder.ConsumerContext;
 import de.sfuhrm.radiorecorder.Main;
 import de.sfuhrm.radiorecorder.Radio;
 import de.sfuhrm.radiorecorder.RadioException;
-import static de.sfuhrm.radiorecorder.RadioRunnable.BUFFER_SIZE;
 import de.sfuhrm.radiorecorder.http.HttpConnection;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.GeneralSecurityException;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.function.Consumer;
 import lombok.extern.slf4j.Slf4j;
 import su.litvak.chromecast.api.v2.Application;
 import su.litvak.chromecast.api.v2.ChromeCast;
 import su.litvak.chromecast.api.v2.ChromeCasts;
 import su.litvak.chromecast.api.v2.ChromeCastsListener;
 import su.litvak.chromecast.api.v2.MediaStatus;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.GeneralSecurityException;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.function.Consumer;
+
+import static de.sfuhrm.radiorecorder.RadioRunnable.BUFFER_SIZE;
 
 /**
  * Plays a stream using a named Chrome Cast device.
@@ -41,14 +43,19 @@ import su.litvak.chromecast.api.v2.MediaStatus;
 @Slf4j
 public class StreamCastConsumer extends MetaDataConsumer implements Consumer<HttpConnection> {
 
-    /** The ID of the default media receiver app.
+    /**
+     * The ID of the default media receiver app.
      */
     public static final String APP_ID = "CC1AD845";
 
-    /** Async communication of the chromecast discovered. */
+    /**
+     * Async communication of the chromecast discovered.
+     */
     private final ArrayBlockingQueue<ChromeCast> arrayBlockingQueue;
 
-    /** The chrome cast discovered. */
+    /**
+     * The chrome cast discovered.
+     */
     private ChromeCast chromeCast = null;
 
     private MediaStatus lastMediaStatus;
@@ -152,17 +159,15 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<Htt
                     }
                 }
                 Runtime.getRuntime().removeShutdownHook(shutdown);
-                }
-            catch (IOException ioe) {
+            } catch (IOException ioe) {
                 log.warn("Error reading stream", ioe);
                 throw new RadioException(true, ioe);
             }
 
-        } catch (GeneralSecurityException | InterruptedException | IOException  ex) {
+        } catch (GeneralSecurityException | InterruptedException | IOException ex) {
             log.warn("Chromecast problem", ex);
             throw new RadioException(false, ex);
-        }
-        finally {
+        } finally {
             cleanup();
         }
     }
