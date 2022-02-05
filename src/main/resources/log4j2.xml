@@ -9,8 +9,8 @@
     </Console>
     <RollingFile
             name="rollingFile"
-            fileName="${LOG}/application.log"
-            filePattern="${LOG}/application.%i.log.gz"
+            fileName="${LOG}/radiorecorder.log"
+            filePattern="${LOG}/radiorecorder.%i.log.gz"
             ignoreExceptions="false">
       <PatternLayout>
         <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %m%n</Pattern>
@@ -24,15 +24,12 @@
 
   <Loggers>
     <Logger name="de.sfuhrm" level="INFO" additivity="false">
-      <AppenderRef ref="rollingFile" />
       <AppenderRef ref="console" />
     </Logger>
     <Logger name="de.sfuhrm.radiorecorder" level="INFO" additivity="false">
-      <AppenderRef ref="rollingFile" />
       <AppenderRef ref="console" />
     </Logger>
     <Root level="WARN">
-      <AppenderRef ref="rollingFile" />
       <AppenderRef ref="console" />
     </Root>
   </Loggers>
