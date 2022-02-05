@@ -82,8 +82,9 @@ public class StreamPlayConsumer extends MetaDataConsumer implements Consumer<Htt
                     }
                 } catch (IOException ioe) {
                     throw new RadioException(true, ioe);
+                } finally {
+                    line.stop();
                 }
-                line.stop();
             }
         } catch (UnsupportedAudioFileException | LineUnavailableException | IOException ex) {
             log.warn("URL " + getContext().getUrl().toExternalForm() + " broke down", ex);
