@@ -8,14 +8,14 @@ on:
     branches: [ master, merge_os ]
 env:
   JPACKAGE_COMMON_OPTS: |
-            --name radiorecorder 
-            --copyright "Stephan Fuhrmann" 
-            --vendor "Stephan Fuhrmann" 
-            --description "Records and plays internet radio streams" 
-            --main-class de.sfuhrm.radiorecorder.Main 
-            --install-dir /usr 
-            --dest jpackage-app 
-            --verbose 
+            --name radiorecorder \
+            --copyright "Stephan Fuhrmann" \
+            --vendor "Stephan Fuhrmann" \
+            --description "Records and plays internet radio streams" \
+            --main-class de.sfuhrm.radiorecorder.Main \
+            --install-dir /usr \
+            --dest jpackage-app \
+            --verbose \
             --java-options -Dlog4j.configurationFile=/usr/lib/radiorecorder/app/etc/log4j2.xml 
 
 jobs:
