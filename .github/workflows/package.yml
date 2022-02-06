@@ -169,7 +169,7 @@ jobs:
         id: packagename
         shell: bash
       - name: Test install package MacOS PKG
-        run: sudo installer -verbose -pkg ./jpackage-app/${{ steps.packagename.outputs.packagename }} -target /
+        run: sudo installer -verbose -pkg ./jpackage-app/${{ steps.packagename.outputs.packagename }} -target / || cat /var/log/install.log
         if: matrix.jpkg_type == 'pkg'
       - name: Test install package MacOS DMG
         run: |
