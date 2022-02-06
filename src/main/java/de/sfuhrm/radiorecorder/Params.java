@@ -167,7 +167,9 @@ public class Params {
     private void showVersion() throws IOException {
         try (InputStream inputStream = Main.class.getResourceAsStream("/application.properties")) {
             Properties applicationProperties = new Properties();
-            applicationProperties.load(inputStream);
+            if (inputStream != null) {
+                applicationProperties.load(inputStream);
+            }
             String unknown = "unknown";
             System.err.printf("Application:  %s%n", applicationProperties.getOrDefault("application.name", unknown));
             System.err.printf("Version:      %s%n", applicationProperties.getOrDefault("application.version", unknown));
