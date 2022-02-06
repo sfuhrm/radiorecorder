@@ -191,7 +191,7 @@ jobs:
         run: |
           APPDIR=$(pwd)/radiorecorder-${{ needs.build.outputs.version }}
           PACKAGE_VERSION=$(echo ${PACKAGE_VERSION} | cut -d"-" -f1)
-          jpackage \
+          jpackage ^
             --main-jar lib/radiorecorder-${{ needs.build.outputs.version }}.jar ^
             --type ${{ matrix.jpkg_type }} ^
             --app-version ${PACKAGE_VERSION} ^
