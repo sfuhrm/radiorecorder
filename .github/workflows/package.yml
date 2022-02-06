@@ -209,7 +209,7 @@ jobs:
             --app-version ${PACKAGE_VERSION} \
             --input ${APPDIR} \
             --license-file ${APPDIR}/LICENSE \
-            --java-options -Dlog4j.configurationFile=C:\\Program Files\\radiorecorder\\app\\etc\\log4j2.xml \
+            --java-options -Dlog4j.configurationFile=C:\\Program\ Files\\radiorecorder\\app\\etc\\log4j2.xml \
             --win-console \
             ${{ env.JPACKAGE_COMMON_OPTS }}
         shell: bash
