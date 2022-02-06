@@ -6,6 +6,18 @@ on:
     tags: [ v* ]
   pull_request:
     branches: [ master, merge_os ]
+env:
+  JPACKAGE_COMMON_OPTS: |
+            --name radiorecorder 
+            --copyright "Stephan Fuhrmann" 
+            --vendor "Stephan Fuhrmann" 
+            --description "Records and plays internet radio streams" 
+            --main-jar lib/radiorecorder-${{ needs.build.outputs.version }}.jar 
+            --main-class de.sfuhrm.radiorecorder.Main 
+            --install-dir /usr 
+            --dest jpackage-app 
+            --verbose 
+            --java-options -Dlog4j.configurationFile=/usr/lib/radiorecorder/app/etc/log4j2.xml 
 
 jobs:
   build:
@@ -98,22 +110,13 @@ jobs:
           fi
           APPDIR=$(pwd)/radiorecorder-${{ needs.build.outputs.version }}
           jpackage \
-            --name radiorecorder \
+            ${{ env.JPACKAGE_COMMON_OPTS }} \
             --type ${{ matrix.jpkg_type }} \
             --app-version ${PACKAGE_VERSION} \
-            --copyright "Stephan Fuhrmann" \
-            --vendor "Stephan Fuhrmann" \
-            --description "Records and plays internet radio streams" \
-            --main-jar lib/radiorecorder-${{ needs.build.outputs.version }}.jar \
-            --main-class de.sfuhrm.radiorecorder.Main \
-            --install-dir /usr \
             --input ${APPDIR} \
-            --dest jpackage-app \
-            --verbose \
             --license-file ${APPDIR}/LICENSE \
             --linux-deb-maintainer s@sfuhrm.de \
-            --linux-app-category sound \
-            --java-options -Dlog4j.configurationFile=/usr/lib/radiorecorder/app/etc/log4j2.xml
+            --linux-app-category sound
       - name: Extract package name
         run: echo "::set-output name=packagename::$(cd jpackage-app; ls)"
         id: packagename
@@ -149,20 +152,11 @@ jobs:
           APPDIR=$(pwd)/radiorecorder-${{ needs.build.outputs.version }}
           PACKAGE_VERSION=$(echo ${PACKAGE_VERSION} | cut -d"-" -f1)
           jpackage \
-            --name radiorecorder \
+            ${{ env.JPACKAGE_COMMON_OPTS }} \
             --type ${{ matrix.jpkg_type }} \
             --app-version ${PACKAGE_VERSION} \
-            --copyright "Stephan Fuhrmann" \
-            --vendor "Stephan Fuhrmann" \
-            --description "Records and plays internet radio streams" \
-            --main-jar lib/radiorecorder-${{ needs.build.outputs.version }}.jar \
-            --main-class de.sfuhrm.radiorecorder.Main \
-            --install-dir /usr \
             --input ${APPDIR} \
-            --dest jpackage-app \
-            --verbose \
-            --license-file ${APPDIR}/LICENSE \
-            --java-options -Dlog4j.configurationFile=/usr/lib/radiorecorder/app/etc/log4j2.xml
+            --license-file ${APPDIR}/LICENSE
       - name: Extract package name
         run: echo "::set-output name=packagename::$(cd jpackage-app; ls)"
         id: packagename
