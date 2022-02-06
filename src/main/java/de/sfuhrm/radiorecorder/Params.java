@@ -16,9 +16,12 @@
 package de.sfuhrm.radiorecorder;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import de.sfuhrm.radiorecorder.http.HttpConnectionBuilderFactory;
 import lombok.Getter;
@@ -68,6 +71,10 @@ public class Params {
     @Getter
     @Option(name = "-play", aliases = {"-p"}, usage = "Play live instead of recording to a file.")
     private boolean play;
+
+    @Getter
+    @Option(name = "-version", aliases = {"-V"}, usage = "Show version information and exit.", help = true)
+    private boolean version;
 
     @Getter
     @Option(name = "-mixer", aliases = {"-m"}, usage = "The mixer to use for playback. " +
@@ -134,6 +141,11 @@ public class Params {
                 return null;
             }
 
+            if (result.isVersion()) {
+                result.showVersion();
+                return null;
+            }
+
             boolean isList = result.isListCast() || result.isListStation() || result.isListMixers();
 
             if (!result.isPlay() && !isList && result.getDirectory() == null) {
@@ -146,7 +158,20 @@ public class Params {
         } catch (CmdLineException ex) {
             log.warn("Error in parsing", ex);
             cmdLineParser.printUsage(System.err);
+        } catch (IOException e) {
+            log.error("Error in program", e);
         }
         return null;
+    }
+
+    private void showVersion() throws IOException {
+        try (InputStream inputStream = Main.class.getResourceAsStream("/application.properties")) {
+            Properties applicationProperties = new Properties();
+            applicationProperties.load(inputStream);
+            String unknown = "unknown";
+            System.err.printf("Application:  %s%n", applicationProperties.getOrDefault("application.name", unknown));
+            System.err.printf("Version:      %s%n", applicationProperties.getOrDefault("application.version", unknown));
+            System.err.printf("Build date:   %s%n", applicationProperties.getOrDefault("build.timestamp", unknown));
+        }
     }
 }
