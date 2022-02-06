@@ -2,10 +2,10 @@ name: Package
 
 on:
   push:
-    branches: [ master, merge_os ]
+    branches: [ master, windows ]
     tags: [ v* ]
   pull_request:
-    branches: [ master, merge_os ]
+    branches: [ master, windows ]
 env:
   JPACKAGE_COMMON_OPTS: |
             --name radiorecorder \
