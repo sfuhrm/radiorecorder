@@ -87,11 +87,11 @@ jobs:
           ls -alR
           yum install --assumeyes rpm-build git openssh-clients
         if: matrix.style == 'redhat'
-      - name: Setup JDK
-        run: |
-          mkdir ${{ env.JAVA_HOME }}
-          curl --insecure --location ${{ env.JDK_URL }} --output - | \
-          tar -xzf- --strip-components 1 --directory ${{ env.JAVA_HOME }}
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: 17
       - name: Build package
         run: |
           if [ ${{ matrix.style }} == "redhat" ]; then
@@ -99,7 +99,7 @@ jobs:
             echo "Fixing RPM version to ${PACKAGE_VERSION}"
           fi
           APPDIR=$(pwd)/radiorecorder-${{ needs.build.outputs.version }}
-          ${{ env.JAVA_HOME }}/bin/jpackage \
+          jpackage \
             --name radiorecorder \
             --type ${{ matrix.jpkg_type }} \
             --app-version ${PACKAGE_VERSION} \
