@@ -28,7 +28,7 @@
       </includes>
     </fileSet>
     <fileSet>
-      <directory>target/classes</directory>
+      <directory>src/main/assembly</directory>
       <outputDirectory>${assembly.dir}/bin</outputDirectory>
       <fileMode>0755</fileMode>
       <includes>
