@@ -170,13 +170,8 @@ jobs:
         id: packagename
         shell: bash
       - name: Test install package MacOS PKG
-        run: sudo installer -verbose -pkg ./jpackage-app/${{ steps.packagename.outputs.packagename }} -target / || cat /var/log/install.log
+        run: sudo installer -verbose -pkg ./jpackage-app/${{ steps.packagename.outputs.packagename }} -target /
         if: matrix.jpkg_type == 'pkg'
-      - name: Test install package MacOS DMG
-        run: |
-          sudo hdiutil attach ./jpackage-app/${{ steps.packagename.outputs.packagename }}
-          sudo installer -verbose -pkg /Volumes/radio*/*.pkg -target /
-        if: matrix.jpkg_type == 'dmg'
       - uses: actions/upload-artifact@v2
         with:
           name: packages
