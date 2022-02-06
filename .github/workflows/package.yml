@@ -129,7 +129,7 @@ jobs:
         if: matrix.style == 'redhat'
       - uses: actions/upload-artifact@v2
         with:
-          name: ${{ jpkg_type }}
+          name: ${{ matrix.jpkg_type }}
           path: jpackage-app/${{ steps.packagename.outputs.packagename }}
       - uses: actions/upload-artifact@v2
         with:
@@ -179,7 +179,7 @@ jobs:
         if: matrix.jpkg_type == 'pkg'
       - uses: actions/upload-artifact@v2
         with:
-          name: ${{ jpkg_type }}
+          name: ${{ matrix.jpkg_type }}
           path: jpackage-app/${{ steps.packagename.outputs.packagename }}
       - uses: actions/upload-artifact@v2
         with:
@@ -230,7 +230,7 @@ jobs:
         if: matrix.jpkg_type == 'msi'
       - uses: actions/upload-artifact@v2
         with:
-          name: ${{ jpkg_type }}
+          name: ${{ matrix.jpkg_type }}
           path: jpackage-app/${{ steps.packagename.outputs.packagename }}
       - uses: actions/upload-artifact@v2
         with:
