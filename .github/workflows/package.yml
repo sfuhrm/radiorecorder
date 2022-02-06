@@ -122,10 +122,10 @@ jobs:
         id: packagename
         shell: bash
       - name: Test install package Debian
-        run: apt-get install ./jpackage-app/${{ steps.packagename.outputs.packagename }}
+        run: apt-get install --assume-yes ./jpackage-app/${{ steps.packagename.outputs.packagename }}
         if: matrix.style == 'debian'
       - name: Test install package RPM
-        run: yum localinstall ./jpackage-app/${{ steps.packagename.outputs.packagename }}
+        run: yum localinstall --assumeyes ./jpackage-app/${{ steps.packagename.outputs.packagename }}
         if: matrix.style == 'redhat'
       - uses: actions/upload-artifact@v2
         with:
