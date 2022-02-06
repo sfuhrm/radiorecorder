@@ -235,6 +235,10 @@ jobs:
         run: msiexec /quiet /passive /i ${{ steps.packagename.outputs.packagename }}
         working-directory: jpackage-app
         if: matrix.jpkg_type == 'msi'
+      - name: dir
+        run: dir
+        working-directory: "C:\\Program Files\\radiorecorder"
+        if: matrix.jpkg_type == 'msi'
       - name: Test run application
         run: radiorecorder -V
         working-directory: "C:\\Program Files\\radiorecorder"
