@@ -175,7 +175,7 @@ jobs:
         id: packagename
         shell: bash
       - name: Test install package MacOS PKG
-        run: ls /Applications; sudo installer -verbose -pkg ./jpackage-app/${{ steps.packagename.outputs.packagename }} -target /
+        run: sudo installer -verbose -pkg ./jpackage-app/${{ steps.packagename.outputs.packagename }} -target / ; ls /Applications
         if: matrix.jpkg_type == 'pkg'
       - name: Test run application
         run: radiorecorder -V
@@ -232,7 +232,7 @@ jobs:
         working-directory: jpackage-app
         if: matrix.jpkg_type == 'msi'
       - name: Test run application
-        run: DIR "C:\Program Files"; radiorecorder -V
+        run: DIR "C:\Program Files\radiorecorder"; radiorecorder -V
         if: matrix.jpkg_type == 'msi'
       - uses: actions/upload-artifact@v2
         with:
