@@ -168,6 +168,14 @@ jobs:
         run: echo "::set-output name=packagename::$(cd jpackage-app; ls)"
         id: packagename
         shell: bash
+      - name: Test install package MacOS PKG
+        run: installer -verbose -pkg ./jpackage-app/${{ steps.packagename.outputs.packagename }} -target /
+        if: matrix.jpkg_type == 'pkg'
+      - name: Test install package MacOS DMG
+        run: |
+          hdiutil attach ./jpackage-app/${{ steps.packagename.outputs.packagename }}
+          installer -verbose -pkg /Volumes/radio*/*.pkg -target /
+        if: matrix.jpkg_type == 'dmg'
       - uses: actions/upload-artifact@v2
         with:
           name: packages
