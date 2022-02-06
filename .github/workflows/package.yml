@@ -115,7 +115,6 @@ jobs:
             --linux-deb-maintainer s@sfuhrm.de \
             --linux-app-category sound \
             --install-dir /usr \
-            --java-options -Dlog4j.configurationFile=/usr/lib/radiorecorder/app/etc/log4j2.xml \
             ${{ env.JPACKAGE_COMMON_OPTS }}
       - name: Extract package name
         run: echo "::set-output name=packagename::$(cd jpackage-app; ls)"
@@ -168,7 +167,6 @@ jobs:
             --input ${APPDIR} \
             --license-file ${APPDIR}/LICENSE \
             --install-dir /Applications \
-            --java-options -Dlog4j.configurationFile=/Applications/radiorecorder/app/etc/log4j2.xml \
             ${{ env.JPACKAGE_COMMON_OPTS }}
       - name: Extract package name
         run: echo "::set-output name=packagename::$(cd jpackage-app; ls)"
