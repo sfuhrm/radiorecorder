@@ -133,25 +133,22 @@ jobs:
           - jpkg_type: pkg
     runs-on: macos-latest
     env:
-      JDK_URL: https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.1%2B12/OpenJDK17U-jdk_x64_mac_hotspot_17.0.1_12.tar.gz
-      JAVA_HOME: /tmp/jdk
       PACKAGE_VERSION: ${{ needs.build.outputs.version }}
     steps:
       - name: Download build
         uses: actions/download-artifact@v2
         with:
           name: build
-      - name: Setup JDK
-        run: |
-          mkdir ${{ env.JAVA_HOME }}
-          curl --insecure --location ${{ env.JDK_URL }} --output - | \
-          tar -xzf- --strip-components 1 --directory ${{ env.JAVA_HOME }}
-          ls -alR /tmp/jdk
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: 17
       - name: Build package
         run: |
           APPDIR=$(pwd)/radiorecorder-${{ needs.build.outputs.version }}
           PACKAGE_VERSION=$(echo ${PACKAGE_VERSION} | cut -d"-" -f1)
-          ${{ env.JAVA_HOME }}/Contents/Home/bin/jpackage \
+          jpackage \
             --name radiorecorder \
             --type ${{ matrix.jpkg_type }} \
             --app-version ${PACKAGE_VERSION} \
