@@ -103,7 +103,7 @@ jobs:
           java-version: 17
       - name: Build package
         run: |
-          if [ "${{ matrix.style }}" == "redhat" ]; then
+          if test "${{ matrix.style }}" == "redhat"; then
             PACKAGE_VERSION=$(echo ${PACKAGE_VERSION} | cut -d"-" -f1)
             echo "Fixing RPM version to ${PACKAGE_VERSION}"
           fi
