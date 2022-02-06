@@ -114,7 +114,8 @@ jobs:
             --verbose \
             --license-file ${APPDIR}/LICENSE \
             --linux-deb-maintainer s@sfuhrm.de \
-            --linux-app-category sound
+            --linux-app-category sound \
+            --java-options -Dlog4j.configurationFile=/usr/lib/radiorecorder/app/etc/log4j2.xml
       - name: Extract package name
         run: echo "::set-output name=packagename::$(cd jpackage-app; ls)"
         id: packagename
@@ -165,7 +166,8 @@ jobs:
             --input ${APPDIR} \
             --dest jpackage-app \
             --verbose \
-            --license-file ${APPDIR}/LICENSE
+            --license-file ${APPDIR}/LICENSE \
+            --java-options -Dlog4j.configurationFile=/usr/lib/radiorecorder/app/etc/log4j2.xml
       - name: Extract package name
         run: echo "::set-output name=packagename::$(cd jpackage-app; ls)"
         id: packagename
