@@ -12,7 +12,6 @@ env:
             --copyright "Stephan Fuhrmann" 
             --vendor "Stephan Fuhrmann" 
             --description "Records and plays internet radio streams" 
-            --main-jar lib/radiorecorder-${{ needs.build.outputs.version }}.jar 
             --main-class de.sfuhrm.radiorecorder.Main 
             --install-dir /usr 
             --dest jpackage-app 
@@ -111,6 +110,7 @@ jobs:
           APPDIR=$(pwd)/radiorecorder-${{ needs.build.outputs.version }}
           jpackage \
             ${{ env.JPACKAGE_COMMON_OPTS }} \
+            --main-jar lib/radiorecorder-${{ needs.build.outputs.version }}.jar \
             --type ${{ matrix.jpkg_type }} \
             --app-version ${PACKAGE_VERSION} \
             --input ${APPDIR} \
@@ -153,6 +153,7 @@ jobs:
           PACKAGE_VERSION=$(echo ${PACKAGE_VERSION} | cut -d"-" -f1)
           jpackage \
             ${{ env.JPACKAGE_COMMON_OPTS }} \
+            --main-jar lib/radiorecorder-${{ needs.build.outputs.version }}.jar \
             --type ${{ matrix.jpkg_type }} \
             --app-version ${PACKAGE_VERSION} \
             --input ${APPDIR} \
