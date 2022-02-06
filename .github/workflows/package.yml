@@ -2,10 +2,10 @@ name: Package
 
 on:
   push:
-    branches: [ master, merge_os ]
+    branches: [ master ]
     tags: [ v* ]
   pull_request:
-    branches: [ master, merge_os ]
+    branches: [ master ]
 env:
   JPACKAGE_COMMON_OPTS: |
             --name radiorecorder \
@@ -177,6 +177,51 @@ jobs:
           sudo hdiutil attach ./jpackage-app/${{ steps.packagename.outputs.packagename }}
           sudo installer -verbose -pkg /Volumes/radio*/*.pkg -target /
         if: matrix.jpkg_type == 'dmg'
+      - uses: actions/upload-artifact@v2
+        with:
+          name: packages
+          path: jpackage-app/${{ steps.packagename.outputs.packagename }}
+  jpackage_windows:
+    needs: build
+    outputs:
+      packagename: ${{ steps.packagename.outputs.packagename }}
+    strategy:
+      matrix:
+        include:
+          - jpkg_type: exe
+          - jpkg_type: msi
+    runs-on: windows-latest
+    env:
+      PACKAGE_VERSION: ${{ needs.build.outputs.version }}
+    steps:
+      - name: Download build
+        uses: actions/download-artifact@v2
+        with:
+          name: build
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: 17
+      - name: Build package
+        run: |
+          APPDIR=$(pwd)/radiorecorder-${{ needs.build.outputs.version }}
+          PACKAGE_VERSION=$(echo ${PACKAGE_VERSION} | cut -d"-" -f1)
+          jpackage \
+            --main-jar lib/radiorecorder-${{ needs.build.outputs.version }}.jar \
+            --type ${{ matrix.jpkg_type }} \
+            --app-version ${PACKAGE_VERSION} \
+            --input ${APPDIR} \
+            --license-file ${APPDIR}/LICENSE \
+            ${{ env.JPACKAGE_COMMON_OPTS }}
+        shell: bash
+      - name: Extract package name
+        run: echo "::set-output name=packagename::$(cd jpackage-app; ls)"
+        id: packagename
+        shell: bash
+      - name: Test install package Windows MSI
+        run: msiexec /quiet /passive /i jpackage-app/${{ steps.packagename.outputs.packagename }}
+        if: matrix.jpkg_type == 'msi'
       - uses: actions/upload-artifact@v2
         with:
           name: packages
