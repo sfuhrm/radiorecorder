@@ -191,13 +191,7 @@ jobs:
         run: |
           APPDIR=$(pwd)/radiorecorder-${{ needs.build.outputs.version }}
           PACKAGE_VERSION=$(echo ${PACKAGE_VERSION} | cut -d"-" -f1)
-          jpackage ^
-            --main-jar lib/radiorecorder-${{ needs.build.outputs.version }}.jar ^
-            --type ${{ matrix.jpkg_type }} ^
-            --app-version ${PACKAGE_VERSION} ^
-            --input ${APPDIR} ^
-            --license-file ${APPDIR}/LICENSE ^
-            ${{ env.JPACKAGE_COMMON_OPTS }}
+          jpackage  --main-jar lib/radiorecorder-${{ needs.build.outputs.version }}.jar --type ${{ matrix.jpkg_type }} --app-version ${PACKAGE_VERSION} --input ${APPDIR} --license-file ${APPDIR}/LICENSE ${{ env.JPACKAGE_COMMON_OPTS }}
       - name: Extract package name
         run: echo "::set-output name=packagename::$(cd jpackage-app; ls)"
         id: packagename
