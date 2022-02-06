@@ -208,6 +208,7 @@ jobs:
             --app-version ${PACKAGE_VERSION} \
             --input ${APPDIR} \
             --license-file ${APPDIR}/LICENSE \
+            --win-console \
             ${{ env.JPACKAGE_COMMON_OPTS }}
         shell: bash
       - name: Extract package name
