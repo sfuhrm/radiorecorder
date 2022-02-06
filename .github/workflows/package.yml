@@ -14,8 +14,7 @@ env:
             --description "Records and plays internet radio streams" \
             --main-class de.sfuhrm.radiorecorder.Main \
             --dest jpackage-app \
-            --verbose \
-            --java-options -Dlog4j.configurationFile=/usr/lib/radiorecorder/app/etc/log4j2.xml 
+            --verbose 
 
 jobs:
   build:
@@ -116,6 +115,7 @@ jobs:
             --linux-deb-maintainer s@sfuhrm.de \
             --linux-app-category sound \
             --install-dir /usr \
+            --java-options -Dlog4j.configurationFile=/usr/lib/radiorecorder/app/etc/log4j2.xml \
             ${{ env.JPACKAGE_COMMON_OPTS }}
       - name: Extract package name
         run: echo "::set-output name=packagename::$(cd jpackage-app; ls)"
@@ -164,6 +164,7 @@ jobs:
             --input ${APPDIR} \
             --license-file ${APPDIR}/LICENSE \
             --install-dir /Applications \
+            --java-options -Dlog4j.configurationFile=/Applications/radiorecorder/app/etc/log4j2.xml \
             ${{ env.JPACKAGE_COMMON_OPTS }}
       - name: Extract package name
         run: echo "::set-output name=packagename::$(cd jpackage-app; ls)"
@@ -208,6 +209,7 @@ jobs:
             --app-version ${PACKAGE_VERSION} \
             --input ${APPDIR} \
             --license-file ${APPDIR}/LICENSE \
+            --java-options -Dlog4j.configurationFile=C:\Program Files\radiorecorder\app\etc\log4j2.xml \            
             --win-console \
             ${{ env.JPACKAGE_COMMON_OPTS }}
         shell: bash
