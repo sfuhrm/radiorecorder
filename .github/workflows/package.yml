@@ -121,6 +121,12 @@ jobs:
         run: echo "::set-output name=packagename::$(cd jpackage-app; ls)"
         id: packagename
         shell: bash
+      - name: Test install package Debian
+        run: apt-get install ./jpackage-app/${{ steps.packagename.outputs.packagename }}
+        if: matrix.style == 'debian'
+      - name: Test install package RPM
+        run: yum localinstall ./jpackage-app/${{ steps.packagename.outputs.packagename }}
+        if: matrix.style == 'redhat'
       - uses: actions/upload-artifact@v2
         with:
           name: packages
