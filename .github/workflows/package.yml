@@ -236,7 +236,7 @@ jobs:
         if: matrix.jpkg_type == 'msi'
       - name: Test run application
         run: radiorecorder -V
-        working-directory: "C:\Program Files\radiorecorder"
+        working-directory: "C:\\Program Files\\radiorecorder"
         if: matrix.jpkg_type == 'msi'
       - uses: actions/upload-artifact@v2
         with:
