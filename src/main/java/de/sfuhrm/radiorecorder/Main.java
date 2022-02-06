@@ -17,12 +17,10 @@ package de.sfuhrm.radiorecorder;
 
 import de.sfuhrm.radiobrowser4j.Paging;
 import de.sfuhrm.radiobrowser4j.RadioBrowser;
-import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
