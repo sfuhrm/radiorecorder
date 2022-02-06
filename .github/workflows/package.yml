@@ -215,7 +215,8 @@ jobs:
         id: packagename
         shell: bash
       - name: Test install package Windows MSI
-        run: msiexec /quiet /passive /i jpackage-app/${{ steps.packagename.outputs.packagename }}
+        run: msiexec /quiet /passive /i ${{ steps.packagename.outputs.packagename }}
+        working-directory: jpackage-app
         if: matrix.jpkg_type == 'msi'
       - uses: actions/upload-artifact@v2
         with:
