@@ -117,7 +117,8 @@ jobs:
             --install-dir /usr \
             ${{ env.JPACKAGE_COMMON_OPTS }}
       - name: Extract package name
-        run: echo "::set-output name=packagename::$(cd jpackage-app; ls)"
+        run: echo "::set-output name=packagename::$(ls)"
+        working-directory: jpackage-app
         id: packagename
         shell: bash
       - name: Test install package Debian
@@ -171,7 +172,8 @@ jobs:
             --install-dir /Applications \
             ${{ env.JPACKAGE_COMMON_OPTS }}
       - name: Extract package name
-        run: echo "::set-output name=packagename::$(cd jpackage-app; ls)"
+        run: echo "::set-output name=packagename::$(ls)"
+        working-directory: jpackage-app
         id: packagename
         shell: bash
       - name: Test install package MacOS PKG
@@ -224,7 +226,8 @@ jobs:
             ${{ env.JPACKAGE_COMMON_OPTS }}
         shell: bash
       - name: Extract package name
-        run: echo "::set-output name=packagename::$(cd jpackage-app; ls)"
+        run: echo "::set-output name=packagename::$(ls)"
+        working-directory: jpackage-app
         id: packagename
         shell: bash
       - name: Test install package Windows MSI
