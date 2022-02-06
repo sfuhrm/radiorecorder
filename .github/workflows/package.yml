@@ -13,7 +13,6 @@ env:
             --vendor "Stephan Fuhrmann" \
             --description "Records and plays internet radio streams" \
             --main-class de.sfuhrm.radiorecorder.Main \
-            --install-dir /usr \
             --dest jpackage-app \
             --verbose \
             --java-options -Dlog4j.configurationFile=/usr/lib/radiorecorder/app/etc/log4j2.xml 
@@ -116,6 +115,7 @@ jobs:
             --license-file ${APPDIR}/LICENSE \
             --linux-deb-maintainer s@sfuhrm.de \
             --linux-app-category sound \
+            --install-dir /usr \
             ${{ env.JPACKAGE_COMMON_OPTS }}
       - name: Extract package name
         run: echo "::set-output name=packagename::$(cd jpackage-app; ls)"
@@ -163,6 +163,7 @@ jobs:
             --app-version ${PACKAGE_VERSION} \
             --input ${APPDIR} \
             --license-file ${APPDIR}/LICENSE \
+            --install-dir /Applications \
             ${{ env.JPACKAGE_COMMON_OPTS }}
       - name: Extract package name
         run: echo "::set-output name=packagename::$(cd jpackage-app; ls)"
