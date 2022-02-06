@@ -236,12 +236,14 @@ jobs:
         working-directory: jpackage-app
         if: matrix.jpkg_type == 'msi'
       - name: dir
-        run: dir
+        run: ls
         working-directory: "C:\\Program Files\\radiorecorder"
+        shell: bash
         if: matrix.jpkg_type == 'msi'
       - name: Test run application
-        run: radiorecorder.exe -V
+        run: ./radiorecorder -V
         working-directory: "C:\\Program Files\\radiorecorder"
+        shell: bash
         if: matrix.jpkg_type == 'msi'
       - uses: actions/upload-artifact@v2
         with:
