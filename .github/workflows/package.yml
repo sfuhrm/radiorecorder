@@ -129,6 +129,10 @@ jobs:
         if: matrix.style == 'redhat'
       - uses: actions/upload-artifact@v2
         with:
+          name: ${{ jpkg_type }}
+          path: jpackage-app/${{ steps.packagename.outputs.packagename }}
+      - uses: actions/upload-artifact@v2
+        with:
           name: packages
           path: jpackage-app/${{ steps.packagename.outputs.packagename }}
   jpackage_macos:
@@ -173,6 +177,10 @@ jobs:
       - name: Test install package MacOS PKG
         run: sudo installer -verbose -pkg ./jpackage-app/${{ steps.packagename.outputs.packagename }} -target /
         if: matrix.jpkg_type == 'pkg'
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{ jpkg_type }}
+          path: jpackage-app/${{ steps.packagename.outputs.packagename }}
       - uses: actions/upload-artifact@v2
         with:
           name: packages
@@ -220,6 +228,10 @@ jobs:
         run: msiexec /quiet /passive /i ${{ steps.packagename.outputs.packagename }}
         working-directory: jpackage-app
         if: matrix.jpkg_type == 'msi'
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{ jpkg_type }}
+          path: jpackage-app/${{ steps.packagename.outputs.packagename }}
       - uses: actions/upload-artifact@v2
         with:
           name: packages
