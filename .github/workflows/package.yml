@@ -177,10 +177,11 @@ jobs:
         id: packagename
         shell: bash
       - name: Test install package MacOS PKG
-        run: sudo installer -verbose -pkg ./jpackage-app/${{ steps.packagename.outputs.packagename }} -target / ; ls -R /Applications
+        run: sudo installer -verbose -pkg ./jpackage-app/${{ steps.packagename.outputs.packagename }} -target /
         if: matrix.jpkg_type == 'pkg'
       - name: Test run application
-        run: radiorecorder -V
+        run: ./radiorecorder -V
+        working-directory: /Applications/radiorecorder.app/Contents/MacOS
         if: matrix.jpkg_type == 'pkg'
       - uses: actions/upload-artifact@v2
         with:
