@@ -220,6 +220,7 @@ jobs:
             --input ${APPDIR} \
             --license-file ${APPDIR}/LICENSE \
             --win-console \
+            --win-upgrade-uuid a32f7c72-87d5-44ab-91b6-1f4e13fea46b \
             ${{ env.JPACKAGE_COMMON_OPTS }}
         shell: bash
       - name: Extract package name
