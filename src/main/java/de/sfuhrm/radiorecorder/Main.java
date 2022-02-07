@@ -228,5 +228,5 @@ public class Main {
         helper.print(System.out);
     }
 
-    private static String NO_RESULTS = "No results.";
+    private static final String NO_RESULTS = "No results.";
 }
