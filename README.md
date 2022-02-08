@@ -49,17 +49,6 @@ Releases typically contain files named like this for downloading:
 You can chose whether you prefer an installation with the runtime as a package or care for the Java runtime yourself.
 The latter makes sense when you're on Windows, Aarch64, X86, or some other system with no dedicated installer.
 
-### Debian
-
-The Debian package can be downloaded and installed like this:
-
-```shell
-wget https://github.com/sfuhrm/radiorecorder/releases/download/radiorecorder-1.4.0/radiorecorder_1.4.0-1_amd64.deb
-apt install ./radiorecorder_1.5.1-1_amd64.deb
-```
-
-after that, the executable is in `/opt/radiorecorder/bin/radiorecorder`.
-
 ## Usage
 
 ### Playback
