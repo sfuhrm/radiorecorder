@@ -24,7 +24,7 @@ jobs:
       run: echo "::set-output name=version::$(mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)"
       id: version
       shell: bash
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         name: binary
         path: target/radiorecorder-${{ steps.version.outputs.version }}-bin.tar.gz
