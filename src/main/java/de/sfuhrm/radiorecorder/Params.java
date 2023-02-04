@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -155,13 +156,8 @@ public class Params {
                 return null;
             }
 
-            if (result.getDirectory() != null
-                && ! Files.isWritable(result.getDirectory().toPath())) {
-                cmdLineParser.printUsage(System.err);
-                log.error("Target directory {} given, but it is not writable!",
-                        result.getDirectory());
-                return null;
-            }
+            if (result.getDirectory() != null &&
+                    prepareOutputDirectory(cmdLineParser, result.getDirectory().toPath())) return null;
 
             return result;
         } catch (CmdLineException ex) {
@@ -171,6 +167,24 @@ public class Params {
             log.error("Error in program", e);
         }
         return null;
+    }
+
+    private static boolean prepareOutputDirectory(CmdLineParser cmdLineParser, Path directoryPath) throws IOException {
+        if (! Files.exists(directoryPath)) {
+            log.info("Target directory {} not existing, creating.",
+                    directoryPath);
+
+            Files.createDirectories(directoryPath);
+        }
+
+        if (Files.isDirectory(directoryPath)
+                && ! Files.isWritable(directoryPath)) {
+            cmdLineParser.printUsage(System.err);
+            log.error("Target directory {} given, but it is not writable!",
+                    directoryPath);
+            return true;
+        }
+        return false;
     }
 
     private void showVersion() throws IOException {
