@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -151,6 +152,14 @@ public class Params {
             if (!result.isPlay() && !isList && result.getDirectory() == null) {
                 cmdLineParser.printUsage(System.err);
                 log.error("Not playing, need a target directory (-directory)!");
+                return null;
+            }
+
+            if (result.getDirectory() != null
+                && ! Files.isWritable(result.getDirectory().toPath())) {
+                cmdLineParser.printUsage(System.err);
+                log.error("Target directory {} given, but it is not writable!",
+                        result.getDirectory());
                 return null;
             }
 
