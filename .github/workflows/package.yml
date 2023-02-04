@@ -76,7 +76,7 @@ jobs:
       PACKAGE_VERSION: ${{ needs.build.outputs.version }}
     steps:
       - name: Download build
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: build
       - name: Setup Debian container
@@ -151,11 +151,11 @@ jobs:
       PACKAGE_VERSION: ${{ needs.build.outputs.version }}
     steps:
       - name: Download build
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: build
       - name: Set up JDK
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: 'adopt'
           java-version: 17
@@ -205,11 +205,11 @@ jobs:
       PACKAGE_VERSION: ${{ needs.build.outputs.version }}
     steps:
       - name: Download build
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: build
       - name: Set up JDK
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: 'adopt'
           java-version: 17
