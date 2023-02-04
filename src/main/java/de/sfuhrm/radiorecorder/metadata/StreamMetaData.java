@@ -73,9 +73,15 @@ public class StreamMetaData {
                 target.setCreated(ZonedDateTime.now());
                 target.setPosition(Optional.of(offsetFilterStream.getOffset()));
                 if (m.matches()) {
-                    target.setArtist(Optional.of(m.group(1)));
-                    target.setTitle(Optional.of(m.group(2)));
+                    String artist = m.group(1);
+                    String title = m.group(2);
+                    log.debug("Icy Meta artist: {}, icy meta title: {}",
+                            artist,
+                            title);
+                    target.setArtist(Optional.of(artist));
+                    target.setTitle(Optional.of(title));
                 } else {
+                    log.info("Icy Meta data was malformed: {}", md);
                     target.setArtist(Optional.empty());
                     target.setTitle(Optional.empty());
                 }
