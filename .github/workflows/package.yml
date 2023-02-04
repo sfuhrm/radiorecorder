@@ -31,7 +31,7 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
     - name: Extract current maven version
-      run: echo "version::$(mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
+      run: echo "version=$(mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
       id: version
       shell: bash
 
@@ -117,7 +117,7 @@ jobs:
             --install-dir /usr \
             ${{ env.JPACKAGE_COMMON_OPTS }}
       - name: Extract package name
-        run: echo "packagename::$(ls)" >> $GITHUB_OUTPUT
+        run: echo "packagename=$(ls)" >> $GITHUB_OUTPUT
         working-directory: jpackage-app
         id: packagename
         shell: bash
@@ -228,7 +228,7 @@ jobs:
             ${{ env.JPACKAGE_COMMON_OPTS }}
         shell: bash
       - name: Extract package name
-        run: echo "packagename::$(ls)" >> $GITHUB_OUTPUT
+        run: echo "packagename=$(ls)" >> $GITHUB_OUTPUT
         working-directory: jpackage-app
         id: packagename
         shell: bash
