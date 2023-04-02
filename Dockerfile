@@ -27,7 +27,7 @@ RUN cd /src && \
             --main-jar lib/radiorecorder-${PROJECT_VERSION}.jar \
             --type deb \
             --app-version ${PROJECT_VERSION} \
-            --input t${APPDIR} \
+            --input ${APPDIR} \
             --license-file ${APPDIR}/LICENSE \
             --linux-deb-maintainer s@sfuhrm.de \
             --linux-app-category sound \
