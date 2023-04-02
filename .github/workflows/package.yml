@@ -129,11 +129,11 @@ jobs:
         if: matrix.style == 'redhat'
       - name: Test run application
         run: radiorecorder -V
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.jpkg_type }}
           path: jpackage-app/${{ steps.packagename.outputs.packagename }}
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: packages
           path: jpackage-app/${{ steps.packagename.outputs.packagename }}
@@ -183,11 +183,11 @@ jobs:
         run: ./radiorecorder -V
         working-directory: /Applications/radiorecorder.app/Contents/MacOS
         if: matrix.jpkg_type == 'pkg'
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.jpkg_type }}
           path: jpackage-app/${{ steps.packagename.outputs.packagename }}
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: packages
           path: jpackage-app/${{ steps.packagename.outputs.packagename }}
@@ -246,11 +246,11 @@ jobs:
         working-directory: "C:\\Program Files\\radiorecorder"
         shell: bash
         if: matrix.jpkg_type == 'msi'
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.jpkg_type }}
           path: jpackage-app/${{ steps.packagename.outputs.packagename }}
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: packages
           path: jpackage-app/${{ steps.packagename.outputs.packagename }}
