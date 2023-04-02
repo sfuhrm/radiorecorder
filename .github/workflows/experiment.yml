@@ -74,6 +74,7 @@ jobs:
           context: .
           platforms: ${{ matrix.platform }}
           outputs: "type=tar,dest=image.tar"
+          build-args: --cpuset-cpus="0"
       -
         name: Show it
         run: |
