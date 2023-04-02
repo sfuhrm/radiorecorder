@@ -1,0 +1,128 @@
+name: Platform Build
+
+on: push
+
+env:
+  QEMU_IMAGE: tonistiigi/binfmt:qemu-v5.0.1
+
+jobs:
+  qemu_show_platform_info:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Set up QEMU for all platforms
+        id: qemu
+        uses: docker/setup-qemu-action@v1
+        with:
+          image: ${{ env.QEMU_IMAGE }}
+          platforms: all
+      -
+        name: Available platforms
+        run: echo ${{ steps.qemu.outputs.platforms }}
+
+  qemu_platform_object_files:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - platform: linux/amd64
+          - platform: linux/arm64
+          - platform: linux/s390x
+          - platform: linux/arm/v7
+          #- platform: linux/arm/v6
+          - platform: linux/ppc64le
+          #- platform: linux/riscv64
+          #- platform: linux/386
+          #- platform: linux/mips64le
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Set up QEMU for ${{ matrix.platform }}
+        id: qemu
+        uses: docker/setup-qemu-action@v1
+        with:
+          image: ${{ env.QEMU_IMAGE }}
+          platforms: ${{ matrix.platform }}
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1        
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      -
+        name: Build on ${{ matrix.platform }}
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          platforms: ${{ matrix.platform }}
+          outputs: "type=tar,dest=image.tar"
+      -
+        name: Show it
+        run: |
+          ls -alR image.tar
+          tar -tvf image.tar
+          
+      -
+        name: Extract shared library
+        run: |
+          tar --wildcards -xvf image.tar openssl4j/target/libopenssl4j-*.so
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: shared_objects
+          path: openssl4j/target/*.so
+          
+  build_jar:
+    needs: qemu_platform_object_files
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      - 
+        uses: actions/download-artifact@v2
+        with:
+          name: shared_objects
+          path: openssl4j/src/main/resources/objects
+      - 
+        name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: 11
+      -
+        name: Cache local Maven repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - 
+        name: Build with Maven
+        run: mvn -B package --file pom.xml
+      - 
+        uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: openssl4j/target/*.jar
+      - 
+        name: Deploy with Maven to SONATYPE OSS Snapshot if secrets are set
+        env:
+          SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+        run: |
+          if [ "${SONATYPE_USER}" != "" -a "${SONATYPE_PASSWORD}" != "" ]; then
+            mvn -B deploy -P snapshot -s .github/settings.xml
+          else
+            echo "Not deploying, secrets SONATYPE_USER and SONATYPE_PASSWORD not provided"
+          fi
