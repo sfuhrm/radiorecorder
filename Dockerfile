@@ -22,7 +22,6 @@ RUN cd /src && \
           PROJECT_VERSION=$(cat project.version); \
           APPDIR=target/radiorecorder-${PROJECT_VERSION}-app/radiorecorder-${PROJECT_VERSION}; \
           echo Project Version: ${PROJECT_VERSION}, APPDIR: ${APPDIR}; \
-          ls -alR; \
           jpackage \
             --main-jar lib/radiorecorder-${PROJECT_VERSION}.jar \
             --type deb \
