@@ -3,7 +3,7 @@ name: Platform Build
 on: push
 
 env:
-  QEMU_IMAGE: tonistiigi/binfmt:qemu-v5.0.1
+  QEMU_IMAGE: tonistiigi/binfmt:qemu-v7.0.0-28
 
 jobs:
   qemu_show_platform_info:
@@ -42,7 +42,7 @@ jobs:
       -
         name: Set up QEMU for ${{ matrix.platform }}
         id: qemu
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v2.1.0
         with:
           image: ${{ env.QEMU_IMAGE }}
           platforms: ${{ matrix.platform }}
