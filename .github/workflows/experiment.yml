@@ -84,10 +84,10 @@ jobs:
       -
         name: Extract shared library
         run: |
-          tar --wildcards -xvf image.tar src/*.deb
+          tar --wildcards -xvf image.tar src/jpackage-app/*.deb
 
       - uses: actions/upload-artifact@v3
         with:
           name: shared_objects
-          path: src/*.deb
+          path: src/jpackage-app/*.deb
           
