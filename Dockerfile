@@ -25,8 +25,8 @@ RUN cd /src && \
             --main-jar radiorecorder-${PROJECT_VERSION}/lib/radiorecorder-${PROJECT_VERSION}.jar \
             --type deb \
             --app-version ${PROJECT_VERSION} \
-            --input target/radiorecorder-${PROJECT_VERSION}-app \
-            --license-file ${APPDIR}/LICENSE \
+            --input ${APPDIR} \
+            --license-file radiorecorder-${PROJECT_VERSION}/LICENSE \
             --linux-deb-maintainer s@sfuhrm.de \
             --linux-app-category sound \
             --install-dir /usr \
