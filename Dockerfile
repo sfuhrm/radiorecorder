@@ -7,16 +7,7 @@ ENV PATH="${JAVA_HOME}/bin:${PATH}"
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends curl openssh-client git fakeroot curl binutils
-
-ENV JPACKAGE_COMMON_OPTS: \
-            --name radiorecorder \
-            --copyright "Stephan Fuhrmann" \
-            --vendor "Stephan Fuhrmann" \
-            --description "Records and plays internet radio streams" \
-            --main-class de.sfuhrm.radiorecorder.Main \
-            --dest jpackage-app \
-            --verbose 
-
+    
 ENV JAVA_HOME=/opt/java/openjdk/
 RUN cd /src && \
           java -version; \
@@ -32,5 +23,10 @@ RUN cd /src && \
             --linux-deb-maintainer s@sfuhrm.de \
             --linux-app-category sound \
             --install-dir /usr \
-            ${JPACKAGE_COMMON_OPTS}
-
+            --name radiorecorder \
+            --copyright "Stephan Fuhrmann" \
+            --vendor "Stephan Fuhrmann" \
+            --description "Records and plays internet radio streams" \
+            --main-class de.sfuhrm.radiorecorder.Main \
+            --dest jpackage-app \
+            --verbose 
