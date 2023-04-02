@@ -21,7 +21,8 @@ ENV JAVA_HOME=/opt/java/openjdk/
 RUN cd /src && \
           PROJECT_VERSION=$(cat project.version); \
           APPDIR=target/radiorecorder-${PROJECT_VERSION}-app/radiorecorder-${PROJECT_VERSION}; \
-           jpackage \
+          echo Project Version: ${PROJECT_VERSION}, APPDIR: ${APPDIR}; \
+          jpackage \
             --main-jar radiorecorder-${PROJECT_VERSION}/lib/radiorecorder-${PROJECT_VERSION}.jar \
             --type deb \
             --app-version ${PROJECT_VERSION} \
