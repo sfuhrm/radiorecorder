@@ -26,7 +26,7 @@ RUN cd /src && \
             --type deb \
             --app-version ${PROJECT_VERSION} \
             --input target/radiorecorder-${PROJECT_VERSION}-app \
-            --license-file ${APPDIR}/LICENSE \
+            --license-file radiorecorder-${PROJECT_VERSION}/LICENSE \
             --linux-deb-maintainer s@sfuhrm.de \
             --linux-app-category sound \
             --install-dir /usr \
