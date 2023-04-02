@@ -19,7 +19,7 @@ ENV JPACKAGE_COMMON_OPTS: \
 
 ENV JAVA_HOME=/opt/java/openjdk/
 RUN cd /src && \
-          java -version \
+          java -version; \
           PROJECT_VERSION=$(cat project.version); \
           APPDIR=target/radiorecorder-${PROJECT_VERSION}-app/radiorecorder-${PROJECT_VERSION}; \
           echo Project Version: ${PROJECT_VERSION}, APPDIR: ${APPDIR}; \
