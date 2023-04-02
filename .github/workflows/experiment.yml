@@ -40,7 +40,7 @@ jobs:
     steps:
       -
         name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       -
         name: Set up QEMU for ${{ matrix.platform }}
         id: qemu
@@ -76,7 +76,7 @@ jobs:
         run: |
           tar --wildcards -xvf image.tar openssl4j/target/libopenssl4j-*.so
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: shared_objects
           path: openssl4j/target/*.so
@@ -87,9 +87,9 @@ jobs:
     steps:
       -
         name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - 
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: shared_objects
           path: openssl4j/src/main/resources/objects
