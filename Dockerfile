@@ -20,13 +20,13 @@ ENV JPACKAGE_COMMON_OPTS: \
 ENV JAVA_HOME=/opt/java/openjdk/
 RUN cd /src && \
           PROJECT_VERSION=$(cat project.version); \
-          APPDIR=target/radiorecorder-${PROJECT_VERSION}-app; \
+          APPDIR=target/radiorecorder-${PROJECT_VERSION}-app/radiorecorder-${PROJECT_VERSION}; \
            jpackage \
             --main-jar radiorecorder-${PROJECT_VERSION}/lib/radiorecorder-${PROJECT_VERSION}.jar \
             --type deb \
             --app-version ${PROJECT_VERSION} \
-            --input target/radiorecorder-${PROJECT_VERSION}-app \
-            --license-file radiorecorder-${PROJECT_VERSION}/LICENSE \
+            --input t${APPDIR} \
+            --license-file ${APPDIR}/LICENSE \
             --linux-deb-maintainer s@sfuhrm.de \
             --linux-app-category sound \
             --install-dir /usr \
