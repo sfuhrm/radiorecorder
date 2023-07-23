@@ -97,7 +97,7 @@ public class ConsumerContext {
     }
 
     /** Whether to name the files after the metadata retrieved.
-     * @return {@code true} if meta data naming was requested on the command line,
+     * @return {@code true} if metadata naming was requested on the command line,
      * {@code false} otherwise.
      * */
     public boolean isSongNames() {

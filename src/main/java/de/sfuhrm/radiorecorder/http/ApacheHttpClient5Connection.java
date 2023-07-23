@@ -34,7 +34,7 @@ import static java.util.stream.Collectors.toList;
 
 
 /**
- * Wrapper for a Apache HttpClient5 based connection.
+ * Wrapper for an Apache HttpClient5 based connection.
  * @author Stephan Fuhrmann
  */
 class ApacheHttpClient5Connection implements HttpConnection {

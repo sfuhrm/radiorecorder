@@ -61,17 +61,17 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
     private int fileNumber;
 
     /**
-     * The last meta data received. Can be {@code null}.
+     * The last metadata received. Can be {@code null}.
      */
     private MetaData metaData;
 
     /**
-     * The last meta data received. Can be {@code null}.
+     * The last metadata received. Can be {@code null}.
      */
     private MetaData previousMetaData;
 
     /**
-     * Whether the meta data changed in the meantime. Indicates that a new file
+     * Whether the metadata changed in the meantime. Indicates that a new file
      * needs to be opened.
      */
     private boolean metaDataChanged;
@@ -340,7 +340,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
     }
 
     /**
-     * Get the file name derived from the received meta data.
+     * Get the file name derived from the received metadata.
      *
      * @return the file, if there is metadata, or empty.
      */

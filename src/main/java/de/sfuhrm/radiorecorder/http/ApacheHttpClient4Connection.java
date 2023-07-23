@@ -30,7 +30,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 
 
 /**
- * Wrapper for a Apache HttpClient4 based connection.
+ * Wrapper for an Apache HttpClient4 based connection.
  * @author Stephan Fuhrmann
  */
 class ApacheHttpClient4Connection implements HttpConnection {

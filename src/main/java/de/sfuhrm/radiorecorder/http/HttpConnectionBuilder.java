@@ -35,7 +35,7 @@ public interface HttpConnectionBuilder {
      */
     void setReadTimeout(int timeout);
 
-    /** Adds a HTTP request header field to the request.
+    /** Adds an HTTP request header field to the request.
      * @param key the header field name, for example "User-Agent".
      * @param value the header field value.
      */

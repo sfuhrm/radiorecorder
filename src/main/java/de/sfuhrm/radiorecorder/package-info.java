@@ -15,7 +15,7 @@
  */
 
 /**
- * A Internet radio recorder program.
+ * An Internet radio recorder program.
  * Holds the classes for setting up the program.
  * {@link de.sfuhrm.radiorecorder.Main} is the main class that is started by the JVM.
  * It holds in {@link de.sfuhrm.radiorecorder.Params} the command line parameters.

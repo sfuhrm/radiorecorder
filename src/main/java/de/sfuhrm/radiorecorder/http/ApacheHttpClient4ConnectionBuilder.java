@@ -26,7 +26,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 /**
- * Builder for a Apache HttpClient v4 based connection.
+ * Builder for an Apache HttpClient v4 based connection.
  * @author Stephan Fuhrmann
  */
 @Slf4j

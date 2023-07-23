@@ -148,7 +148,7 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<Htt
             Runtime.getRuntime().addShutdownHook(shutdown);
 
             try {
-                // this is a second stream just to display the meta data
+                // this is a second stream just to display the metadata
                 while (-1 != (length = inputStream.read(buffer))) {
                     log.trace("Read {} bytes", length);
 

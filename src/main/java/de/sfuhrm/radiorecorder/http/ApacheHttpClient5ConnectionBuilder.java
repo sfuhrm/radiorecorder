@@ -28,7 +28,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 /**
- * Builder for a Apache HttpClient v5 based connection.
+ * Builder for an Apache HttpClient v5 based connection.
  * @author Stephan Fuhrmann
  */
 @Slf4j

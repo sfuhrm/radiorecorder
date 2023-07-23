@@ -27,14 +27,14 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Filters icecast meta data out of the stream.
+ * Filters icecast metadata out of the stream.
  * @see ConnectionHandler
  * @author Stephan Fuhrmann
  */
 @Slf4j
 class IcyMetaFilterStream extends OffsetFilterStream {
 
-    /** Byte interval in the stream to the next meta data block. */
+    /** Byte interval in the stream to the next metadata block. */
     private final int metaInterval;
 
     /** Pattern for meta data String. */
@@ -66,7 +66,7 @@ class IcyMetaFilterStream extends OffsetFilterStream {
         return -1;
     }
 
-    /** Read a meta data block at the current stream position. */
+    /** Read a metadata block at the current stream position. */
     private void readIcyMeta() throws IOException {
         int c;
         log.trace("Offset is {}, Icy Interval is {}", getOffset(), metaInterval);
@@ -129,7 +129,7 @@ class IcyMetaFilterStream extends OffsetFilterStream {
 
             if (len < next) {
                 // the offset is not within the next 'len' bytes
-                // go on, don't care about icy meta data
+                // go on, don't care about icy metadata
                 result = super.read(b, off, len);
             } else {
                 // the offset is within the next 'len' bytes
