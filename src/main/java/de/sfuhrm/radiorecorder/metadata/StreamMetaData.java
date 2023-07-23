@@ -25,6 +25,8 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +56,13 @@ public class StreamMetaData {
         offsetFilterStream = new OffsetFilterStream(connection.getInputStream());
         result = offsetFilterStream;
 
-        Map<String,List<String>> headers = connection.getHeaderFields();
+        // headers in original form
+        Map<String,List<String>> headersOriginal = connection.getHeaderFields();
+        // headers with keys mapped to lower case
+        Map<String,List<String>> headers = headersOriginal
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(e -> e.getKey().toLowerCase(), e -> e.getValue()));
         if (headers.containsKey(ICY_NAME)) {
             metaData.setStationName(Optional.of(headers.get(ICY_NAME).get(0)));
         }
