@@ -21,6 +21,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -41,7 +42,11 @@ class JavaNetHttpConnection implements HttpConnection {
 
     @Override
     public Map<String, List<String>> getHeaderFields() {
-        return connection.getHeaderFields();
+        return connection.getHeaderFields()
+                .entrySet()
+                .stream()
+                .filter(e -> e.getKey() != null)
+                .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
     }
 
     @Override

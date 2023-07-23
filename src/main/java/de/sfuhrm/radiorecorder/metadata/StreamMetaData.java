@@ -62,7 +62,6 @@ public class StreamMetaData {
         Map<String,List<String>> headers = headersOriginal
                 .entrySet()
                 .stream()
-                .filter(e -> e.getKey() != null)
                 .collect(Collectors.toMap(e -> e.getKey().toLowerCase(), e -> e.getValue()));
         if (headers.containsKey(ICY_NAME)) {
             metaData.setStationName(Optional.of(headers.get(ICY_NAME).get(0)));
