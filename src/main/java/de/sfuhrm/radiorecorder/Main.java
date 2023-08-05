@@ -15,6 +15,7 @@
  */
 package de.sfuhrm.radiorecorder;
 
+import de.sfuhrm.radiobrowser4j.EndpointDiscovery;
 import de.sfuhrm.radiobrowser4j.Paging;
 import de.sfuhrm.radiobrowser4j.RadioBrowser;
 import java.io.IOException;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -53,8 +55,15 @@ public class Main {
     /** Id for {@link ConsumerContext}. */
     private static int nextId = 1;
 
-    private static RadioBrowser newRadioBrowser(Params params) {
-        RadioBrowser browser = new RadioBrowser("https://de1.api.radio-browser.info/",
+    private static RadioBrowser newRadioBrowser(Params params) throws IOException {
+        EndpointDiscovery endpointDiscovery = new EndpointDiscovery(GITHUB_URL);
+        Optional<String> endpoint = endpointDiscovery.discover();
+
+        if (! endpoint.isPresent()) {
+            throw new Error("Radiobrowser endpoint discovery failed");
+        }
+
+        RadioBrowser browser = new RadioBrowser(endpoint.get(),
                 params.getTimeout() * 1000,
                 GITHUB_URL,
                 params.getProxy() != null ? params.getProxy().toExternalForm() : null,
@@ -68,7 +77,7 @@ public class Main {
      * @param params the command line.
      * @return the sanitized URLs.
      */
-    private static List<Radio> sanitize(List<String> urls, Params params) {
+    private static List<Radio> sanitize(List<String> urls, Params params) throws IOException {
         List<Radio> result = new ArrayList<>();
 
         RadioBrowser radioBrowser = newRadioBrowser(params);
@@ -210,7 +219,7 @@ public class Main {
         helper.print(System.out);
     }
 
-    private static void listStations(List<String> names, Params params) {
+    private static void listStations(List<String> names, Params params) throws IOException {
         List<Radio> radios = sanitize(names, params);
 
         if (radios.isEmpty()) {
