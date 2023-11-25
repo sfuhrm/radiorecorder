@@ -24,7 +24,6 @@ import com.mpatric.mp3agic.NotSupportedException;
 import com.mpatric.mp3agic.UnsupportedTagException;
 import de.sfuhrm.radiorecorder.ConsumerContext;
 import de.sfuhrm.radiorecorder.Main;
-import de.sfuhrm.radiorecorder.Radio;
 import de.sfuhrm.radiorecorder.RadioException;
 import static de.sfuhrm.radiorecorder.RadioRunnable.BUFFER_SIZE;
 import de.sfuhrm.radiorecorder.http.HttpConnection;
@@ -36,7 +35,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.file.FileStore;
 import java.nio.file.Files;
@@ -54,6 +52,9 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<HttpConnection> {
+
+    /** When the consumer was created. */
+    private long creationTimeStamp;
 
     /**
      * The consecutive file number.
@@ -96,6 +97,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
     public StreamCopyConsumer(ConsumerContext consumerContext) {
         super(consumerContext);
 
+        creationTimeStamp = System.currentTimeMillis();
         directory = createDirectory(consumerContext);
         try {
             initFileNumber();
@@ -123,18 +125,28 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
      * file system or maximum write size.
      *
      * @see ConsumerContext#getMinFree()
-     * @see ConsumerContext#getAbortAfter()
+     * @see ConsumerContext#getAbortAfterFileLength()
      */
     private boolean needToAbort(Optional<File> currentFile) throws IOException {
         if (currentFile.isPresent()) {
             File f = currentFile.get();
 
-            if (getContext().getAbortAfter().isPresent()) {
-                if (f.length() > getContext().getAbortAfter().get()) {
+            if (getContext().getAbortAfterFileLength().isPresent()) {
+                if (f.length() > getContext().getAbortAfterFileLength().get()) {
                     log.warn("Aborting due to maximum file size of {} exceeded: {} file size, {} is the abort-after size",
                             f,
                             f.length(),
-                            getContext().getAbortAfter().get());
+                            getContext().getAbortAfterFileLength().get());
+                    return true;
+                }
+            }
+
+            if (getContext().getAbortAfterDuration().isPresent()) {
+                long abortAfterMillis = getContext().getAbortAfterDuration().get();
+                long elapsedMillis = System.currentTimeMillis() - creationTimeStamp;
+                if (elapsedMillis > abortAfterMillis) {
+                    log.warn("Aborting due to maximum duration of {}ms",
+                            System.currentTimeMillis() - creationTimeStamp);
                     return true;
                 }
             }

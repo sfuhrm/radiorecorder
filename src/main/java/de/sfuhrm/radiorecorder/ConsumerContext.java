@@ -18,6 +18,7 @@ package de.sfuhrm.radiorecorder;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
@@ -27,7 +28,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Line;
 import javax.sound.sampled.Mixer;
 
 /**
@@ -81,11 +81,21 @@ public class ConsumerContext {
     /** Get the amount of bytes after which to abort.
      * @return optional maximum of bytes after which to abort writing to write to disk.
      */
-    public Optional<Long> getAbortAfter() {
-        if (params.getAbortAfterKilo() == null) {
+    public Optional<Long> getAbortAfterFileLength() {
+        if (params.getAbortAfterKB() == null) {
             return Optional.empty();
         }
-        return Optional.of(params.getAbortAfterKilo() * 1024);
+        return Optional.of(params.getAbortAfterKB() * 1024);
+    }
+
+    /** Get the amount of bytes after which to abort.
+     * @return optional maximum of milliseconds to record.
+     */
+    public Optional<Long> getAbortAfterDuration() {
+        if (params.getAbortAfterDuration() == null) {
+            return Optional.empty();
+        }
+        return Optional.of(Params.toMillis(params.getAbortAfterDuration()));
     }
 
     /** Whether to play or store.

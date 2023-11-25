@@ -192,14 +192,32 @@ public class Main {
             log.warn("Restricting to first station because playing.");
         }
 
+        List<Thread> threadList = new ArrayList<>();
+        List<RadioRunnable> radioRunnables = new ArrayList<>();
         radios.stream().forEach(radio -> {
             try {
                 log.info("Starting radio: {}", radio);
-                Runnable r = new RadioRunnable(toConsumerContext(params, radio));
+                RadioRunnable r = new RadioRunnable(toConsumerContext(params, radio));
+                radioRunnables.add(r);
                 Thread t = new Thread(r, "Radio " + radio.getUuid());
+                threadList.add(t);
                 t.start();
             } catch (IOException ex) {
                 log.warn("Could not start thread for station url "+radio.getUrl(), ex);
+            }
+        });
+
+        // wait for finish
+        log.info("Waiting for background processes to finish");
+        joinThreads(threadList);
+    }
+
+    private static void joinThreads(List<Thread> threadList) {
+        threadList.forEach(t -> {
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         });
     }

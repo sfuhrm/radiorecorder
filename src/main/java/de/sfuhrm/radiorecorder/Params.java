@@ -21,6 +21,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -63,8 +65,12 @@ public class Params {
     private long minimumFreeMegs = 512;
 
     @Getter
-    @Option(name = "-abort-after", usage = "Abort after writing the given amount of kilobytes to target drive.", metaVar = "KB")
-    private Long abortAfterKilo;
+    @Option(name = "-abort-after-kb", usage = "Abort after writing the given amount of kilobytes to target drive.", metaVar = "KB", aliases = { "-abort-after" })
+    private Long abortAfterKB;
+
+    @Getter
+    @Option(name = "-abort-after-duration", usage = "Abort after a given time, i.e. '3m10s', '3h' or '10s'.", metaVar = "DURATION")
+    private String abortAfterDuration;
 
     @Getter
     @Option(name = "-reconnect", aliases = {"-r"}, usage = "Automatically reconnect after connection loss.")
@@ -159,6 +165,16 @@ public class Params {
             if (result.getDirectory() != null &&
                     prepareOutputDirectory(cmdLineParser, result.getDirectory().toPath())) return null;
 
+            if (result.getAbortAfterDuration() != null) {
+                try {
+                    long d = toMillis(result.abortAfterDuration);
+                }
+                catch (DateTimeParseException e) {
+                    log.warn("Error in parsing the duration", e);
+                    cmdLineParser.printUsage(System.err);
+                }
+            }
+
             return result;
         } catch (CmdLineException ex) {
             log.warn("Error in parsing", ex);
@@ -167,6 +183,14 @@ public class Params {
             log.error("Error in program", e);
         }
         return null;
+    }
+
+    public static long toMillis(String strDuration) {
+        strDuration = strDuration.replaceAll("\\s+", "").replaceFirst("(\\d+d)", "P$1T");
+        strDuration = strDuration.charAt(0) != 'P' ? "PT" + strDuration.replace("min", "m")
+                : strDuration.replace("min", "m");
+        Duration duration = Duration.parse(strDuration);
+        return duration.toMillis();
     }
 
     private static boolean prepareOutputDirectory(CmdLineParser cmdLineParser, Path directoryPath) throws IOException {
