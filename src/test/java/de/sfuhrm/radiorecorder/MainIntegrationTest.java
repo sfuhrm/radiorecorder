@@ -37,7 +37,7 @@ public class MainIntegrationTest {
     public void testAbortAfterDuration() throws IOException, InterruptedException {
         Path tmpDir = Files.createTempDirectory("rb");
         try {
-            Main.main(new String[]{"Deutschlandfunk", "-abort-after-duration", "3s", "-limit", "1", "-d", tmpDir.toAbsolutePath().toString()});
+            Main.main(new String[]{"SWR3", "-abort-after-duration", "3s", "-limit", "1", "-d", tmpDir.toAbsolutePath().toString()});
 
             // expecting one file
             assertEquals(1, listRecursively(tmpDir).stream().filter(p -> Files.isRegularFile(p)).count());
