@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.function.Function;
 
 class ListHelper<T> {
-    private List<T> list;
-    private List<ColumnInfo> columns;
+    private final List<T> list;
+    private final List<ColumnInfo> columns;
     @Getter
     @Setter
     @AllArgsConstructor

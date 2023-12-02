@@ -46,7 +46,7 @@ class JavaNetHttpConnection implements HttpConnection {
                 .entrySet()
                 .stream()
                 .filter(e -> e.getKey() != null)
-                .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     @Override

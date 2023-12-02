@@ -86,9 +86,8 @@ public class ConnectionHandler {
     /** Configures the builder with the configuration
      * from the {@link #consumerContext}.
      * @param builder the builder to configure.
-     * @throws IOException if configuration fails due to an IO problem.
      * */
-    protected void configure(@NonNull HttpConnectionBuilder builder) throws IOException {
+    protected void configure(@NonNull HttpConnectionBuilder builder) {
         configureIcecast(builder);
         configureTimeout(builder);
         configureClient(builder);
@@ -121,14 +120,15 @@ public class ConnectionHandler {
                 try {
                     Thread.sleep(GRACE_PERIOD);
                 } catch (InterruptedException ex) {
+                    log.debug("Interrupted", ex);
                 }
                 log.info("Reconnecting.");
             }
             try {
+                first = false;
                 HttpConnection connection = openConnection(url);
                 Consumer<HttpConnection> consumer = consumerFromContentType(consumerContext, connection.getContentType());
                 consumer.accept(connection);
-                first = false;
                 loop = false;
             } catch (RadioException re) {
                 loop &= re.isRetryable();

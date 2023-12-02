@@ -31,10 +31,10 @@ import lombok.extern.slf4j.Slf4j;
  *
  * @author Stephan Fuhrmann
  */
+@Getter
 @Slf4j
 public abstract class MetaDataConsumer extends AbstractConsumer implements Consumer<HttpConnection> {
 
-    @Getter
     private final StreamMetaData streamMetaData;
 
     /**

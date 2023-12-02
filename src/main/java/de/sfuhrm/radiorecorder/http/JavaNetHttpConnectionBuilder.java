@@ -19,11 +19,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.net.SocketAddress;
 import java.net.URL;
-import java.net.URLConnection;
-import java.util.HashMap;
-import java.util.Map;
 
 import lombok.extern.slf4j.Slf4j;
 

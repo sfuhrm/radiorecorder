@@ -17,7 +17,6 @@ package de.sfuhrm.radiorecorder.http;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +30,7 @@ import java.util.Optional;
 class AbstractHttpConnectionBuilder {
     protected Optional<Integer> connectTimeout = Optional.empty();
     protected Optional<Integer> readTimeout = Optional.empty();
-    protected Map<String, String> requestProperties = new HashMap<>();
+    protected final Map<String, String> requestProperties = new HashMap<>();
     protected Optional<URL> proxy = Optional.empty();
 
     /** Configures the timeout for connecting to the server.

@@ -31,8 +31,8 @@ import lombok.Getter;
  * Temporary file reference that will delete on closing.
  * @author Stephan Fuhrmann
  */
+@Getter
 public class TemporaryFile implements AutoCloseable {
-    @Getter
     private final File file;
 
     public TemporaryFile() throws IOException {

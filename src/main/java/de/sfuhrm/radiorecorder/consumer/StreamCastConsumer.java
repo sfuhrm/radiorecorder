@@ -100,7 +100,7 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<Htt
             log.info("Player state changed to {}", mediaStatus.playerState);
         }
 
-        if (mediaStatus != null && mediaStatus.playerState.equals(MediaStatus.PlayerState.IDLE)) {
+        if (mediaStatus.playerState.equals(MediaStatus.PlayerState.IDLE)) {
             log.info("Player state is {}. reason: {}",
                     mediaStatus.playerState,
                     mediaStatus.idleReason);

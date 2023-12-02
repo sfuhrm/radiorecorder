@@ -38,11 +38,14 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.file.FileStore;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -54,7 +57,7 @@ import lombok.extern.slf4j.Slf4j;
 public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<HttpConnection> {
 
     /** When the consumer was created. */
-    private long creationTimeStamp;
+    private final long creationTimeStamp;
 
     /**
      * The consecutive file number.
@@ -78,7 +81,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
     private boolean metaDataChanged;
 
     /** The directory to write files to. */
-    private File directory;
+    private final File directory;
 
     /**
      * The current file being written to, if any.
@@ -325,17 +328,17 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
         final Pattern integerPattern = Pattern.compile("[0-9]+");
 
         // this works for both songname files and number files
-        final OptionalInt maxFileNumber = Files.list(directory.toPath())
-                .filter(p -> Files.isRegularFile(p))
-                .map(p -> p.getFileName().toString())
-                .filter(s -> s.contains("."))
-                .map(s -> s.substring(0, s.indexOf('.')))
-                .filter(s -> integerPattern.matcher(s).matches())
-                .mapToInt(Integer::parseInt)
-                .max();
-
-        fileNumber = maxFileNumber.orElse(0) + 1;
-        log.debug("Found file number {}, fileNumber starts at {}", maxFileNumber, fileNumber);
+        try (final Stream<Path> stream = Files.list(directory.toPath())) {
+            OptionalInt maxFileNumber = stream.filter(Files::isRegularFile)
+                    .map(p -> p.getFileName().toString())
+                    .filter(s -> s.contains("."))
+                    .map(s -> s.substring(0, s.indexOf('.')))
+                    .filter(s -> integerPattern.matcher(s).matches())
+                    .mapToInt(Integer::parseInt)
+                    .max();
+            fileNumber = maxFileNumber.orElse(0) + 1;
+            log.debug("Found file number {}, fileNumber starts at {}", maxFileNumber, fileNumber);
+        }
     }
 
     /**

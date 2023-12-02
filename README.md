@@ -32,7 +32,7 @@ Restrictions:
 
 ## Downloading & installation
 
-The current version can be downloaded for Debian, CentOS and MacOS X systems here:
+The current version can be downloaded for Debian, CentOS and Mac OS X systems here:
 
 https://github.com/sfuhrm/radiorecorder/releases
 
@@ -50,7 +50,7 @@ Releases typically contain files named like this for downloading:
   * `radiorecorder-xxx-bin.tar.gz`: A program-only archive in tar.gz format that requires a Java runtime installed on your system.
   * `radiorecorder-xxx-bin.zip`: A program-only archive in ZIP format that requires a Java runtime installed on your system.
 
-You can chose whether you prefer an installation with the runtime as a package or care for the Java runtime yourself.
+You can choose whether you prefer an installation with the runtime as a package or care for the Java runtime yourself.
 The latter makes sense when you're on Windows, Aarch64, X86, or some other system with no dedicated installer.
 
 ## Usage

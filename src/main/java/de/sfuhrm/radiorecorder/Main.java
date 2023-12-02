@@ -114,7 +114,7 @@ public class Main {
         return result;
     }
 
-    private static ConsumerContext toConsumerContext(Params p, Radio radio) throws MalformedURLException, UnsupportedEncodingException {
+    private static ConsumerContext toConsumerContext(Params p, Radio radio) throws MalformedURLException {
         return new ConsumerContext(nextId++, radio, p);
     }
 
@@ -127,7 +127,7 @@ public class Main {
     }
 
     private static class MyListener implements ChromeCastsListener {
-        private List<CastItem> discovered = new ArrayList<>();
+        private final List<CastItem> discovered = new ArrayList<>();
         @Override
         public void newChromeCastDiscovered(ChromeCast chromeCast) {
             CastItem castItem = new CastItem(chromeCast.getTitle(), chromeCast.getModel(), chromeCast.getAddress(), chromeCast.getAppTitle());
@@ -157,10 +157,10 @@ public class Main {
         }
 
         ListHelper<CastItem> helper = new ListHelper<>(instance.discovered);
-        helper.addColumn("Title", i -> i.getTitle());
-        helper.addColumn("Model", i -> i.getModel());
-        helper.addColumn("Address", i -> i.getAddress());
-        helper.addColumn("App Title", i -> i.getAppTitle());
+        helper.addColumn("Title", CastItem::getTitle);
+        helper.addColumn("Model", CastItem::getModel);
+        helper.addColumn("Address", CastItem::getAddress);
+        helper.addColumn("App Title", CastItem::getAppTitle);
         helper.print(System.out);
     }
 
@@ -202,12 +202,10 @@ public class Main {
         }
 
         List<Thread> threadList = new ArrayList<>();
-        List<RadioRunnable> radioRunnables = new ArrayList<>();
         radios.stream().forEach(radio -> {
             try {
                 log.info("Starting radio: {}", radio);
                 RadioRunnable r = new RadioRunnable(toConsumerContext(params, radio));
-                radioRunnables.add(r);
                 Thread t = new Thread(r, "Radio " + radio.getUuid());
                 threadList.add(t);
                 t.start();
@@ -240,9 +238,9 @@ public class Main {
         }
 
         ListHelper<Mixer.Info> helper = new ListHelper<>(infoList);
-        helper.addColumn("Name", i -> i.getName());
-        helper.addColumn("Description", i -> i.getDescription());
-        helper.addColumn("Vendor", i -> i.getVendor());
+        helper.addColumn("Name", Mixer.Info::getName);
+        helper.addColumn("Description", Mixer.Info::getDescription);
+        helper.addColumn("Vendor", Mixer.Info::getVendor);
         helper.print(System.out);
     }
 
@@ -256,8 +254,8 @@ public class Main {
 
         ListHelper<Radio> helper = new ListHelper<>(radios);
         helper.addColumn("UUID", s -> s.getUuid().toString());
-        helper.addColumn("Name", s -> s.getName());
-        helper.addColumn("Codec", s -> s.getCodec());
+        helper.addColumn("Name", Radio::getName);
+        helper.addColumn("Codec", Radio::getCodec);
         helper.addColumn("BR", s -> String.format("%d", s.getBitrate()));
         helper.addColumn("Tags", s -> s.getTags().toString());
 

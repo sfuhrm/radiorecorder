@@ -54,9 +54,8 @@ public class ConsumerContext {
      * @param id numerical unique id of this context.
      * @param radio the radio station to process in this context.
      * @param params the command line parameters.
-     * @throws MalformedURLException if the URL of the radio station was malformed.
      * */
-    public ConsumerContext(int id, Radio radio, Params params) throws MalformedURLException {
+    public ConsumerContext(int id, Radio radio, Params params) {
         this.id = id;
         this.radio = radio;
         this.url = radio.getUrl();
