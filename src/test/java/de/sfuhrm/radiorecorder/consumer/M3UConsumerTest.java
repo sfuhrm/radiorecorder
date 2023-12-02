@@ -19,7 +19,7 @@ import de.sfuhrm.radiorecorder.ConnectionHandler;
 import de.sfuhrm.radiorecorder.ConsumerContext;
 import de.sfuhrm.radiorecorder.http.HttpConnection;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 
 import de.sfuhrm.radiorecorder.http.HttpConnectionBuilderFactory;
 import org.junit.jupiter.api.AfterEach;
@@ -58,10 +58,10 @@ public class M3UConsumerTest {
         try (TemporaryFile tmp = new TemporaryFile()) {
             tmp.write(TEST_STRING);
 
-            Mockito.when(consumerContext.getUrl()).thenReturn(tmp.getURL());
+            Mockito.when(consumerContext.getUri()).thenReturn(tmp.getFile().toURI());
 
             HttpConnection connection = Mockito.mock(HttpConnection.class);
-            Mockito.when(connection.getURL()).thenReturn(tmp.getURL());
+            Mockito.when(connection.getURI()).thenReturn(tmp.getFile().toURI());
             //Mockito.when(connection.getContentType()).thenReturn("audio/x-scpls");
             Mockito.when(connection.getInputStream()).thenReturn(tmp.getInputStream());
 
@@ -71,8 +71,8 @@ public class M3UConsumerTest {
             consumer.setConnectionHandler(connectionHandler);
             consumer.accept(connection);
 
-            Mockito.verify(connectionHandler).consume(new URL("http://streamexample.com:80"));
-            Mockito.verify(connectionHandler).consume(new URL("http://example.com/song.mp3"));
+            Mockito.verify(connectionHandler).consume(URI.create("http://streamexample.com:80"));
+            Mockito.verify(connectionHandler).consume(URI.create("http://example.com/song.mp3"));
         }
     }
 

@@ -16,6 +16,7 @@
 package de.sfuhrm.radiorecorder.http;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 
 /**
@@ -44,7 +45,7 @@ public interface HttpConnectionBuilder {
     /** Sets the HTTP/HTTPS proxy to use.
      * @param proxy the URL of the proxy to use.
      */
-    void setProxy(URL proxy);
+    void setProxy(URI proxy);
 
     /** Constructs a connection from this builder.
      * The connection is usually being opened by this method.

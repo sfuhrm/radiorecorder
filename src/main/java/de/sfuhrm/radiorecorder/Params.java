@@ -18,6 +18,7 @@ package de.sfuhrm.radiorecorder;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -100,7 +101,7 @@ public class Params {
     private HttpConnectionBuilderFactory.HttpClientType httpClientType = HttpConnectionBuilderFactory.HttpClientType.APACHE_CLIENT_5;
 
     @Option(name = "-proxy", aliases = {"-P"}, usage = "The HTTP/HTTPS proxy to use.", metaVar = "URL")
-    private URL proxy;
+    private URI proxy;
 
     @Argument(usage = "URLs of the internet radio station(s), (partial) station name for lookup or the station " +
             "UUID (see option -list-station)", metaVar = "URL_OR_UUID_OR_NAME", required = true)

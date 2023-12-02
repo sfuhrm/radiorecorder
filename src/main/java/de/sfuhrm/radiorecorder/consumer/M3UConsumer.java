@@ -21,7 +21,7 @@ import de.sfuhrm.radiorecorder.RadioException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URL;
+import java.net.URI;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -49,11 +49,11 @@ public class M3UConsumer extends AbstractConsumer implements Consumer<HttpConnec
             log.debug("Found {} lines with URLs", lines.size());
             for (String line : lines) {
                 log.debug("Found line {}", line);
-                getConnectionHandler().consume(new URL(line));
+                getConnectionHandler().consume(URI.create(line));
             }
         }
         catch (IOException ex) {
-            log.warn("URL " + getContext().getUrl().toExternalForm() + " broke down", ex);
+            log.warn("URL " + getContext().getUri().toASCIIString() + " broke down", ex);
             throw new RadioException(true, ex);
         }
     }

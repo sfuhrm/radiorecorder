@@ -19,9 +19,8 @@ import de.sfuhrm.radiobrowser4j.EndpointDiscovery;
 import de.sfuhrm.radiobrowser4j.Paging;
 import de.sfuhrm.radiobrowser4j.RadioBrowser;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -69,7 +68,7 @@ public class Main {
         RadioBrowser browser = new RadioBrowser(endpoint.get(),
                 params.getTimeout() * 1000,
                 GITHUB_URL,
-                params.getProxy() != null ? params.getProxy().toExternalForm() : null,
+                params.getProxy() != null ? params.getProxy().toASCIIString() : null,
                 null,
                 null);
         return browser;
@@ -86,14 +85,16 @@ public class Main {
         RadioBrowser radioBrowser = newRadioBrowser(params);
         int limit = params.getStationLimit();
         for (String urlString : urls) {
-            try {
-                URL url = new URL(urlString); // parse the url
+            URI uri = URI.create(urlString); // parse the url
+
+            String scheme = uri.getScheme();
+            if (scheme != null) {
                 Radio s = new Radio();
                 s.setName("User-Suppplied URL");
-                s.setUrl(url);
+                s.setUri(uri);
                 result.add(s);
-            } catch (MalformedURLException ex) {
-                log.debug("Parameter not an URL: "+urlString, ex);
+            } else {
+                log.debug("Parameter not an URL: {}", urlString);
                 try {
                     UUID uuid = UUID.fromString(urlString);
                     List<Station> stations = radioBrowser.listStationsBy(SearchMode.BYUUID, uuid.toString()).collect(Collectors.toList());
@@ -101,7 +102,7 @@ public class Main {
                     result.addAll(radios);
                 }
                 catch (IllegalArgumentException e) {
-                    log.debug("Parameter not an UUID: "+urlString, ex);
+                    log.debug("Parameter not an UUID: {}", urlString);
                     List<Station> stations = radioBrowser.listStationsBy(
                             Paging.at(0, limit),
                             SearchMode.BYNAME,
@@ -210,7 +211,7 @@ public class Main {
                 threadList.add(t);
                 t.start();
             } catch (IOException ex) {
-                log.warn("Could not start thread for station url "+radio.getUrl(), ex);
+                log.warn("Could not start thread for station url "+radio.getUri(), ex);
             }
         });
 

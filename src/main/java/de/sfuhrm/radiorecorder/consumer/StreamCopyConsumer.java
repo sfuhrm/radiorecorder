@@ -177,7 +177,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
             throw new RadioException(false, ex);
         }
         log.debug("Copying from url {} to file {}, type {}",
-                getContext().getUrl().toExternalForm(),
+                getContext().getUri().toASCIIString(),
                 f,
                 contentType);
     }
@@ -237,7 +237,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
             }
 
         } catch (IOException ex) {
-            log.warn("URL " + getContext().getUrl().toExternalForm() + " broke down", ex);
+            log.warn("URL " + getContext().getUri().toASCIIString() + " broke down", ex);
             fileNumber++;
             throw new RadioException(true, ex);
         } finally {
@@ -251,7 +251,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
             try {
                 outputStream.get().close();
             } catch (IOException ex) {
-                log.warn("URL " + getContext().getUrl().toExternalForm() + " close error", ex);
+                log.warn("URL " + getContext().getUri().toASCIIString() + " close error", ex);
             }
         }
         if (file.isPresent() && deletePartly) {

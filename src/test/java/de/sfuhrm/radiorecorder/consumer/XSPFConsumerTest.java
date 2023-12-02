@@ -19,6 +19,8 @@ import de.sfuhrm.radiorecorder.ConnectionHandler;
 import de.sfuhrm.radiorecorder.ConsumerContext;
 import de.sfuhrm.radiorecorder.http.HttpConnection;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import de.sfuhrm.radiorecorder.http.HttpConnectionBuilderFactory;
@@ -54,15 +56,15 @@ public class XSPFConsumerTest {
     }
 
     @Test
-    void accept() throws IOException {
+    void accept() throws IOException, URISyntaxException {
         URL url = getClass().getResource("/playlist.xspf");
 
         assertNotNull(url);
 
-        Mockito.when(consumerContext.getUrl()).thenReturn(url);
+        Mockito.when(consumerContext.getUri()).thenReturn(url.toURI());
 
         HttpConnection connection = Mockito.mock(HttpConnection.class);
-        Mockito.when(connection.getURL()).thenReturn(url);
+        Mockito.when(connection.getURI()).thenReturn(url.toURI());
         Mockito.when(connection.getInputStream()).thenReturn(url.openStream());
 
         ConnectionHandler connectionHandler = Mockito.mock(ConnectionHandler.class);
@@ -71,10 +73,10 @@ public class XSPFConsumerTest {
         consumer.setConnectionHandler(connectionHandler);
         consumer.accept(connection);
 
-        Mockito.verify(connectionHandler).consume(new URL("http://stream.futuremusic.fm:8000/mp3"));
-        Mockito.verify(connectionHandler).consume(new URL("http://szpila-radio.pl:8300/live.m3u"));
-        Mockito.verify(connectionHandler).consume(new URL("http://stream.szpila-radio.pl:8300/listen1"));
-        Mockito.verify(connectionHandler).consume(new URL("http://85.25.43.55/berlin.mp3"));
+        Mockito.verify(connectionHandler).consume(URI.create("http://stream.futuremusic.fm:8000/mp3"));
+        Mockito.verify(connectionHandler).consume(URI.create("http://szpila-radio.pl:8300/live.m3u"));
+        Mockito.verify(connectionHandler).consume(URI.create("http://stream.szpila-radio.pl:8300/listen1"));
+        Mockito.verify(connectionHandler).consume(URI.create("http://85.25.43.55/berlin.mp3"));
     }
 
     @AfterEach

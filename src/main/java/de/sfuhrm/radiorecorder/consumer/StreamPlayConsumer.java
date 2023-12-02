@@ -53,7 +53,7 @@ public class StreamPlayConsumer extends MetaDataConsumer implements Consumer<Htt
             getStreamMetaData().setMetaDataConsumer(new ConsoleMetaDataConsumer());
             byte[] buffer = new byte[BUFFER_SIZE];
 
-            AudioFileFormat audioFileFormat = AudioSystem.getAudioFileFormat(t.getURL());
+            AudioFileFormat audioFileFormat = AudioSystem.getAudioFileFormat(t.getURI().toURL());
             AudioFormat targetFormat = new AudioFormat(44100, 16, 2, true, true);
             AudioInputStream input = AudioSystem.getAudioInputStream(inputStream);
             AudioInputStream converted = AudioSystem.getAudioInputStream(targetFormat, input);
@@ -61,7 +61,7 @@ public class StreamPlayConsumer extends MetaDataConsumer implements Consumer<Htt
             try (SourceDataLine line = AudioSystem.getSourceDataLine(targetFormat, mixerInfo)) {
                 long bufferSize = line.getBufferSize();
                 log.debug("Streaming from url {} to line {}, format {}, buffer size {}",
-                        getContext().getUrl().toExternalForm(),
+                        getContext().getUri().toASCIIString(),
                         line.getLineInfo().toString(),
                         audioFileFormat,
                         bufferSize);
@@ -89,7 +89,7 @@ public class StreamPlayConsumer extends MetaDataConsumer implements Consumer<Htt
                 }
             }
         } catch (UnsupportedAudioFileException | LineUnavailableException | IOException ex) {
-            log.warn("URL " + getContext().getUrl().toExternalForm() + " broke down", ex);
+            log.warn("URL " + getContext().getUri().toASCIIString() + " broke down", ex);
             throw new RadioException(false, ex);
         }
     }
