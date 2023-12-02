@@ -29,6 +29,8 @@ import java.net.URL;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -41,7 +43,10 @@ public class ConnectionHandler {
     private final ConsumerContext consumerContext;
     private final HttpConnectionBuilderFactory builderFactory;
 
-    public ConnectionHandler(ConsumerContext consumerContext) {
+    /** Constructor for {@link ConnectionHandler}.
+     * @param consumerContext non-null consumer context this handler belongs to.
+          * */
+    public ConnectionHandler(@NonNull ConsumerContext consumerContext) {
         this.consumerContext = Objects.requireNonNull(consumerContext);
         this.builderFactory = new HttpConnectionBuilderFactory(consumerContext.getHttpClient());
     }
@@ -78,7 +83,12 @@ public class ConnectionHandler {
         builder.setRequestProperty("User-Agent", Main.PROJECT);
     }
 
-    protected void configure(HttpConnectionBuilder builder) throws IOException {
+    /** Configures the builder with the configuration
+     * from the {@link #consumerContext}.
+     * @param builder the builder to configure.
+     * @throws IOException if configuration fails due to an IO problem.
+     * */
+    protected void configure(@NonNull HttpConnectionBuilder builder) throws IOException {
         configureIcecast(builder);
         configureTimeout(builder);
         configureClient(builder);
@@ -100,10 +110,10 @@ public class ConnectionHandler {
 
     /** Consumes the given URL.
      * @param url the URL to process. Must be non-null.
+     * @throws NullPointerException if url is null.
      * */
-    public void consume(URL url) {
+    public void consume(@NonNull URL url) {
         boolean first = true;
-        Objects.requireNonNull(url, "url must be non-null");
         boolean loop = consumerContext.isReconnect();
         do {
             if (!first) {

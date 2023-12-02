@@ -35,6 +35,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PLSConsumer extends AbstractConsumer implements Consumer<HttpConnection> {
 
+    /** Constructor.
+     * @param context the context to work in.
+     * */
     public PLSConsumer(ConsumerContext context) {
         super(context);
     }

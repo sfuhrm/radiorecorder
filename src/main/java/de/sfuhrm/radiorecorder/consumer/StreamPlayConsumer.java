@@ -41,6 +41,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class StreamPlayConsumer extends MetaDataConsumer implements Consumer<HttpConnection> {
 
+    /** Constructor.
+     * @param consumerContext the context to work in.
+     * */
     public StreamPlayConsumer(ConsumerContext consumerContext) {
         super(consumerContext);
     }

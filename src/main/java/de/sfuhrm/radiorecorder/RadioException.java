@@ -22,7 +22,7 @@ import lombok.Getter;
  * @author Stephan Fuhrmann
  */
 public class RadioException extends RuntimeException {
-    
+
     /** Is the cause of the exception tagged as being retryable?
      * This is typically the case when there is a I/O problem with the
      * remote side.
@@ -30,6 +30,11 @@ public class RadioException extends RuntimeException {
     @Getter
     private final boolean retryable;
 
+    /**
+     * Constructor for a RadioException.
+     * @param retryable whether the problem source could only be temporarily and a retry might make sense.
+     * @param cause the causing exception.
+     */
     public RadioException(boolean retryable, Throwable cause) {
         super(cause);
         this.retryable = retryable;

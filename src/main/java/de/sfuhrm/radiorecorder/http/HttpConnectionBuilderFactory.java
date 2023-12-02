@@ -29,8 +29,12 @@ import java.util.function.Function;
 @Slf4j
 public class HttpConnectionBuilderFactory {
 
+    /** Multiple types of http clients this program offers. */
     public enum HttpClientType {
+        /** Built-in JDK java.net HTTP connection.  */
         JAVA_NET(JavaNetHttpConnectionBuilder::new),
+
+        /** Apache HttpComponents HttpClient 4.x. */
         APACHE_CLIENT_4(url -> {
             try {
                 return new ApacheHttpClient4ConnectionBuilder(url);
@@ -38,6 +42,7 @@ public class HttpConnectionBuilderFactory {
                 throw new RuntimeException(e);
             }
         }),
+        /** Apache Httpcomponents HttpClient 5.x. */
         APACHE_CLIENT_5(url -> {
             try {
                 return new ApacheHttpClient5ConnectionBuilder(url);
@@ -58,11 +63,19 @@ public class HttpConnectionBuilderFactory {
 
     private final HttpClientType httpClientType;
 
+    /** Constructor.
+     * @param httpClientType the type of client to produce.
+     * */
     public HttpConnectionBuilderFactory(@NonNull HttpClientType httpClientType) {
         log.debug("Using client {}", httpClientType);
         this.httpClientType = httpClientType;
     }
 
+    /** Creates a new client of the type configured in the type.
+     * @param url the URL to create a new builder for.
+     * @return a new builder instance for the given URL.
+     * @see #httpClientType
+     * */
     public HttpConnectionBuilder newInstance(URL url) {
         return httpClientType.builder(url);
     }

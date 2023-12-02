@@ -20,9 +20,11 @@ import de.sfuhrm.radiorecorder.ConsumerContext;
 import de.sfuhrm.radiorecorder.http.HttpConnection;
 import de.sfuhrm.radiorecorder.RadioException;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.function.Consumer;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,7 +42,12 @@ public abstract class AbstractConsumer implements Consumer<HttpConnection> {
     @Getter @Setter(AccessLevel.PACKAGE)
     private ConnectionHandler connectionHandler;
 
-    public AbstractConsumer(ConsumerContext context) {
+    /** Constructor for AbstractConsumer.
+     * @param context the context to provide to the subclasses via the accessor.
+     *                Must be non-null.
+     * @throws NullPointerException if context is null.
+     * */
+    public AbstractConsumer(@NonNull ConsumerContext context) {
         this.context = context;
         this.connectionHandler = new ConnectionHandler(context);
     }

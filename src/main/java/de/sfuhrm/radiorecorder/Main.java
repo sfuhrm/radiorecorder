@@ -49,7 +49,10 @@ import javax.sound.sampled.Mixer;
 @Slf4j
 public class Main {
 
+    /** The URL of the GitHub project. */
     public static final String GITHUB_URL = "https://github.com/sfuhrm/radiorecorder";
+
+    /** The name of the application. */
     public static final String PROJECT = "Radio Recorder";
 
     /** Id for {@link ConsumerContext}. */
@@ -161,6 +164,12 @@ public class Main {
         helper.print(System.out);
     }
 
+    /** Main method of the program.
+     * @param args command line arguments.
+     * @see Params
+     * @throws IOException if there's a problem with IO
+     * @throws InterruptedException when there's an unexpected interrupt
+     * */
     public static void main(String[] args) throws IOException, InterruptedException {
         Params params = Params.parse(args);
         if (params == null) {

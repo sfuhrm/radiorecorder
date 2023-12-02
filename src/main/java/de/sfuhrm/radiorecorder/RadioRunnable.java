@@ -25,10 +25,14 @@ import org.slf4j.MDC;
 @Slf4j
 public class RadioRunnable implements Runnable {
 
+    /** The buffer size in bytes to use for the consumers. */
     public static final int BUFFER_SIZE = 8192;
     private final ConsumerContext consumerContext;
     private final ConnectionHandler configurator;
 
+    /** Constructor.
+     * @param consumerContext the context to work in.
+     * */
     public RadioRunnable(ConsumerContext consumerContext) {
         this.consumerContext = Objects.requireNonNull(consumerContext);
         this.configurator = new ConnectionHandler(consumerContext);

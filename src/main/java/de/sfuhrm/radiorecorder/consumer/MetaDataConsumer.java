@@ -37,6 +37,10 @@ public abstract class MetaDataConsumer extends AbstractConsumer implements Consu
     @Getter
     private final StreamMetaData streamMetaData;
 
+    /**
+     * Constructor.
+     * @param consumerContext the context to work in.
+     * */
     public MetaDataConsumer(ConsumerContext consumerContext) {
         super(consumerContext);
         streamMetaData = new StreamMetaData();
@@ -53,5 +57,9 @@ public abstract class MetaDataConsumer extends AbstractConsumer implements Consu
         }
     }
 
+    /** The accept method to overwrite by implementing classes.
+     * @param t the http connection being processed.
+     * @param inputStream the input stream that is processed.
+     * */
     protected abstract void __accept(HttpConnection t, InputStream inputStream);
 }

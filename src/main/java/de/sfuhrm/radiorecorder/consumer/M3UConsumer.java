@@ -34,6 +34,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class M3UConsumer extends AbstractConsumer implements Consumer<HttpConnection> {
 
+    /** Constructor.
+     * @param context the context this consumer belongs to.
+     * */
     public M3UConsumer(ConsumerContext context) {
         super(context);
     }

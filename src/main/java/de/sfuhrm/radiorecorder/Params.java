@@ -185,6 +185,11 @@ public class Params {
         return null;
     }
 
+    /** Convert the textual duration towards a millisecond duration.
+     * @param strDuration a textual duration with the letters matching towards {@link Duration#parse(CharSequence)}.
+     * @return number of milliseconds parsed.
+     * @throws DateTimeParseException if the text cannot be parsed to a duration.
+     * */
     public static long toMillis(String strDuration) {
         strDuration = strDuration.replaceAll("\\s+", "").replaceFirst("(\\d+d)", "P$1T");
         strDuration = strDuration.charAt(0) != 'P' ? "PT" + strDuration.replace("min", "m")

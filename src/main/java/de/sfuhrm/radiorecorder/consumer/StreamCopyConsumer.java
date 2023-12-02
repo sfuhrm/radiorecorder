@@ -94,6 +94,9 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
      */
     private Optional<FileOutputStream> outputStream = Optional.empty();
 
+    /** Constructor.
+     * @param consumerContext the context to work in.
+     * */
     public StreamCopyConsumer(ConsumerContext consumerContext) {
         super(consumerContext);
 

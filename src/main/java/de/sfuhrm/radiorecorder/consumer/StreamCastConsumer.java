@@ -82,7 +82,9 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<Htt
         }
     }
 
-
+    /** Constructor.
+     * @param consumerContext the context to work in.
+     * */
     public StreamCastConsumer(ConsumerContext consumerContext) {
         super(consumerContext);
         arrayBlockingQueue = new ArrayBlockingQueue<>(1);

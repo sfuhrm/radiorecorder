@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,7 +52,16 @@ public class StreamMetaData {
     /** Current meta data. */
     private MetaData metaData = new MetaData();
 
-    public InputStream openStream(HttpConnection connection) throws IOException {
+    /** Opens the input stream of the http connection.
+     * Internally filters the stream and pushes all
+     * new metadata objects seen to the registered
+     * metadata consumer.
+     * @param connection the non-null http connection to open the stream for.
+     * @return the inputstream that reads data from the source the HttpConnection provides.
+     * @see #metaDataConsumer
+     * @throws IOException if a problem occurs while opening the stream.
+     * */
+    public InputStream openStream(@NonNull HttpConnection connection) throws IOException {
         InputStream result;
         offsetFilterStream = new OffsetFilterStream(connection.getInputStream());
         result = offsetFilterStream;
@@ -62,7 +72,7 @@ public class StreamMetaData {
         Map<String,List<String>> headers = headersOriginal
                 .entrySet()
                 .stream()
-                .collect(Collectors.toMap(e -> e.getKey().toLowerCase(), e -> e.getValue()));
+                .collect(Collectors.toMap(e -> e.getKey().toLowerCase(), Map.Entry::getValue));
         if (headers.containsKey(ICY_NAME)) {
             metaData.setStationName(Optional.of(headers.get(ICY_NAME).get(0)));
         }

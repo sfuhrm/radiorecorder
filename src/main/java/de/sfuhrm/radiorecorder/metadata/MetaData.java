@@ -22,7 +22,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * The tuple of metadata.
+ * The tuple of media metadata.
  * @author Stephan Fuhrmann
  */
 public class MetaData implements Cloneable {
@@ -44,6 +44,9 @@ public class MetaData implements Cloneable {
     @Getter @Setter(AccessLevel.PACKAGE)
     private Optional<Long> position;
 
+    /** Constructs a metadata objects with created timestamp now and all other
+     * fields {@link Optional#empty()}.
+     * */
     public MetaData() {
         created = ZonedDateTime.now();
         artist = Optional.empty();

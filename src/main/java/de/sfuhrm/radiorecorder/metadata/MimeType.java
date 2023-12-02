@@ -19,35 +19,56 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Stream;
 import lombok.Getter;
+import lombok.NonNull;
 
 /**
  * Mime types for use in the application.
  * @author Stephan Fuhrmann
  */
 public enum MimeType {
+    /** MIME type for {@code audio/mpeg}. */
     AUDIO_MPEG("audio/mpeg", ".mp3"),
+    /** MIME type for {@code audio/ogg}. */
     AUDIO_OGG("audio/ogg", ".ogg"),
+    /** MIME type for {@code audio/x-wav}. */
     AUDIO_XWAV("audio/x-wav", ".wav"),
+    /** MIME type for {@code audio/x-ms-wma}. */
     AUDIO_XMSWMA("audio/x-ms-wma", ".wma"),
+    /** MIME type for {@code audio/mpegurl}. */
     AUDIO_MPEGURL("audio/mpegurl", ".m3u"),
+    /** MIME type for {@code audio/x-mpegurl}. */
     AUDIO_XMPEGURL("audio/x-mpegurl", ".m3u"),
+    /** MIME type for {@code audio/x-scpls}. */
     AUDIO_XSCPLS("audio/x-scpls", ".pls"),
+    /** MIME type for {@code application/ogg}. */
     APPLICATION_OGG("application/ogg", ".ogg"),
+    /** MIME type for {@code application/pls+xml}. */
     APPLICATION_PLS_XML("application/pls+xml", ".pls"),
+    /** MIME type for {@code audio/aac}, {@code audio/aacp} or {@code audio/mp4}. */
     AUDIO_AAC(new String[] {"audio/aac", "audio/aacp", "audio/mp4"}, ".m4a");
 
+    /** The content type, for example {@code  audio/aac}. */
     @Getter
     private final String[] contentTypes;
 
+    /** The file system suffix for this mime type, for example {@code .mp3}. */
     @Getter
     private final String suffix;
 
-    MimeType(String contentType, String suffix) {
+    /** Constructor for MimeType.
+     * @param contentType the content type, for example {@code  audio/aac}.
+     * @param suffix file system suffix for this mime type, for example {@code .mp3}.
+     * */
+    MimeType(@NonNull String contentType, @NonNull String suffix) {
         this.contentTypes = new String[] { contentType };
         this.suffix = suffix;
     }
 
-    MimeType(String[] contentTypes, String suffix) {
+    /** Constructor for MimeType.
+     * @param contentTypes multiple content types to match.
+     * @param suffix file system suffix for this mime type, for example {@code .mp3}.
+     * */
+    MimeType(@NonNull String[] contentTypes, @NonNull String suffix) {
         this.contentTypes = Arrays.copyOf(contentTypes, contentTypes.length);
         this.suffix = suffix;
     }
