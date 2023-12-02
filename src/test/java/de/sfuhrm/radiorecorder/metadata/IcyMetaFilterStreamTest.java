@@ -19,8 +19,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Random;
-import org.junit.Test;
-import static org.junit.Assert.*;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Mockito based test for {@link IcyMetaFilterStream}.
@@ -42,9 +43,9 @@ public class IcyMetaFilterStreamTest {
         bb.get(result);
         return result;
     }
-    
+
     @Test
-    public void readWithByteArrayInputStream() throws IOException {    
+    void readWithByteArrayInputStream() throws IOException {    
         Random rand = new Random();
         ByteBuffer bb = ByteBuffer.allocate(256);
         

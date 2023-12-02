@@ -22,37 +22,39 @@ import java.io.IOException;
 import java.net.URL;
 
 import de.sfuhrm.radiorecorder.http.HttpConnectionBuilderFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /** Mockito based test for {@link PLSConsumer}.
  * @author Stephan Fuhrmann
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class PLSConsumerTest {
 
     @Mock
     ConsumerContext consumerContext;
 
-    @Before
+    @BeforeEach
     public void init() {
         Mockito.when(consumerContext.getHttpClient()).thenReturn(HttpConnectionBuilderFactory.HttpClientType.JAVA_NET);
     }
 
     @Test
-    public void create() {
+    void create() {
         PLSConsumer consumer = new PLSConsumer(consumerContext);
         assertEquals(consumerContext, consumer.getContext());
     }
 
     @Test
-    public void accept() throws IOException {
+    void accept() throws IOException {
         try (TemporaryFile tmp = new TemporaryFile()) {
             tmp.write(TEST_STRING);
 
@@ -74,7 +76,7 @@ public class PLSConsumerTest {
         }
     }
 
-    @After
+    @AfterEach
     public void validate() {
         Mockito.validateMockitoUsage();
     }
