@@ -33,15 +33,7 @@ public class HttpConnectionBuilderFactory {
     public enum HttpClientType {
         /** Built-in JDK java.net HTTP connection.  */
         JAVA_NET(JavaNetHttpConnectionBuilder::new),
-
-        /** Apache HttpComponents HttpClient 4.x. */
-        APACHE_CLIENT_4(url -> {
-            try {
-                return new ApacheHttpClient4ConnectionBuilder(url);
-            } catch (URISyntaxException e) {
-                throw new RuntimeException(e);
-            }
-        }),
+        
         /** Apache Httpcomponents HttpClient 5.x. */
         APACHE_CLIENT_5(url -> {
             try {
