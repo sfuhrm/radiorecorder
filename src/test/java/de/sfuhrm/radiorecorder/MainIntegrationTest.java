@@ -15,6 +15,8 @@
  */
 package de.sfuhrm.radiorecorder;
 
+import org.hamcrest.core.IsNot;
+import org.hamcrest.core.StringEndsWith;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -24,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class MainIntegrationTest {
 
@@ -40,7 +43,13 @@ public class MainIntegrationTest {
             Main.main(new String[]{"SWR3", "-abort-after-duration", "3s", "-limit", "1", "-d", tmpDir.toAbsolutePath().toString()});
 
             // expecting one file
-            assertEquals(1, listRecursively(tmpDir).stream().filter(p -> Files.isRegularFile(p)).count());
+            List<Path> files = listRecursively(tmpDir);
+            // one file
+            assertEquals(1, files.stream().filter(p -> Files.isRegularFile(p)).count());
+            // non zero file
+            assertThat(Files.size(files.get(0)), IsNot.not(0));
+            // mp3 (might be unstable test???)
+            assertThat(files.get(0).toString(), StringEndsWith.endsWith(".mp3"));
         }
         finally {
             deleteRecursively(tmpDir);
