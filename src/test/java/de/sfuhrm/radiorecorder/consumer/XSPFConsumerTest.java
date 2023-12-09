@@ -22,37 +22,39 @@ import java.io.IOException;
 import java.net.URL;
 
 import de.sfuhrm.radiorecorder.http.HttpConnectionBuilderFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /** Mockito based test for {@link XSPFConsumer}.
  * @author Stephan Fuhrmann
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class XSPFConsumerTest {
 
     @Mock
     ConsumerContext consumerContext;
 
-    @Before
+    @BeforeEach
     public void init() {
         Mockito.when(consumerContext.getHttpClient()).thenReturn(HttpConnectionBuilderFactory.HttpClientType.JAVA_NET);
     }
 
     @Test
-    public void create() {
+    void create() {
         XSPFConsumer consumer = new XSPFConsumer(consumerContext);
         assertEquals(consumerContext, consumer.getContext());
     }
 
     @Test
-    public void accept() throws IOException {
+    void accept() throws IOException {
         URL url = getClass().getResource("/playlist.xspf");
 
         assertNotNull(url);
@@ -75,7 +77,7 @@ public class XSPFConsumerTest {
         Mockito.verify(connectionHandler).consume(new URL("http://85.25.43.55/berlin.mp3"));
     }
 
-    @After
+    @AfterEach
     public void validate() {
         Mockito.validateMockitoUsage();
     }

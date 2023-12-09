@@ -17,34 +17,36 @@ package de.sfuhrm.radiorecorder.metadata;
 
 import java.io.IOException;
 import java.io.InputStream;
-import org.junit.After;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.mockito.Mock;
 import static org.mockito.Mockito.*;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * Mockito based test for {@link OffsetFilterStream}.
  *
  * @author Stephan Fuhrmann
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class OffsetFilterStreamTest {
 
     @Mock
     InputStream inputStream;
 
     @Test
-    public void create() {
+    void create() {
         OffsetFilterStream ofs = new OffsetFilterStream(inputStream);
         assertEquals(0, ofs.getOffset());
         assertEquals(0, ofs.getMarked());
     }
 
     @Test
-    public void readWithOneByte() throws IOException {
+    void readWithOneByte() throws IOException {
         when(inputStream.read()).thenReturn(42);
         OffsetFilterStream ofs = new OffsetFilterStream(inputStream);
         assertEquals(0, ofs.getOffset());
@@ -60,7 +62,7 @@ public class OffsetFilterStreamTest {
     }
 
     @Test
-    public void readWithArray() throws IOException {
+    void readWithArray() throws IOException {
         byte[] array = new byte[16];
 
         when(inputStream.read(any(), anyInt(), anyInt())).thenReturn(16);
@@ -78,7 +80,7 @@ public class OffsetFilterStreamTest {
     }
 
     @Test
-    public void readWithArrayShortRead() throws IOException {
+    void readWithArrayShortRead() throws IOException {
         byte[] array = new byte[16];
 
         when(inputStream.read(any(), anyInt(), anyInt())).thenReturn(5);
@@ -95,7 +97,7 @@ public class OffsetFilterStreamTest {
         verify(inputStream).read(array, 0, 16);
     }
 
-    @After
+    @AfterEach
     public void validate() {
         validateMockitoUsage();
     }

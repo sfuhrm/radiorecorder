@@ -17,7 +17,7 @@ package de.sfuhrm.radiorecorder;
 
 import org.hamcrest.core.IsNot;
 import org.hamcrest.core.StringEndsWith;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,19 +25,19 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MainIntegrationTest {
 
     @Test
-    public void testlistStation() throws IOException, InterruptedException {
+    void testlistStation() throws IOException, InterruptedException {
         Main.main(new String[] {"-Z", "synth"});
     }
 
 
     @Test
-    public void testAbortAfterDuration() throws IOException, InterruptedException {
+    void testAbortAfterDuration() throws IOException, InterruptedException {
         Path tmpDir = Files.createTempDirectory("rb");
         try {
             Main.main(new String[]{"SWR3", "-abort-after-duration", "3s", "-limit", "1", "-d", tmpDir.toAbsolutePath().toString()});

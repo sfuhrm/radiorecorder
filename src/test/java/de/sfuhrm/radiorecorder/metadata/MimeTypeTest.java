@@ -16,9 +16,10 @@
 package de.sfuhrm.radiorecorder.metadata;
 
 import java.util.Optional;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /** JUnit based test for {@link MimeType}.
  * @author Stephan Fuhrmann
@@ -26,18 +27,18 @@ import static org.hamcrest.MatcherAssert.*;
 public class MimeTypeTest {
 
     @Test
-    public void existenceOfAudioMpeg() {
+    void existenceOfAudioMpeg() {
         assertThat(MimeType.AUDIO_MPEG, notNullValue());
     }
 
     @Test
-    public void byContentTypeWithAudioMpeg() {
+    void byContentTypeWithAudioMpeg() {
         Optional<MimeType> mimeType = MimeType.byContentType("audio/mpeg");
         assertThat(mimeType, is(Optional.of(MimeType.AUDIO_MPEG)));
     }
 
     @Test
-    public void byContentTypeWithUnknown() {
+    void byContentTypeWithUnknown() {
         Optional<MimeType> mimeType = MimeType.byContentType("foo/bar");
         assertThat(mimeType, is(Optional.empty()));
     }
