@@ -17,7 +17,7 @@ package de.sfuhrm.radiorecorder.http;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,8 +31,8 @@ import java.util.Optional;
 class AbstractHttpConnectionBuilder {
     protected Optional<Integer> connectTimeout = Optional.empty();
     protected Optional<Integer> readTimeout = Optional.empty();
-    protected Map<String, String> requestProperties = new HashMap<>();
-    protected Optional<URL> proxy = Optional.empty();
+    protected final Map<String, String> requestProperties = new HashMap<>();
+    protected Optional<URI> proxy = Optional.empty();
 
     /** Configures the timeout for connecting to the server.
      * @param timeout the timeout in milliseconds.
@@ -62,8 +62,8 @@ class AbstractHttpConnectionBuilder {
     /** Sets the HTTP/HTTPS proxy to use.
      * @param proxy the URL of the proxy to use.
      */
-    public void setProxy(URL proxy) {
-        log.debug("Proxy: {}", proxy.toExternalForm());
+    public void setProxy(URI proxy) {
+        log.debug("Proxy: {}", proxy.toASCIIString());
         this.proxy = Optional.of(proxy);
     }
 }

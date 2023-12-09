@@ -18,6 +18,7 @@ package de.sfuhrm.radiorecorder.http;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.function.Function;
@@ -33,15 +34,7 @@ public class HttpConnectionBuilderFactory {
     public enum HttpClientType {
         /** Built-in JDK java.net HTTP connection.  */
         JAVA_NET(JavaNetHttpConnectionBuilder::new),
-
-        /** Apache HttpComponents HttpClient 4.x. */
-        APACHE_CLIENT_4(url -> {
-            try {
-                return new ApacheHttpClient4ConnectionBuilder(url);
-            } catch (URISyntaxException e) {
-                throw new RuntimeException(e);
-            }
-        }),
+        
         /** Apache Httpcomponents HttpClient 5.x. */
         APACHE_CLIENT_5(url -> {
             try {
@@ -51,12 +44,12 @@ public class HttpConnectionBuilderFactory {
             }
         });
 
-        private final Function<URL, HttpConnectionBuilder> builder;
+        private final Function<URI, HttpConnectionBuilder> builder;
 
-        HttpClientType(@NonNull Function<URL, HttpConnectionBuilder> inBuilder) {
+        HttpClientType(@NonNull Function<URI, HttpConnectionBuilder> inBuilder) {
             this.builder = inBuilder;
         }
-        HttpConnectionBuilder builder(@NonNull URL url) {
+        HttpConnectionBuilder builder(@NonNull URI url) {
             return builder.apply(url);
         }
     }
@@ -76,7 +69,7 @@ public class HttpConnectionBuilderFactory {
      * @return a new builder instance for the given URL.
      * @see #httpClientType
      * */
-    public HttpConnectionBuilder newInstance(URL url) {
+    public HttpConnectionBuilder newInstance(URI url) {
         return httpClientType.builder(url);
     }
 }

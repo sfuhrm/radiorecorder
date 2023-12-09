@@ -20,7 +20,7 @@ import de.sfuhrm.radiorecorder.http.HttpConnection;
 import de.sfuhrm.radiorecorder.RadioException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+import java.net.URI;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.function.Consumer;
@@ -84,12 +84,12 @@ public class XSPFConsumer extends AbstractConsumer implements Consumer<HttpConne
             for (int i = 0; i < nl.getLength(); i++) {
                 Node n = nl.item(i);
                 String url = n.getTextContent();
-                getConnectionHandler().consume(new URL(url));
+                getConnectionHandler().consume(URI.create(url));
             }
         } catch (XPathExpressionException ex) {
             throw new RadioException(false, ex);
         } catch (IOException ex) {
-            log.warn("URL " + getContext().getUrl().toExternalForm() + " broke down", ex);
+            log.warn("URL " + getContext().getUri().toASCIIString() + " broke down", ex);
             throw new RadioException(true, ex);
         }
     }

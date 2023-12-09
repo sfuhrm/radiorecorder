@@ -50,8 +50,8 @@ class ApacheHttpClient5Connection implements HttpConnection {
     }
 
     @Override
-    public URL getURL() throws IOException {
-        return uri.toURL();
+    public URI getURI() throws IOException {
+        return uri;
     }
 
     @Override

@@ -20,7 +20,6 @@ import de.sfuhrm.radiorecorder.ConsumerContext;
 import de.sfuhrm.radiorecorder.http.HttpConnection;
 import de.sfuhrm.radiorecorder.RadioException;
 import java.io.IOException;
-import java.util.Objects;
 import java.util.function.Consumer;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -33,13 +32,13 @@ import lombok.extern.slf4j.Slf4j;
  * Subclasses need to implement {@link #_accept(de.sfuhrm.radiorecorder.http.HttpConnection) }.
  * @author Stephan Fuhrmann
  */
+@Getter
 @Slf4j
 public abstract class AbstractConsumer implements Consumer<HttpConnection> {
 
-    @Getter
     private final ConsumerContext context;
 
-    @Getter @Setter(AccessLevel.PACKAGE)
+    @Setter(AccessLevel.PACKAGE)
     private ConnectionHandler connectionHandler;
 
     /** Constructor for AbstractConsumer.
@@ -55,7 +54,7 @@ public abstract class AbstractConsumer implements Consumer<HttpConnection> {
     @Override
     public final void accept(HttpConnection u) {
         try {
-            log.debug("Source URL is {}, real URL is {}", getContext().getUrl(), u.getURL().toExternalForm());
+            log.debug("Source URL is {}, real URL is {}", getContext().getUri(), u.getURI().toASCIIString());
             log.debug("HTTP {} {}", u.getResponseCode(), u.getResponseMessage());
             if (log.isDebugEnabled()) {
                 log.debug("HTTP Response Header fields");

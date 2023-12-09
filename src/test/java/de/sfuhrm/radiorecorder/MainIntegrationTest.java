@@ -45,7 +45,7 @@ public class MainIntegrationTest {
             // expecting one file
             List<Path> files = listRecursively(tmpDir);
             // one file
-            assertEquals(1, files.stream().filter(p -> Files.isRegularFile(p)).count());
+            assertEquals(1, files.stream().filter(Files::isRegularFile).count());
             // non zero file
             assertThat(Files.size(files.get(0)), IsNot.not(0));
             // mp3 (might be unstable test???)

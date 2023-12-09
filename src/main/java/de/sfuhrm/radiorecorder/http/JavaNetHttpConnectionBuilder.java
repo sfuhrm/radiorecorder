@@ -16,14 +16,7 @@
 package de.sfuhrm.radiorecorder.http;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.SocketAddress;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.HashMap;
-import java.util.Map;
+import java.net.*;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,9 +26,9 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 class JavaNetHttpConnectionBuilder extends AbstractHttpConnectionBuilder implements HttpConnectionBuilder {
-    private final URL url;
+    private final URI url;
 
-    JavaNetHttpConnectionBuilder(URL url) {
+    JavaNetHttpConnectionBuilder(URI url) {
         this.url = url;
     }
 
@@ -48,7 +41,7 @@ class JavaNetHttpConnectionBuilder extends AbstractHttpConnectionBuilder impleme
             proxyToUse = new Proxy(Proxy.Type.HTTP,
                     new InetSocketAddress(proxy.get().getHost(), proxy.get().getPort()));
         }
-        HttpURLConnection connection = (HttpURLConnection)url.openConnection(proxyToUse);
+        HttpURLConnection connection = (HttpURLConnection)url.toURL().openConnection(proxyToUse);
 
         if (readTimeout.isPresent()) {
             connection.setReadTimeout(readTimeout.get());

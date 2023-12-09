@@ -22,7 +22,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
+import java.net.URI;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -58,10 +58,10 @@ public class PLSConsumer extends AbstractConsumer implements Consumer<HttpConnec
         try (InputStream is = t.getInputStream()) {
             List<String> urls = readUrls(is);
             for (String url : urls) {
-                getConnectionHandler().consume(new URL(url));
+                getConnectionHandler().consume(URI.create(url));
             }
         } catch (IOException ex) {
-            log.warn("URL " + getContext().getUrl().toExternalForm() + " broke down", ex);
+            log.warn("URL " + getContext().getUri().toASCIIString() + " broke down", ex);
             throw new RadioException(true, ex);
         }
     }

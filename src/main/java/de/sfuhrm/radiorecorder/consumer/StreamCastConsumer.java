@@ -100,7 +100,7 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<Htt
             log.info("Player state changed to {}", mediaStatus.playerState);
         }
 
-        if (mediaStatus != null && mediaStatus.playerState.equals(MediaStatus.PlayerState.IDLE)) {
+        if (mediaStatus.playerState.equals(MediaStatus.PlayerState.IDLE)) {
             log.info("Player state is {}. reason: {}",
                     mediaStatus.playerState,
                     mediaStatus.idleReason);
@@ -132,8 +132,8 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<Htt
             chromeCast.setApplication(Main.PROJECT);
             chromeCast.setName(radio.getName());
             MediaStatus mediaStatus = chromeCast.load(Main.PROJECT + ": " + radio.getName(),
-                    radio.getFavIconUrl() != null ? radio.getFavIconUrl().toExternalForm() : null,
-                    t.getURL().toExternalForm(),
+                    radio.getFavIconUrl() != null ? radio.getFavIconUrl().toASCIIString() : null,
+                    t.getURI().toASCIIString(),
                     t.getContentType());
             boolean shallExit;
             shallExit = trackMediaStatusShallExit(mediaStatus);

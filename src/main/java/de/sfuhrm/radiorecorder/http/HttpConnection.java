@@ -17,7 +17,7 @@ package de.sfuhrm.radiorecorder.http;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +31,7 @@ public interface HttpConnection extends AutoCloseable {
      * @return the URL associated with this connection.
      * @throws IOException if resolving the URL resulted in an error.
      */
-    URL getURL() throws IOException;
+    URI getURI() throws IOException;
 
     /** Get the response header fields from the HTTP server.
      * @return a map with the keys being headers field names and the

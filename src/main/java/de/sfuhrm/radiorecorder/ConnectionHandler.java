@@ -25,7 +25,7 @@ import de.sfuhrm.radiorecorder.http.HttpConnectionBuilder;
 import de.sfuhrm.radiorecorder.http.HttpConnectionBuilderFactory;
 import de.sfuhrm.radiorecorder.metadata.MimeType;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -86,9 +86,8 @@ public class ConnectionHandler {
     /** Configures the builder with the configuration
      * from the {@link #consumerContext}.
      * @param builder the builder to configure.
-     * @throws IOException if configuration fails due to an IO problem.
      * */
-    protected void configure(@NonNull HttpConnectionBuilder builder) throws IOException {
+    protected void configure(@NonNull HttpConnectionBuilder builder) {
         configureIcecast(builder);
         configureTimeout(builder);
         configureClient(builder);
@@ -96,9 +95,9 @@ public class ConnectionHandler {
     }
 
     /** Opens the url using a configured connection. */
-    private HttpConnection openConnection(URL url) throws RadioException {
+    private HttpConnection openConnection(URI uri) throws RadioException {
         try {
-            HttpConnectionBuilder builder = builderFactory.newInstance(url);
+            HttpConnectionBuilder builder = builderFactory.newInstance(uri);
             configure(builder);
             return builder.build();
         } catch (IOException ex) {
@@ -109,10 +108,10 @@ public class ConnectionHandler {
     private static final long GRACE_PERIOD = 5000;
 
     /** Consumes the given URL.
-     * @param url the URL to process. Must be non-null.
+     * @param uri the URL to process. Must be non-null.
      * @throws NullPointerException if url is null.
      * */
-    public void consume(@NonNull URL url) {
+    public void consume(@NonNull URI uri) {
         boolean first = true;
         boolean loop = consumerContext.isReconnect();
         do {
@@ -121,14 +120,15 @@ public class ConnectionHandler {
                 try {
                     Thread.sleep(GRACE_PERIOD);
                 } catch (InterruptedException ex) {
+                    log.debug("Interrupted", ex);
                 }
                 log.info("Reconnecting.");
             }
             try {
-                HttpConnection connection = openConnection(url);
+                first = false;
+                HttpConnection connection = openConnection(uri);
                 Consumer<HttpConnection> consumer = consumerFromContentType(consumerContext, connection.getContentType());
                 consumer.accept(connection);
-                first = false;
                 loop = false;
             } catch (RadioException re) {
                 loop &= re.isRetryable();

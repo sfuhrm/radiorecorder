@@ -16,9 +16,8 @@
 package de.sfuhrm.radiorecorder;
 
 import java.io.File;
-import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
@@ -46,7 +45,7 @@ public class ConsumerContext {
     private final Radio radio;
 
     @Getter
-    private final URL url;
+    private final URI uri;
 
     private final Params params;
 
@@ -54,12 +53,11 @@ public class ConsumerContext {
      * @param id numerical unique id of this context.
      * @param radio the radio station to process in this context.
      * @param params the command line parameters.
-     * @throws MalformedURLException if the URL of the radio station was malformed.
      * */
-    public ConsumerContext(int id, Radio radio, Params params) throws MalformedURLException {
+    public ConsumerContext(int id, Radio radio, Params params) {
         this.id = id;
         this.radio = radio;
-        this.url = radio.getUrl();
+        this.uri = radio.getUri();
         this.params = Objects.requireNonNull(params);
     }
 
@@ -161,7 +159,7 @@ public class ConsumerContext {
     /** The HTTP proxy to use or NULL.
      * @return the HTTP proxy requested in the command line.
      * */
-    public URL getProxy() {
+    public URI getProxy() {
         return params.getProxy();
     }
 }

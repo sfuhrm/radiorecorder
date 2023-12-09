@@ -18,6 +18,8 @@ package de.sfuhrm.radiorecorder.http;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -36,8 +38,12 @@ class JavaNetHttpConnection implements HttpConnection {
     }
 
     @Override
-    public URL getURL() {
-        return connection.getURL();
+    public URI getURI() {
+        try {
+            return connection.getURL().toURI();
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     @Override
@@ -46,7 +52,7 @@ class JavaNetHttpConnection implements HttpConnection {
                 .entrySet()
                 .stream()
                 .filter(e -> e.getKey() != null)
-                .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     @Override

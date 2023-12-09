@@ -6,8 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,13 +23,13 @@ public class Radio {
     private String name;
 
     /** The station URL. */
-    private URL url;
+    private URI uri;
 
     /** The station UUID in radio browser. */
     private UUID uuid;
 
     /** The station favicon URL (optional). */
-    private URL favIconUrl;
+    private URI favIconUrl;
 
     /** The associated codec. */
     private String codec;
@@ -51,20 +50,12 @@ public class Radio {
         Radio r = new Radio();
         r.setName(s.getName());
         if (s.getUrl() != null) {
-            try {
-                r.setUrl(new URL(s.getUrl()));
-            } catch (MalformedURLException e) {
-                log.error("Error parsing station URL '" + s.getUrl() + "'", e);
-                throw new IllegalArgumentException(e);
-            }
+            URI uri = URI.create(s.getUrl());
+            r.setUri(uri);
         }
         r.setUuid(s.getStationUUID());
         if (s.getFavicon() != null && ! s.getFavicon().isEmpty()) {
-            try {
-                r.setFavIconUrl(new URL(s.getFavicon()));
-            } catch (MalformedURLException e) {
-                log.warn("Error parsing station favicon URL '" + s.getFavicon() + "'", e);
-            }
+            r.setFavIconUrl(URI.create(s.getFavicon()));
         }
         r.setCodec(s.getCodec());
         r.setBitrate(r.getBitrate());

@@ -25,6 +25,7 @@ import lombok.NonNull;
  * Mime types for use in the application.
  * @author Stephan Fuhrmann
  */
+@Getter
 public enum MimeType {
     /** MIME type for {@code audio/mpeg}. */
     AUDIO_MPEG("audio/mpeg", ".mp3"),
@@ -48,11 +49,9 @@ public enum MimeType {
     AUDIO_AAC(new String[] {"audio/aac", "audio/aacp", "audio/mp4"}, ".m4a");
 
     /** The content type, for example {@code  audio/aac}. */
-    @Getter
     private final String[] contentTypes;
 
     /** The file system suffix for this mime type, for example {@code .mp3}. */
-    @Getter
     private final String suffix;
 
     /** Constructor for MimeType.
