@@ -26,7 +26,6 @@ import lombok.ToString;
  * The tuple of media metadata.
  * @author Stephan Fuhrmann
  */
-@ToString
 public class MetaData implements Cloneable {
     /** The index of the song in the stream. */
     @Getter @Setter(AccessLevel.PACKAGE)
