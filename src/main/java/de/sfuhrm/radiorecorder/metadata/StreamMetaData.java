@@ -52,6 +52,8 @@ public class StreamMetaData {
     /** Current meta data. */
     private MetaData metaData = new MetaData();
 
+    private static final Pattern artistTitlePattern = Pattern.compile("(.{2,}) - (.{2,})");
+
     /** Opens the input stream of the http connection.
      * Internally filters the stream and pushes all
      * new metadata objects seen to the registered
@@ -74,10 +76,14 @@ public class StreamMetaData {
                 .stream()
                 .collect(Collectors.toMap(e -> e.getKey().toLowerCase(), Map.Entry::getValue));
         if (headers.containsKey(ICY_NAME)) {
-            metaData.setStationName(Optional.of(headers.get(ICY_NAME).get(0)));
+            String stationName = headers.get(ICY_NAME).get(0);
+            log.debug("Station name: {}", stationName);
+            metaData.setStationName(Optional.of(stationName));
         }
         if (headers.containsKey(ICY_URL)) {
-            metaData.setStationUrl(Optional.of(headers.get(ICY_URL).get(0)));
+            String stationUrl = headers.get(ICY_URL).get(0);
+            log.debug("Station url: {}", stationUrl);
+            metaData.setStationUrl(Optional.of(stationUrl));
         }
 
         if (headers.containsKey(ICY_METAINT)) {
@@ -85,24 +91,7 @@ public class StreamMetaData {
             int metaInterval = Integer.parseInt(headers.get(ICY_METAINT).get(0));
             icyMetaFilterStream = new IcyMetaFilterStream(metaInterval, offsetFilterStream);
             icyMetaFilterStream.setMetaDataConsumer(md -> {
-                Pattern p = Pattern.compile("(.{2,}) - (.{2,})");
-                Matcher m = p.matcher(md);
-                MetaData target = metaData.clone();
-                target.setCreated(ZonedDateTime.now());
-                target.setPosition(Optional.of(offsetFilterStream.getOffset()));
-                if (m.matches()) {
-                    String artist = m.group(1);
-                    String title = m.group(2);
-                    log.debug("Icy Meta artist: {}, icy meta title: {}",
-                            artist,
-                            title);
-                    target.setArtist(Optional.of(artist));
-                    target.setTitle(Optional.of(title));
-                } else {
-                    log.info("Icy Meta data was malformed: {}", md);
-                    target.setArtist(Optional.empty());
-                    target.setTitle(Optional.empty());
-                }
+                MetaData target = parse(metaData, offsetFilterStream.getOffset(), md);
                 metaData = target;
                 metaDataConsumer.accept(target);
             });
@@ -110,5 +99,34 @@ public class StreamMetaData {
         }
 
         return result;
+    }
+
+    /** Parses the metadata string.
+     * @param oldMetaData previous songs meta data (as a template).
+     * @param offset byte offset in the stream of this song.
+     * @param streamMetaData usually a string containing of arist and title separated by a hyphen '-'.
+     * @return meta data object.
+     * */
+    static MetaData parse(MetaData oldMetaData, long offset, String streamMetaData) {
+        Matcher m = artistTitlePattern.matcher(streamMetaData);
+        MetaData target = oldMetaData.clone();
+        target.setCreated(ZonedDateTime.now());
+        // start counting at 0
+        target.setIndex(Optional.of(1 + oldMetaData.getIndex().orElse(-1)));
+        target.setOffset(Optional.of(offset));
+        if (m.matches()) {
+            String artist = m.group(1);
+            String title = m.group(2);
+            log.debug("Icy Meta artist: {}, icy meta title: {}",
+                    artist,
+                    title);
+            target.setArtist(Optional.of(artist));
+            target.setTitle(Optional.of(title));
+        } else {
+            log.info("Icy Meta data was malformed: {}", streamMetaData);
+            target.setArtist(Optional.empty());
+            target.setTitle(Optional.of(streamMetaData));
+        }
+        return target;
     }
 }

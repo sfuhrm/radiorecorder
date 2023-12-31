@@ -20,29 +20,41 @@ import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * The tuple of media metadata.
  * @author Stephan Fuhrmann
  */
+@ToString
 public class MetaData implements Cloneable {
+    /** The index of the song in the stream. */
+    @Getter @Setter(AccessLevel.PACKAGE)
+    private Optional<Integer> index;
+
+    /** The timestamp when the song was first detected. */
     @Getter @Setter(AccessLevel.PACKAGE)
     private ZonedDateTime created;
 
+    /** The artist of the song. */
     @Getter @Setter(AccessLevel.PACKAGE)
     private Optional<String> artist;
 
+    /** The title of the song. */
     @Getter @Setter(AccessLevel.PACKAGE)
     private Optional<String> title;
 
+    /** The name of the radio station. */
     @Getter @Setter(AccessLevel.PACKAGE)
     private Optional<String> stationName;
 
+    /** The URL of the radio station. */
     @Getter @Setter(AccessLevel.PACKAGE)
     private Optional<String> stationUrl;
 
+    /** The byte offset in the stream. */
     @Getter @Setter(AccessLevel.PACKAGE)
-    private Optional<Long> position;
+    private Optional<Long> offset;
 
     /** Constructs a metadata objects with created timestamp now and all other
      * fields {@link Optional#empty()}.
@@ -53,7 +65,8 @@ public class MetaData implements Cloneable {
         title = Optional.empty();
         stationName = Optional.empty();
         stationUrl = Optional.empty();
-        position = Optional.empty();
+        offset = Optional.empty();
+        index = Optional.empty();
     }
 
     @Override
