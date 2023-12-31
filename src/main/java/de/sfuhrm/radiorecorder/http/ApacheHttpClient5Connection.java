@@ -16,14 +16,13 @@
 package de.sfuhrm.radiorecorder.http;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -40,10 +39,10 @@ import static java.util.stream.Collectors.toList;
 class ApacheHttpClient5Connection implements HttpConnection {
 
     private final CloseableHttpClient client;
-    private final CloseableHttpResponse response;
+    private final ClassicHttpResponse response;
     private final URI uri;
 
-    ApacheHttpClient5Connection(CloseableHttpClient client, CloseableHttpResponse connection, URI uri) {
+    ApacheHttpClient5Connection(CloseableHttpClient client, ClassicHttpResponse connection, URI uri) {
         this.client = client;
         this.response = connection;
         this.uri = uri;

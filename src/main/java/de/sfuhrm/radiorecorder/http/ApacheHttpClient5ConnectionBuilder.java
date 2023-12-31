@@ -23,6 +23,7 @@ import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.io.BasicHttpClientConnectionManager;
 import org.apache.hc.client5.http.impl.routing.DefaultProxyRoutePlanner;
 import org.apache.hc.client5.http.routing.HttpRoutePlanner;
+import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 import org.apache.hc.core5.util.Timeout;
@@ -30,7 +31,6 @@ import org.apache.hc.core5.util.Timeout;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 
 /**
  * Builder for an Apache HttpClient v5 based connection.
@@ -43,8 +43,8 @@ class ApacheHttpClient5ConnectionBuilder extends AbstractHttpConnectionBuilder i
     private final ClassicRequestBuilder requestBuilder;
 
     ApacheHttpClient5ConnectionBuilder(URI url) throws URISyntaxException {
-        configBuilder = RequestConfig.custom();
-        requestBuilder = ClassicRequestBuilder.get(url);
+        this.configBuilder = RequestConfig.custom();
+        this.requestBuilder = ClassicRequestBuilder.get(url);
 
         log.debug("Request for uri {}", requestBuilder.getUri());
     }
@@ -76,6 +76,9 @@ class ApacheHttpClient5ConnectionBuilder extends AbstractHttpConnectionBuilder i
 
         CloseableHttpClient client = httpClientBuilder.build();
 
-        return new ApacheHttpClient5Connection(client, client.execute(requestBuilder.build()), requestBuilder.getUri());
+        HttpHost httpHost = HttpHost.create(requestBuilder.getUri());
+        ClassicHttpRequest classicHttpRequest = requestBuilder.build();
+
+        return new ApacheHttpClient5Connection(client, client.executeOpen(httpHost, classicHttpRequest, null), requestBuilder.getUri());
     }
 }
