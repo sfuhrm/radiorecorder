@@ -16,12 +16,15 @@
 package de.sfuhrm.radiorecorder.metadata;
 
 import de.sfuhrm.radiorecorder.ConnectionHandler;
+
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -75,7 +78,7 @@ class IcyMetaFilterStream extends OffsetFilterStream {
         int length = (c & 0xff) * 16;
 
         byte[] metaData = new byte[length];
-        int actually = super.read(metaData, 0, length);
+        int actually = superReadFully(metaData, 0, length);
 
         log.trace("Expected len {}, actual len {}", length, actually);
 
@@ -105,6 +108,30 @@ class IcyMetaFilterStream extends OffsetFilterStream {
         }
 
         setOffset(0);
+    }
+
+    /** Reads full array, blocking if necessary.
+     * @param target the array to store the data in.
+     * @param length the number of bytes to read before finishing.
+     * @throws EOFException if the end of file was met before reading the length bytes.
+     * */
+    private int superReadFully(byte[] target, int offset, int length) throws IOException {
+        int total = 0;
+        int myOffset = offset; // current offset in the array
+        int myLength = length; // rest length to read
+
+        while (total < length) {
+            int actual = super.read(target, myOffset, myLength);
+
+            if (actual >= 0) {
+                total += actual;
+                myLength -= actual;
+                myOffset += actual;
+            } else {
+                throw new EOFException("End of file met before reading " + length + " bytes");
+            }
+        }
+        return total;
     }
 
     @Override
