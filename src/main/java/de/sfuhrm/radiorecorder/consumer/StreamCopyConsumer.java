@@ -204,7 +204,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
                 this.previousMetaData = metaData;
                 this.metaData = m;
                 metaDataChanged = true;
-                new ConsoleMetaDataConsumer().accept(m);
+            new ConsoleMetaDataConsumer().accept(m);
             });
             byte[] buffer = new byte[BUFFER_SIZE];
             Optional<MimeType> contentType = MimeType.byContentType(t.getContentType());
@@ -215,19 +215,30 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
 
             int len;
             long ofs = 0;
+            boolean dropMsgWritten = false;
             while (-1 != (len = inputStream.read(buffer))) {
                 try {
                     if (needToAbort(file)) {
                         return;
                     }
-                    if (metaDataChanged && getContext().isSongNames()) {
+
+                    // open new output stream if meta data has changed, we're using song names and
+                    // we're not in the first (incomplete) song (see #37)
+                    if (metaDataChanged && getContext().isSongNames() && metaData.getIndex().orElse(0) > 0) {
                         closeOldFileAndReopenWithNewMetadata(contentType);
                     }
 
                     if (outputStream.isPresent()) {
                         outputStream.get().write(buffer, 0, len);
                     } else {
-                        log.info("Dropped {} bytes, no file name yet", len);
+                        if (!dropMsgWritten) {
+                            if (metaData != null) {
+                                log.info("Dropping bytes of incomplete title {}", metaData);
+                            } else {
+                                log.info("Dropping bytes, no file name yet");
+                            }
+                        }
+                        dropMsgWritten = true;
                     }
                 } catch (IOException ioe) {
                     throw new RadioException(false, ioe);
