@@ -20,7 +20,6 @@ import de.sfuhrm.radiorecorder.ConsumerContext;
 import de.sfuhrm.radiorecorder.http.HttpConnection;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 
 import de.sfuhrm.radiorecorder.http.HttpConnectionBuilderFactory;

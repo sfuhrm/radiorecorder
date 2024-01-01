@@ -18,7 +18,6 @@ package de.sfuhrm.radiorecorder.http;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;

@@ -17,7 +17,6 @@ package de.sfuhrm.radiorecorder;
 
 import java.io.File;
 import java.net.URI;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;

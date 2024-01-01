@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.function.Function;
 
 /**
@@ -34,7 +33,7 @@ public class HttpConnectionBuilderFactory {
     public enum HttpClientType {
         /** Built-in JDK java.net HTTP connection.  */
         JAVA_NET(JavaNetHttpConnectionBuilder::new),
-        
+
         /** Apache Httpcomponents HttpClient 5.x. */
         APACHE_CLIENT_5(url -> {
             try {

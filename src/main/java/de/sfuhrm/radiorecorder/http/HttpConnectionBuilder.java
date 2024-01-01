@@ -17,7 +17,6 @@ package de.sfuhrm.radiorecorder.http;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
 
 /**
  * Configures an HttpConnection. The connection can be created
