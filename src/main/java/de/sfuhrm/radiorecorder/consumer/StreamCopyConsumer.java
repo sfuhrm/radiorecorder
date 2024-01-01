@@ -222,7 +222,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
                         return;
                     }
 
-                    // open new output stream if meta data has changed, we're using song names and
+                    // open new output stream if metadata has changed, we're using song names, and
                     // we're not in the first (incomplete) song (see #37)
                     if (metaDataChanged && getContext().isSongNames() && metaData.getIndex().orElse(0) > 0) {
                         closeOldFileAndReopenWithNewMetadata(contentType);

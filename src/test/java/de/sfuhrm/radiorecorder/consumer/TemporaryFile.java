@@ -52,8 +52,8 @@ public class TemporaryFile implements AutoCloseable {
         return file.toURI().toURL();
     }
 
-    public InputStream getInputStream() throws FileNotFoundException {
-        return new FileInputStream(file);
+    public InputStream getInputStream() throws IOException {
+        return Files.newInputStream(file.toPath());
     }
 
     @Override

@@ -57,8 +57,9 @@ class ApacheHttpClient5ConnectionBuilder extends AbstractHttpConnectionBuilder i
                     .forEach(requestBuilder::addHeader);
         }
 
-        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
-        httpClientBuilder = httpClientBuilder.setDefaultRequestConfig(configBuilder.build());
+        HttpClientBuilder httpClientBuilder = HttpClientBuilder
+                .create()
+                .setDefaultRequestConfig(configBuilder.build());
 
         if (proxy.isPresent()) {
             HttpHost proxyHost = new HttpHost(proxy.get().getScheme(), proxy.get().getHost(), proxy.get().getPort());

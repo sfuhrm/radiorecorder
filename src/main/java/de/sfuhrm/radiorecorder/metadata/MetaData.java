@@ -25,33 +25,28 @@ import lombok.Setter;
  * The tuple of media metadata.
  * @author Stephan Fuhrmann
  */
+@Getter
+@Setter(AccessLevel.PACKAGE)
 public class MetaData implements Cloneable {
     /** The index of the song in the stream. */
-    @Getter @Setter(AccessLevel.PACKAGE)
     private Optional<Integer> index;
 
     /** The timestamp when the song was first detected. */
-    @Getter @Setter(AccessLevel.PACKAGE)
     private ZonedDateTime created;
 
     /** The artist of the song. */
-    @Getter @Setter(AccessLevel.PACKAGE)
     private Optional<String> artist;
 
     /** The title of the song. */
-    @Getter @Setter(AccessLevel.PACKAGE)
     private Optional<String> title;
 
     /** The name of the radio station. */
-    @Getter @Setter(AccessLevel.PACKAGE)
     private Optional<String> stationName;
 
     /** The URL of the radio station. */
-    @Getter @Setter(AccessLevel.PACKAGE)
     private Optional<String> stationUrl;
 
     /** The byte offset in the stream. */
-    @Getter @Setter(AccessLevel.PACKAGE)
     private Optional<Long> offset;
 
     /** Constructs a metadata objects with created timestamp now and all other

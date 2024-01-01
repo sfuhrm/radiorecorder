@@ -34,7 +34,7 @@ public class StreamMetaDataTest {
         assertEquals(Optional.of("foo"), actual.getArtist());
         assertEquals(Optional.of("bar"), actual.getTitle());
         assertEquals(Optional.of(0), actual.getIndex());
-        assertEquals(Optional.of(0l), actual.getOffset());
+        assertEquals(Optional.of(0L), actual.getOffset());
         assertNotNull(actual.getCreated());
     }
 
@@ -42,7 +42,7 @@ public class StreamMetaDataTest {
     public void parseWithExistingTemplate() {
         MetaData old = new MetaData();
         old.setIndex(Optional.of(1));
-        old.setOffset(Optional.of(42l));
+        old.setOffset(Optional.of(42L));
         old.setStationUrl(Optional.of("http://www.google.com/"));
         old.setStationName(Optional.of("Google Radio"));
         old.setTitle(Optional.of("Old McDonald had a farm"));
@@ -53,14 +53,14 @@ public class StreamMetaDataTest {
         assertEquals(Optional.of("dipsy"), actual.getArtist());
         assertEquals(Optional.of("tinkywinky"), actual.getTitle());
         assertEquals(Optional.of(2), actual.getIndex());
-        assertEquals(Optional.of(43l), actual.getOffset());
+        assertEquals(Optional.of(43L), actual.getOffset());
     }
 
     @Test
     public void parseWithMalformedMetadata() {
         MetaData old = new MetaData();
         old.setIndex(Optional.of(1));
-        old.setOffset(Optional.of(42l));
+        old.setOffset(Optional.of(42L));
         old.setStationUrl(Optional.of("http://www.google.com/"));
         old.setStationName(Optional.of("Google Radio"));
         old.setTitle(Optional.of("Old McDonald had a farm"));
@@ -71,6 +71,6 @@ public class StreamMetaDataTest {
         assertEquals(Optional.empty(), actual.getArtist());
         assertEquals(Optional.of("this is really malformed"), actual.getTitle());
         assertEquals(Optional.of(2), actual.getIndex());
-        assertEquals(Optional.of(66l), actual.getOffset());
+        assertEquals(Optional.of(66L), actual.getOffset());
     }
 }
