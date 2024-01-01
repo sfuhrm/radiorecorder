@@ -238,11 +238,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
                         outputStream.get().write(buffer, 0, len);
                     } else {
                         if (!dropMsgWritten) {
-                            if (metaData != null) {
-                                log.info("Dropping bytes of incomplete title {}", metaData);
-                            } else {
-                                log.info("Dropping bytes, no file name yet");
-                            }
+                            log.info("Dropping bytes of incomplete file, waiting for next song");
                         }
                         dropMsgWritten = true;
                     }
