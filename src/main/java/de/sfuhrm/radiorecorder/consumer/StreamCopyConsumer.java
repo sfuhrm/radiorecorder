@@ -115,15 +115,21 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
 
     private File createDirectory(ConsumerContext context) {
         File parent = context.getTargetDirectory();
-        String hostAndPath;
-        try {
-            hostAndPath = URLEncoder.encode(context.getRadio().getName(), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+        File result;
+        String radioName = context.getRadio().getName();
+        if (! radioName.isEmpty()) {
+            String hostAndPath;
+            try {
+                hostAndPath = URLEncoder.encode(context.getRadio().getName(), "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
+            }
+            result= new File(parent, hostAndPath);
+        } else {
+            result = parent;
         }
-        File dir = new File(parent, hostAndPath);
-        dir.mkdirs();
-        return dir;
+        result.mkdirs();
+        return result;
     }
 
     /**

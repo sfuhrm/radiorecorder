@@ -74,6 +74,8 @@ public class Main {
         return browser;
     }
 
+    public static final String NO_RADIO_NAME = "";
+
     /** Read the URLs or names given and resolve them using {@link RadioBrowser}.
      * @param urls the input urls from the command line.
      * @param params the command line.
@@ -90,7 +92,7 @@ public class Main {
             String scheme = uri.getScheme();
             if (scheme != null) {
                 Radio s = new Radio();
-                s.setName("User-Suppplied URL");
+                s.setName(NO_RADIO_NAME);
                 s.setUri(uri);
                 result.add(s);
             } else {
