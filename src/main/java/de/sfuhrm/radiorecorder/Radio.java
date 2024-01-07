@@ -58,7 +58,9 @@ public class Radio {
             r.setFavIconUrl(URI.create(s.getFavicon()));
         }
         r.setCodec(s.getCodec());
-        r.setBitrate(r.getBitrate());
+        if (s.getBitrate() != null) {
+            r.setBitrate(s.getBitrate());
+        }
         r.setTags(new ArrayList<>(r.getTags()));
         return r;
     }
