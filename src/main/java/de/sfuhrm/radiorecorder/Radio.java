@@ -61,7 +61,7 @@ public class Radio {
         if (s.getBitrate() != null) {
             r.setBitrate(s.getBitrate());
         }
-        r.setTags(new ArrayList<>(r.getTags()));
+        r.setTags(new ArrayList<>(s.getTagList()));
         return r;
     }
 }
