@@ -4,7 +4,7 @@
 
   <groupId>de.sfuhrm</groupId>
   <artifactId>radiorecorder</artifactId>
-  <version>1.8.5</version>
+  <version>1.8.6-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>Radio Recorder</name>
@@ -30,7 +30,7 @@
   <scm>
     <url>git@github.com:sfuhrm/radiorecorder.git</url>
     <connection>scm:git:git@github.com:sfuhrm/radiorecorder.git</connection>
-    <tag>v1.8.5</tag>
+    <tag>v1.6.5</tag>
   </scm>
 
   <properties>
