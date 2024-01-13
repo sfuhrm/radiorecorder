@@ -15,6 +15,7 @@
  */
 package de.sfuhrm.radiorecorder;
 
+import de.sfuhrm.radiobrowser4j.ConnectionParams;
 import de.sfuhrm.radiobrowser4j.EndpointDiscovery;
 import de.sfuhrm.radiobrowser4j.Paging;
 import de.sfuhrm.radiobrowser4j.RadioBrowser;
@@ -65,12 +66,14 @@ public class Main {
             throw new Error("Radiobrowser endpoint discovery failed");
         }
 
-        RadioBrowser browser = new RadioBrowser(endpoint.get(),
-                params.getTimeout() * 1000,
-                GITHUB_URL,
-                params.getProxy() != null ? params.getProxy().toASCIIString() : null,
-                null,
-                null);
+        ConnectionParams.ConnectionParamsBuilder builder = ConnectionParams.builder();
+        builder.apiUrl(endpoint.get());
+        builder.timeout(params.getTimeout() * 1000);
+        if (params.getProxy() != null) {
+            builder.proxyUri(params.getProxy().toASCIIString());
+        }
+        builder.userAgent(GITHUB_URL);
+        RadioBrowser browser = new RadioBrowser(builder.build());
         return browser;
     }
 
