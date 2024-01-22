@@ -60,6 +60,8 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<Htt
 
     private MediaStatus lastMediaStatus;
 
+    private static final long TRACK_MEDIASTATUS_EVERY_MS = 1000L;
+
     private class MyChromeCastsListener implements ChromeCastsListener {
 
         @Override
@@ -114,6 +116,7 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<Htt
     @Override
     protected void __accept(HttpConnection t, InputStream inputStream) {
         try {
+
             getStreamMetaData().setMetaDataConsumer(new ConsoleMetaDataConsumer());
 
             ChromeCasts.registerListener(new MyChromeCastsListener());
@@ -149,15 +152,20 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<Htt
             Thread shutdown = new Thread(this::cleanup);
             Runtime.getRuntime().addShutdownHook(shutdown);
 
+            long lastTrack = System.currentTimeMillis();
             try {
                 // this is a second stream just to display the metadata
                 while (-1 != (length = inputStream.read(buffer))) {
                     log.trace("Read {} bytes", length);
 
-                    mediaStatus = chromeCast.getMediaStatus();
-                    shallExit = trackMediaStatusShallExit(mediaStatus);
-                    if (shallExit) {
-                        return;
+                    if (System.currentTimeMillis() - lastTrack > TRACK_MEDIASTATUS_EVERY_MS) {
+                        lastTrack = System.currentTimeMillis();
+                        mediaStatus = chromeCast.getMediaStatus();
+                        shallExit = trackMediaStatusShallExit(mediaStatus);
+                        if (shallExit) {
+                            log.info("Media status said shall exit");
+                            return;
+                        }
                     }
                 }
                 Runtime.getRuntime().removeShutdownHook(shutdown);
