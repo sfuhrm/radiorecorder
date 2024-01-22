@@ -78,13 +78,15 @@ The program is a command line only program. It supports multiple parameters:
                                           station(s), (partial) station name
                                           for lookup or the station UUID (see
                                           option -list-station)
- -abort-after KB                        : Abort after writing the given amount
+ -abort-after-duration DURATION         : Abort after a given time, i.e.
+                                          '3m10s', '3h' or '10s'.
+ -abort-after-kb (-abort-after) KB      : Abort after writing the given amount
                                           of kilobytes to target drive.
  -cast (-c) CASTDEVICE_TITLE            : Stream to the given chrome cast
                                           device. Use cast device title from
                                           '-list-cast'.
  -client (-C) [JAVA_NET |               : Specify HTTP client to use. (default:
- APACHE_CLIENT_4 | APACHE_CLIENT_5]       APACHE_CLIENT_5)
+ APACHE_CLIENT_5]                         APACHE_CLIENT_5)
  -directory (-d) DIR                    : Write recorded stream files to a
                                           folder hierarchy in this target
                                           directory.
@@ -114,11 +116,13 @@ The program is a command line only program. It supports multiple parameters:
  -use-songnames (-S)                    : Use songnames from retrieved metadata
                                           information. Will create one file per
                                           detected song. (default: false)
+ -version (-V)                          : Show version information and exit.
+                                          (default: false)
 ```
 
 ## License
 
-Copyright 2017-2023 Stephan Fuhrmann
+Copyright 2017-2024 Stephan Fuhrmann
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
