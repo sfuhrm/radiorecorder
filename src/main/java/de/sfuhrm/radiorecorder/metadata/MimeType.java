@@ -46,7 +46,7 @@ public enum MimeType {
     /** MIME type for {@code application/pls+xml}. */
     APPLICATION_PLS_XML("application/pls+xml", ".pls"),
     /** MIME type for {@code audio/aac}, {@code audio/aacp} or {@code audio/mp4}. */
-    AUDIO_AAC(new String[] {"audio/aac", "audio/aacp", "audio/mp4"}, ".m4a");
+    AUDIO_AAC(new String[] {"audio/aac", "audio/aacp", "audio/mp4", "audio/x-m4a"}, ".m4a");
 
     /** The content type, for example {@code  audio/aac}. */
     private final String[] contentTypes;

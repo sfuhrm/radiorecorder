@@ -15,6 +15,7 @@
  */
 package de.sfuhrm.radiorecorder.consumer;
 
+import com.github.trilarion.sound.vorbis.sampled.spi.VorbisAudioFileReader;
 import de.sfuhrm.radiorecorder.ConsumerContext;
 import de.sfuhrm.radiorecorder.RadioException;
 import static de.sfuhrm.radiorecorder.RadioRunnable.BUFFER_SIZE;
@@ -23,8 +24,8 @@ import de.sfuhrm.radiorecorder.http.HttpConnection;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 import java.util.function.Consumer;
-import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -32,7 +33,12 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.Mixer;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.sound.sampled.spi.AudioFileReader;
+
+import de.sfuhrm.radiorecorder.metadata.MimeType;
+import javazoom.spi.mpeg.sampled.file.MpegAudioFileReader;
 import lombok.extern.slf4j.Slf4j;
+import net.sourceforge.jaad.spi.javasound.AACAudioFileReader;
 
 /**
  * Plays a stream using the Java Media Framework API.
@@ -47,6 +53,32 @@ public class StreamPlayConsumer extends MetaDataConsumer implements Consumer<Htt
      * */
     public StreamPlayConsumer(ConsumerContext consumerContext) {
         super(consumerContext);
+    }
+
+    private AudioFileReader getAudioFileReader(String contentType) throws UnsupportedAudioFileException {
+        if (contentType == null) {
+            log.error("Content type is null");
+            throw new UnsupportedAudioFileException("No mapping for NULL content type");
+        }
+        Optional<MimeType> mimeType = MimeType.byContentType(contentType);
+        if (! mimeType.isPresent()) {
+            log.error("Derived mime type is null");
+            throw new UnsupportedAudioFileException("No mapping for NULL mime type");
+        }
+        switch (mimeType.get()) {
+            case AUDIO_AAC:
+                return new AACAudioFileReader();
+            case AUDIO_MPEG:
+                return new MpegAudioFileReader();
+            case AUDIO_OGG:
+                return new VorbisAudioFileReader();
+//            case AUDIO_XWAV:
+//                return new WaveFileReader();
+            default:
+                log.error("No mapping for content type {} / mime type {}",
+                        contentType, mimeType.get());
+                throw new UnsupportedAudioFileException("No mapping for content type " + contentType);
+        }
     }
 
     @Override
@@ -67,7 +99,8 @@ public class StreamPlayConsumer extends MetaDataConsumer implements Consumer<Htt
                 inputStream = new BufferedInputStream(inputStream);
             }
 
-            AudioInputStream input = AudioSystem.getAudioInputStream(inputStream);
+            AudioFileReader audioFileReader = getAudioFileReader(contentType);
+            AudioInputStream input = audioFileReader.getAudioInputStream(inputStream);
             log.debug("Input format {}", input.getFormat());
 
             boolean bigEndian = input.getFormat().isBigEndian();
