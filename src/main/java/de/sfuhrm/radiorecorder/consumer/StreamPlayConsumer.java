@@ -19,6 +19,8 @@ import de.sfuhrm.radiorecorder.ConsumerContext;
 import de.sfuhrm.radiorecorder.RadioException;
 import static de.sfuhrm.radiorecorder.RadioRunnable.BUFFER_SIZE;
 import de.sfuhrm.radiorecorder.http.HttpConnection;
+
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.function.Consumer;
@@ -53,9 +55,25 @@ public class StreamPlayConsumer extends MetaDataConsumer implements Consumer<Htt
             getStreamMetaData().setMetaDataConsumer(new ConsoleMetaDataConsumer());
             byte[] buffer = new byte[BUFFER_SIZE];
 
-            AudioFileFormat audioFileFormat = AudioSystem.getAudioFileFormat(t.getURI().toURL());
-            AudioFormat targetFormat = new AudioFormat(44100, 16, 2, true, true);
+            String contentType = t.getContentType();
+
+            // this is not needed, but will make the AAC codec fail in an
+            // endless loop because it is thinking MP3 can be interpreted as AAC
+            //AudioFileFormat audioFileFormat = AudioSystem.getAudioFileFormat(t.getURI().toURL());
+
+            boolean bigEndian = true;
+            if (contentType.equals("audio/ogg")) {
+                bigEndian = false;
+            }
+            AudioFormat targetFormat = new AudioFormat(44100, 16, 2, true, bigEndian);
+
+            // many audio codecs need mark() and reset() to work
+            if (! inputStream.markSupported()) {
+                inputStream = new BufferedInputStream(inputStream);
+            }
+
             AudioInputStream input = AudioSystem.getAudioInputStream(inputStream);
+
             AudioInputStream converted = AudioSystem.getAudioInputStream(targetFormat, input);
             Mixer.Info mixerInfo = getContext().getMixerInfo();
             try (SourceDataLine line = AudioSystem.getSourceDataLine(targetFormat, mixerInfo)) {
@@ -63,7 +81,7 @@ public class StreamPlayConsumer extends MetaDataConsumer implements Consumer<Htt
                 log.debug("Streaming from url {} to line {}, format {}, buffer size {}",
                         getContext().getUri().toASCIIString(),
                         line.getLineInfo().toString(),
-                        audioFileFormat,
+                        contentType,
                         bufferSize);
                 int len;
                 long ofs = 0;
