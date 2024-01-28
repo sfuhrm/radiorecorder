@@ -20,6 +20,7 @@ import de.sfuhrm.radiorecorder.http.HttpConnection;
 import de.sfuhrm.radiorecorder.http.HttpConnectionBuilderFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -77,6 +78,14 @@ public class StreamPlayConsumerTest {
     @Test
     void __acceptWithM4A() throws IOException {
         URI uri = URI.create("https://getsamplefiles.com/download/m4a/sample-4.m4a");
+        innerTest(uri);
+    }
+
+    // disabled, endless stream
+    @Disabled
+    @Test
+    void __acceptWithAAC() throws IOException {
+        URI uri = URI.create("https://playerservices.streamtheworld.com/api/livestream-redirect/XHPSFMAAC.aac");
         innerTest(uri);
     }
 

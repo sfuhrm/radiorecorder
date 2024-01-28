@@ -56,16 +56,11 @@ public class StreamPlayConsumer extends MetaDataConsumer implements Consumer<Htt
             byte[] buffer = new byte[BUFFER_SIZE];
 
             String contentType = t.getContentType();
+            log.debug("Content type {}", contentType);
 
             // this is not needed, but will make the AAC codec fail in an
             // endless loop because it is thinking MP3 can be interpreted as AAC
             //AudioFileFormat audioFileFormat = AudioSystem.getAudioFileFormat(t.getURI().toURL());
-
-            boolean bigEndian = true;
-            if (contentType.equals("audio/ogg")) {
-                bigEndian = false;
-            }
-            AudioFormat targetFormat = new AudioFormat(44100, 16, 2, true, bigEndian);
 
             // many audio codecs need mark() and reset() to work
             if (! inputStream.markSupported()) {
@@ -73,7 +68,12 @@ public class StreamPlayConsumer extends MetaDataConsumer implements Consumer<Htt
             }
 
             AudioInputStream input = AudioSystem.getAudioInputStream(inputStream);
+            log.debug("Input format {}", input.getFormat());
 
+            boolean bigEndian = input.getFormat().isBigEndian();
+            AudioFormat targetFormat = new AudioFormat(44100, 16, 2, true, bigEndian);
+
+            log.debug("Target format {}", targetFormat);
             AudioInputStream converted = AudioSystem.getAudioInputStream(targetFormat, input);
             Mixer.Info mixerInfo = getContext().getMixerInfo();
             try (SourceDataLine line = AudioSystem.getSourceDataLine(targetFormat, mixerInfo)) {
