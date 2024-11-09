@@ -5,7 +5,7 @@
   <parent>
     <groupId>de.sfuhrm</groupId>
     <artifactId>radiorecorder-parent</artifactId>
-    <version>1.10.2-SNAPSHOT</version>
+    <version>1.11.0</version>
   </parent>
   <artifactId>radiorecorder-aac</artifactId>
   <packaging>jar</packaging>
