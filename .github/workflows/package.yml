@@ -136,7 +136,7 @@ jobs:
           path: jpackage-app/${{ steps.packagename.outputs.packagename }}
       - uses: actions/upload-artifact@v4
         with:
-          name: packages-${{ steps.packagename.outputs.packagename }}
+          name: packages-${{ matrix.jpkg_type }}
           path: jpackage-app/${{ steps.packagename.outputs.packagename }}
   jpackage_macos:
     needs: build
@@ -190,7 +190,7 @@ jobs:
           path: jpackage-app/${{ steps.packagename.outputs.packagename }}
       - uses: actions/upload-artifact@v4
         with:
-          name: packages-${{ steps.packagename.outputs.packagename }}
+          name: packages-${{ matrix.jpkg_type }}
           path: jpackage-app/${{ steps.packagename.outputs.packagename }}
   jpackage_windows:
     needs: build
@@ -253,7 +253,7 @@ jobs:
           path: jpackage-app/${{ steps.packagename.outputs.packagename }}
       - uses: actions/upload-artifact@v4
         with:
-          name: packages-${{ steps.packagename.outputs.packagename }}
+          name: packages-${{ matrix.jpkg_type }}
           path: jpackage-app/${{ steps.packagename.outputs.packagename }}
 
   merge_packages:
@@ -267,9 +267,9 @@ jobs:
       - name: Download package artifacts
         uses: actions/download-artifact@v4.1.7
         with:
-          path: package
-          pattern: package-*
+          path: packages
+          pattern: packages-*
       - uses: actions/upload-artifact@v4
         with:
           name: packages
-          path: package
+          path: packages
