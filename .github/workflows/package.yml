@@ -35,22 +35,22 @@ jobs:
       id: version
       shell: bash
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: packages
         path: radiorecorder/target/radiorecorder-${{ steps.version.outputs.version }}-bin.tar.gz
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: packages
         path: radiorecorder/target/radiorecorder-${{ steps.version.outputs.version }}-bin.tar.bz2
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: packages
         path: radiorecorder/target/radiorecorder-${{ steps.version.outputs.version }}-bin.zip
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: build
         path: radiorecorder/target/radiorecorder-${{ steps.version.outputs.version }}-app
