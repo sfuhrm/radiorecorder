@@ -42,10 +42,9 @@
             <configuration>
               <filters>
                 <filter>
-                  <artifact>${aac.group}:${aac.artifact}:${aac.version}</artifact>
+                  <artifact>${aac.group}:*</artifact>
                   <excludes>
-                    <exclude>META-INF/services/javax.sound.sampled.spi.FormatConversionProvider</exclude>
-                    <exclude>META-INF/services/javax.sound.sampled.spi.AudioFileReader</exclude>
+                    <exclude>META-INF/services/**</exclude>
                   </excludes>
                 </filter>
               </filters>
