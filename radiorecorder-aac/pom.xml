@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>de.sfuhrm</groupId>
+    <artifactId>radiorecorder-parent</artifactId>
+    <version>1.10.2-SNAPSHOT</version>
+  </parent>
+  <artifactId>radiorecorder-aac</artifactId>
+  <packaging>jar</packaging>
+
+  <name>javasound-aac-patched</name>
+  <description>Patched com.tianscar.javasound javasound-aac plugin</description>
+
+  <properties>
+    <aac.group>com.tianscar.javasound</aac.group>
+    <aac.artifact>javasound-aac</aac.artifact>
+    <aac.version>0.9.8</aac.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>${aac.group}</groupId>
+      <artifactId>${aac.artifact}</artifactId>
+      <version>${aac.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.6.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <filters>
+                <filter>
+                  <artifact>${aac.group}:${aac.artifact}:${aac.version}</artifact>
+                  <excludes>
+                    <exclude>META-INF/services/javax.sound.sampled.spi.FormatConversionProvider</exclude>
+                    <exclude>META-INF/services/javax.sound.sampled.spi.AudioFileReader</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

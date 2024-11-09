@@ -3,11 +3,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>de.sfuhrm</groupId>
-  <artifactId>radiorecorder</artifactId>
+  <artifactId>radiorecorder-parent</artifactId>
   <version>1.10.2-SNAPSHOT</version>
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
 
-  <name>Radio Recorder</name>
+  <name>Radio Recorder Parent</name>
   <description>Records and plays internet radio streams</description>
   <url>https://github.com/sfuhrm/radiorecorder</url>
   <licenses>
@@ -42,214 +42,6 @@
     <timestamp>${maven.build.timestamp}</timestamp>
     <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'</maven.build.timestamp.format>
   </properties>
-
-  <dependencies>
-    <dependency>
-      <groupId>de.sfuhrm</groupId>
-      <artifactId>radiobrowser4j</artifactId>
-      <version>3.1.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.httpcomponents.client5</groupId>
-      <artifactId>httpclient5</artifactId>
-      <version>5.3.1</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>de.sfuhrm</groupId>
-      <artifactId>chromecast-java-api-v2</artifactId>
-      <version>0.12.7</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>com.mpatric</groupId>
-      <artifactId>mp3agic</artifactId>
-      <version>0.9.1</version>
-    </dependency>
-    <dependency>
-      <groupId>com.googlecode.soundlibs</groupId>
-      <artifactId>jlayer</artifactId>
-      <version>1.0.1.4</version>
-      <exclusions>
-        <exclusion>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>com.googlecode.soundlibs</groupId>
-      <artifactId>mp3spi</artifactId>
-      <version>1.9.5.4</version>
-    </dependency>
-    <dependency>
-      <groupId>com.github.trilarion</groupId>
-      <artifactId>java-vorbis-support</artifactId>
-      <version>1.2.1</version>
-    </dependency>
-    <dependency>
-      <groupId>com.tianscar.javasound</groupId>
-      <artifactId>javasound-aac</artifactId>
-      <version>0.9.8</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j2-impl</artifactId>
-      <version>2.23.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>2.0.13</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-ext</artifactId>
-      <version>2.0.16</version>
-    </dependency>
-    <dependency>
-      <groupId>args4j</groupId>
-      <artifactId>args4j</artifactId>
-      <version>2.37</version>
-    </dependency>
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <version>1.18.34</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter</artifactId>
-      <version>5.11.3</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-junit-jupiter</artifactId>
-      <version>5.12.0</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-core</artifactId>
-      <version>3.0</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <version>5.8.0</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest</artifactId>
-      <version>2.2</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-
-  <build>
-    <resources>
-      <resource>
-        <directory>${basedir}/src/main/assembly</directory>
-        <filtering>true</filtering>
-      </resource>
-      <resource>
-        <directory>${basedir}/src/main/resources</directory>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
-
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>3.4.2</version>
-        <configuration>
-          <archive>
-            <index>false</index>
-            <manifest>
-              <addClasspath>true</addClasspath>
-              <useUniqueVersions>false</useUniqueVersions>
-              <mainClass>de.sfuhrm.radiorecorder.Main</mainClass>
-              <addBuildEnvironmentEntries>true</addBuildEnvironmentEntries>
-              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-            </manifest>
-          </archive>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>3.7.1</version>
-        <configuration>
-          <descriptors>
-            <descriptor>src/main/assembly/dist.xml</descriptor>
-            <descriptor>src/main/assembly/app.xml</descriptor>
-          </descriptors>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <version>3.3.1</version>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.7.0</version>
-        <configuration>
-          <excludePackageNames>de.sfuhrm.foo</excludePackageNames>
-          <failOnError>false</failOnError>
-        </configuration>
-        <executions>
-          <execution>
-            <id>attach-javadocs</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-release-plugin</artifactId>
-        <version>3.1.1</version>
-        <configuration>
-          <tagNameFormat>v@{project.version}</tagNameFormat>
-          <releaseProfiles>release</releaseProfiles>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
   <profiles>
     <profile>
@@ -294,4 +86,9 @@
       </build>
     </profile>
   </profiles>
+
+  <modules>
+      <module>radiorecorder</module>
+      <module>radiorecorder-aac</module>
+  </modules>
 </project>
