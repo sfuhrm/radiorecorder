@@ -10,7 +10,7 @@
   <artifactId>radiorecorder-aac</artifactId>
   <packaging>jar</packaging>
 
-  <name>javasound-aac-patched</name>
+  <name>Radio Recorder javasound-aac-patched</name>
   <description>Patched com.tianscar.javasound javasound-aac plugin without the SPI descriptor files from java sound</description>
 
   <properties>
@@ -51,13 +51,6 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <configuration>
-          <skip>true</skip>
-        </configuration>
       </plugin>
     </plugins>
   </build>
