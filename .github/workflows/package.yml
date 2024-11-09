@@ -1,3 +1,4 @@
+---
 name: Package
 
 on:
@@ -14,7 +15,7 @@ env:
             --description "Records and plays internet radio streams" \
             --main-class de.sfuhrm.radiorecorder.Main \
             --dest jpackage-app \
-            --verbose 
+            --verbose
 
 jobs:
   build:
@@ -22,18 +23,18 @@ jobs:
     outputs:
       version: ${{ steps.version.outputs.version }}
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'adopt'
-        java-version: 21
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
-    - name: Extract current maven version
-      run: echo "version=$(mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
-      id: version
-      shell: bash
+      - uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'adopt'
+          java-version: 21
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+      - name: Extract current maven version
+        run: echo "version=$(mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
+        id: version
+        shell: bash
 
     - uses: actions/upload-artifact@v4
       with:
@@ -268,7 +269,7 @@ jobs:
         with:
           path: package
           pattern: package-*
-    - uses: actions/upload-artifact@v4
-      with:
-        name: packages
-        path: package
+      - uses: actions/upload-artifact@v4
+        with:
+          name: packages
+          path: package
