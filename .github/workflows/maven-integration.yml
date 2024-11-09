@@ -27,7 +27,7 @@ jobs:
     - uses: actions/upload-artifact@v3
       with:
         name: binary
-        path: target/radiorecorder-${{ steps.version.outputs.version }}-bin.tar.gz
+        path: radiorecorder/target/radiorecorder-${{ steps.version.outputs.version }}-bin.tar.gz
   run:
     needs: build
     runs-on: ubuntu-latest
