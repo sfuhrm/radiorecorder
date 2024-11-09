@@ -38,22 +38,22 @@ jobs:
     - uses: actions/upload-artifact@v3
       with:
         name: packages
-        path: target/radiorecorder-${{ steps.version.outputs.version }}-bin.tar.gz
+        path: radiorecorder/target/radiorecorder-${{ steps.version.outputs.version }}-bin.tar.gz
 
     - uses: actions/upload-artifact@v3
       with:
         name: packages
-        path: target/radiorecorder-${{ steps.version.outputs.version }}-bin.tar.bz2
+        path: radiorecorder/target/radiorecorder-${{ steps.version.outputs.version }}-bin.tar.bz2
 
     - uses: actions/upload-artifact@v3
       with:
         name: packages
-        path: target/radiorecorder-${{ steps.version.outputs.version }}-bin.zip
+        path: radiorecorder/target/radiorecorder-${{ steps.version.outputs.version }}-bin.zip
 
     - uses: actions/upload-artifact@v3
       with:
         name: build
-        path: target/radiorecorder-${{ steps.version.outputs.version }}-app
+        path: radiorecorder/target/radiorecorder-${{ steps.version.outputs.version }}-app
 
   jpackage_linux:
     needs: build

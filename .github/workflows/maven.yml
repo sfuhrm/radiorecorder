@@ -24,4 +24,4 @@ jobs:
     - uses: actions/upload-artifact@v3
       with:
         name: jdk-${{ matrix.java }}
-        path: ./target/radiorecorder-*.jar
+        path: radiorecorder/target/radiorecorder-*.jar
