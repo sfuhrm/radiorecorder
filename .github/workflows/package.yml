@@ -257,13 +257,11 @@ jobs:
 
   merge_packages:
     needs:
-    - build
-    - jpackage_linux
-    - jpackage_macos
-    - jpackage_windows
+      - build
+      - jpackage_linux
+      - jpackage_macos
+      - jpackage_windows
     runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.version.outputs.version }}
     steps:
       - name: Download package artifacts
         uses: actions/download-artifact@v4.1.7
