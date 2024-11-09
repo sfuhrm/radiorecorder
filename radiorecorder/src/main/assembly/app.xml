@@ -8,7 +8,7 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <fileSets>
     <fileSet>
-      <directory>${project.basedir}</directory>
+      <directory>${project.basedir}/..</directory>
       <outputDirectory>${assembly.dir}</outputDirectory>
       <includes>
         <include>README.md</include>
