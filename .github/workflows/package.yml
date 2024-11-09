@@ -254,3 +254,23 @@ jobs:
         with:
           name: packages-${{ steps.packagename.outputs.packagename }}
           path: jpackage-app/${{ steps.packagename.outputs.packagename }}
+
+  merge_packages:
+    needs:
+    - build
+    - jpackage_linux
+    - jpackage_macos
+    - jpackage_windows
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Download package artifacts
+        uses: actions/download-artifact@v4.1.7
+        with:
+          path: package
+          pattern: package-*
+    - uses: actions/upload-artifact@v4
+      with:
+        name: packages
+        path: package
