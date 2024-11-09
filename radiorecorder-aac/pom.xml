@@ -11,7 +11,7 @@
   <packaging>jar</packaging>
 
   <name>javasound-aac-patched</name>
-  <description>Patched com.tianscar.javasound javasound-aac plugin</description>
+  <description>Patched com.tianscar.javasound javasound-aac plugin without the SPI descriptor files from java sound</description>
 
   <properties>
     <aac.group>com.tianscar.javasound</aac.group>
