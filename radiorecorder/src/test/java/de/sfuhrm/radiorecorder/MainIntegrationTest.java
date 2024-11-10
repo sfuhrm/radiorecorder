@@ -24,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -58,35 +59,39 @@ public class MainIntegrationTest {
 
     private static List<Path> listRecursively(Path p) throws IOException {
         List<Path> result = new ArrayList<>();
-        Files.list(p).forEach(entry -> {
-            if (Files.isDirectory(entry)) {
-                try {
-                    result.addAll(listRecursively(entry));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+        try (Stream<Path> pathStream = Files.list(p)) {
+            pathStream.forEach(entry -> {
+                if (Files.isDirectory(entry)) {
+                    try {
+                        result.addAll(listRecursively(entry));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
-            }
-            if (Files.isRegularFile(entry)) {
-                result.add(entry);
-            }
-        });
+                if (Files.isRegularFile(entry)) {
+                    result.add(entry);
+                }
+            });
+        }
         return result;
     }
 
     private static void deleteRecursively(Path p) throws IOException {
-        Files.list(p).forEach(entry -> {
-            if (Files.isDirectory(entry)) {
+        try (Stream<Path> pathStream = Files.list(p)) {
+            pathStream.forEach(entry -> {
+                if (Files.isDirectory(entry)) {
+                    try {
+                        deleteRecursively(entry);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
                 try {
-                    deleteRecursively(entry);
+                    Files.delete(entry);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-            }
-            try {
-                Files.delete(entry);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+            });
+        };
     }
 }

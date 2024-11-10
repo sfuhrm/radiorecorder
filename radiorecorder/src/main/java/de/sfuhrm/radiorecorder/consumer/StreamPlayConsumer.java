@@ -62,7 +62,7 @@ public class StreamPlayConsumer extends MetaDataConsumer implements Consumer<Htt
             log.error("Derived mime type is null");
             throw new UnsupportedAudioFileException("No mapping for NULL mime type");
         }
-        AudioInputStream result = null;
+        AudioInputStream result;
         switch (mimeType.get()) {
             case AUDIO_AAC:
                 log.debug("Using hard-wired AAC plugin for content-type {}", contentType);
