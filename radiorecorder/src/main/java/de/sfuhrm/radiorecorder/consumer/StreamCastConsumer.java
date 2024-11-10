@@ -155,12 +155,16 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<Htt
             long lastTrack = System.currentTimeMillis();
             try {
                 // this is a second stream just to display the metadata
-                while (-1 != (length = inputStream.read(buffer))) {
+                while (chromeCast != null && -1 != (length = inputStream.read(buffer))) {
                     log.trace("Read {} bytes", length);
 
                     if (System.currentTimeMillis() - lastTrack > TRACK_MEDIASTATUS_EVERY_MS) {
                         lastTrack = System.currentTimeMillis();
-                        mediaStatus = chromeCast.getMediaStatus();
+                        synchronized (this) {
+                            if (chromeCast != null) {
+                                mediaStatus = chromeCast.getMediaStatus();
+                            }
+                        }
                         shallExit = trackMediaStatusShallExit(mediaStatus);
                         if (shallExit) {
                             log.info("Media status said shall exit");
@@ -168,7 +172,11 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<Htt
                         }
                     }
                 }
-                Runtime.getRuntime().removeShutdownHook(shutdown);
+                try {
+                    Runtime.getRuntime().removeShutdownHook(shutdown);
+                } catch (IllegalStateException e) {
+                    // shotdown already in progress, ignore
+                }
             } catch (IOException ioe) {
                 log.warn("Error reading stream", ioe);
                 throw new RadioException(true, ioe);
@@ -190,7 +198,9 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<Htt
                 }
                 chromeCast.disconnect();
                 log.debug("Disconnected from chromecast {}", chromeCast.getTitle());
-                chromeCast = null;
+                synchronized(this) {
+                    chromeCast = null;
+                }
             }
             ChromeCasts.stopDiscovery();
             log.debug("Stopped discovery");
