@@ -23,6 +23,7 @@ import de.sfuhrm.radiorecorder.http.HttpConnection;
 import lombok.extern.slf4j.Slf4j;
 import su.litvak.chromecast.api.v2.Application;
 import su.litvak.chromecast.api.v2.ChromeCast;
+import su.litvak.chromecast.api.v2.ChromeCastException;
 import su.litvak.chromecast.api.v2.ChromeCasts;
 import su.litvak.chromecast.api.v2.ChromeCastsListener;
 import su.litvak.chromecast.api.v2.MediaStatus;
@@ -47,6 +48,9 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<Htt
      * The ID of the default media receiver app.
      */
     public static final String APP_ID = "CC1AD845";
+
+    /** The application string to use for this application. */
+    private static final String CHROMECAST_APPLICATION = Main.PROJECT;
 
     /**
      * Async communication of the chromecast discovered.
@@ -81,6 +85,7 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<Htt
 
         @Override
         public void chromeCastRemoved(ChromeCast chromeCast) {
+            log.debug("Removed chromecast {}", chromeCast.getTitle());
         }
     }
 
@@ -92,7 +97,7 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<Htt
         arrayBlockingQueue = new ArrayBlockingQueue<>(1);
     }
 
-    private boolean trackMediaStatusShallExit(MediaStatus mediaStatus) {
+    private boolean trackMediaStatusShallExit(String application, MediaStatus mediaStatus) {
         boolean result = false;
         if (mediaStatus == null) {
             return false;
@@ -102,8 +107,17 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<Htt
             log.info("Player state changed to {}", mediaStatus.playerState);
         }
 
-        if (mediaStatus.playerState.equals(MediaStatus.PlayerState.IDLE)) {
-            log.info("Player state is {}. reason: {}",
+        if (! CHROMECAST_APPLICATION.equals(application)) {
+            log.info("Application changed from {} to {}, exiting",
+                    CHROMECAST_APPLICATION,
+                    application);
+            result = true;
+        }
+
+        if (lastMediaStatus != null &&
+            lastMediaStatus.equals(MediaStatus.PlayerState.PLAYING) &&
+            mediaStatus.playerState.equals(MediaStatus.PlayerState.IDLE)) {
+            log.info("Player state is {}. reason: {}, exiting",
                     mediaStatus.playerState,
                     mediaStatus.idleReason);
             result = true;
@@ -132,14 +146,15 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<Htt
 
             Radio radio = getContext().getRadio();
             Application app = chromeCast.launchApp(APP_ID);
-            chromeCast.setApplication(Main.PROJECT);
+            chromeCast.setApplication(CHROMECAST_APPLICATION);
             chromeCast.setName(radio.getName());
+            String application = chromeCast.getApplication();
             MediaStatus mediaStatus = chromeCast.load(Main.PROJECT + ": " + radio.getName(),
                     radio.getFavIconUrl() != null ? radio.getFavIconUrl().toASCIIString() : null,
                     t.getURI().toASCIIString(),
                     t.getContentType());
             boolean shallExit;
-            shallExit = trackMediaStatusShallExit(mediaStatus);
+            shallExit = trackMediaStatusShallExit(application, mediaStatus);
             if (shallExit) {
                 return;
             }
@@ -162,13 +177,22 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<Htt
                         lastTrack = System.currentTimeMillis();
                         synchronized (this) {
                             if (chromeCast != null) {
-                                mediaStatus = chromeCast.getMediaStatus();
+                                try {
+                                    application = chromeCast.getApplication();
+                                    mediaStatus = chromeCast.getMediaStatus();
+                                    shallExit = trackMediaStatusShallExit(application, mediaStatus);
+                                } catch (ChromeCastException e) {
+                                    shallExit = true;
+                                    log.warn("Chrome cast exception caught", e);
+                                }
+                                if (shallExit) {
+                                    log.info("Media status said shall exit");
+                                    return;
+                                }
+                            } else {
+                                log.info("Chromecast absence said shall exit");
+                                return;
                             }
-                        }
-                        shallExit = trackMediaStatusShallExit(mediaStatus);
-                        if (shallExit) {
-                            log.info("Media status said shall exit");
-                            return;
                         }
                     }
                 }
