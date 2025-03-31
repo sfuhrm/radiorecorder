@@ -33,7 +33,7 @@
     <dependency>
       <groupId>de.sfuhrm</groupId>
       <artifactId>chromecast-java-api-v2</artifactId>
-      <version>0.12.11</version>
+      <version>0.12.12</version>
       <exclusions>
         <exclusion>
           <groupId>org.slf4j</groupId>
