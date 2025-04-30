@@ -397,7 +397,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
     }
 
     private static String sanitizeFileName(String in) {
-        return in.replaceAll("[/:\\|]", "_");
+        return in.replaceAll("[/:\\|?$\\\\]", "_");
     }
 
     /**
