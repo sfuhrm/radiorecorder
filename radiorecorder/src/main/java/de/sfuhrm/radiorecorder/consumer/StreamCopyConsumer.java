@@ -120,7 +120,11 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
         if (! radioName.isEmpty()) {
             String hostAndPath;
             try {
-                hostAndPath = URLEncoder.encode(context.getRadio().getName(), "UTF-8");
+                int nameLimit = 128;
+                if (radioName.length() > nameLimit) {
+                    radioName = radioName.substring(0, nameLimit);
+                }
+                hostAndPath = URLEncoder.encode(radioName, "UTF-8");
             } catch (UnsupportedEncodingException e) {
                 throw new RuntimeException(e);
             }
