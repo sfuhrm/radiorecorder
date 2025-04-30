@@ -41,7 +41,7 @@ public class MainIntegrationTest {
     void testAbortAfterDuration() throws IOException, InterruptedException {
         Path tmpDir = Files.createTempDirectory("rb");
         try {
-            Main.main(new String[]{"SWR3 Rock", "-abort-after-duration", "3s", "-limit", "1", "-d", tmpDir.toAbsolutePath().toString()});
+            Main.main(new String[]{"synth", "-abort-after-duration", "3s", "-limit", "1", "-d", tmpDir.toAbsolutePath().toString()});
 
             // expecting one file
             List<Path> files = listRecursively(tmpDir);
