@@ -25,6 +25,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -79,6 +80,49 @@ public class Main {
 
     public static final String NO_RADIO_NAME = "";
 
+    interface Resolver {
+        List<Radio> fromString(RadioBrowser radioBrowser, Params params, String radioString);
+    }
+
+    private static Resolver resolverByUri = (radioBrowser, params, radioString) -> {
+        try {
+            Radio s = new Radio();
+            URI uri = URI.create(radioString); // parse the url
+            String scheme = uri.getScheme();
+            if (scheme != null) {
+                s.setName(uri.getHost());
+                s.setUri(uri);
+                return Collections.singletonList(s);
+            }
+        }
+        catch (IllegalArgumentException e) {
+            log.debug("Parameter not an URI: {}", radioString);
+        }
+        return Collections.emptyList();
+    };
+
+    private static Resolver resolverByUUID = (radioBrowser, params, radioString) -> {
+        try {
+            UUID uuid = UUID.fromString(radioString);
+            List<Station> stations = radioBrowser.listStationsBy(SearchMode.BYUUID, uuid.toString()).collect(Collectors.toList());
+            List<Radio> radios = stations.stream().map(Radio::fromStation).collect(Collectors.toList());
+            return radios;
+        }
+        catch (IllegalArgumentException e) {
+            log.debug("Parameter not an UUID: {}", radioString);
+        }
+        return Collections.emptyList();
+    };
+
+    private static Resolver resolverByQuery = (radioBrowser, params, radioString) -> {
+        List<Station> stations = radioBrowser.listStationsBy(
+                Paging.at(0, params.getStationLimit()),
+                SearchMode.BYNAME,
+                radioString);
+        List<Radio> radios = stations.stream().map(Radio::fromStation).collect(Collectors.toList());
+        return radios;
+    };
+
     /** Read the URLs or names given and resolve them using {@link RadioBrowser}.
      * @param urls the input urls from the command line.
      * @param params the command line.
@@ -90,32 +134,18 @@ public class Main {
         RadioBrowser radioBrowser = newRadioBrowser(params);
         int limit = params.getStationLimit();
         for (String urlString : urls) {
-            URI uri = URI.create(urlString); // parse the url
 
-            String scheme = uri.getScheme();
-            if (scheme != null) {
-                Radio s = new Radio();
-                s.setName(NO_RADIO_NAME);
-                s.setUri(uri);
-                result.add(s);
-            } else {
-                log.debug("Parameter not an URL: {}", urlString);
-                try {
-                    UUID uuid = UUID.fromString(urlString);
-                    List<Station> stations = radioBrowser.listStationsBy(SearchMode.BYUUID, uuid.toString()).collect(Collectors.toList());
-                    List<Radio> radios = stations.stream().map(Radio::fromStation).collect(Collectors.toList());
-                    result.addAll(radios);
-                }
-                catch (IllegalArgumentException e) {
-                    log.debug("Parameter not an UUID: {}", urlString);
-                    List<Station> stations = radioBrowser.listStationsBy(
-                            Paging.at(0, limit),
-                            SearchMode.BYNAME,
-                            urlString);
-                    List<Radio> radios = stations.stream().map(Radio::fromStation).collect(Collectors.toList());
-                    result.addAll(radios);
-                }
+            List<Radio> tmpList = new ArrayList<>();
+            tmpList.addAll(resolverByUri.fromString(radioBrowser, params, urlString));
+            tmpList.addAll(resolverByUUID.fromString(radioBrowser, params, urlString));
+            if (tmpList.isEmpty()) {
+                tmpList.addAll(resolverByQuery.fromString(radioBrowser, params, urlString));
             }
+
+            log.debug("Search String {} was resolved to {} stations",
+                    urlString,
+                    tmpList.size());
+            result.addAll(tmpList);
         }
         return result;
     }

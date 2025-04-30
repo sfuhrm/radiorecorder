@@ -18,6 +18,8 @@ package de.sfuhrm.radiorecorder.metadata;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,6 +29,8 @@ import lombok.Setter;
  */
 @Getter
 @Setter(AccessLevel.PACKAGE)
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class MetaData implements Cloneable {
     /** The index of the song in the stream. */
     private Optional<Integer> index;

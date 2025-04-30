@@ -17,6 +17,7 @@ package de.sfuhrm.radiorecorder;
 
 import java.io.File;
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
@@ -70,8 +71,8 @@ public class ConsumerContext {
     /** Get the directory to write files to.
      * @return directory to write files to.
      */
-    public File getTargetDirectory() {
-        return params.getDirectory();
+    public Path getTargetDirectory() {
+        return params.getDirectory().toPath();
     }
 
     /** Get minimum free bytes.
@@ -160,5 +161,21 @@ public class ConsumerContext {
      * */
     public URI getProxy() {
         return params.getProxy();
+    }
+
+    /** The format of the files to generate.
+     * @return pattern on how to create file names.
+     * @see Params#getSongnameFormat()
+     * */
+    public String getSongnameFormat() {
+        return params.getSongnameFormat();
+    }
+
+    /** The format of the files to generate.
+     * @return pattern on how to create file names.
+     * @see Params#getNoSongnameFormat()
+     * */
+    public String getNoSongnameFormat() {
+        return params.getNoSongnameFormat();
     }
 }

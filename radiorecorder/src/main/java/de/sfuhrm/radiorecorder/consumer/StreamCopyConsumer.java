@@ -15,36 +15,23 @@
  */
 package de.sfuhrm.radiorecorder.consumer;
 
-import com.mpatric.mp3agic.ID3v1;
-import com.mpatric.mp3agic.ID3v1Tag;
-import com.mpatric.mp3agic.ID3v24Tag;
-import com.mpatric.mp3agic.InvalidDataException;
-import com.mpatric.mp3agic.Mp3File;
-import com.mpatric.mp3agic.NotSupportedException;
-import com.mpatric.mp3agic.UnsupportedTagException;
 import de.sfuhrm.radiorecorder.ConsumerContext;
-import de.sfuhrm.radiorecorder.Main;
 import de.sfuhrm.radiorecorder.RadioException;
 import static de.sfuhrm.radiorecorder.RadioRunnable.BUFFER_SIZE;
 import de.sfuhrm.radiorecorder.http.HttpConnection;
 import de.sfuhrm.radiorecorder.metadata.MetaData;
 import de.sfuhrm.radiorecorder.metadata.MimeType;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import java.io.OutputStream;
 import java.nio.file.FileStore;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.FileTime;
 import java.util.Optional;
-import java.util.OptionalInt;
 import java.util.function.Consumer;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -80,22 +67,29 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
      */
     private boolean metaDataChanged;
 
-    /** The directory to write files to. */
-    private final File directory;
+    /** The directory to write files to.
+     * @see #getFileFromMetaData(MimeType)
+     * */
+    private final Path targetDirectory;
 
     /**
      * The current file being written to, if any.
      *
-     * @see #outputStream
+     * @see #outputStreamNullable
      */
-    private Optional<File> file = Optional.empty();
+    private Path fileNullable = null;
 
     /**
      * The current output stream being written to, if any.
      *
-     * @see #file
+     * @see #fileNullable
      */
-    private Optional<FileOutputStream> outputStream = Optional.empty();
+    private OutputStream outputStreamNullable = null;
+
+    /**
+     * Helps with file names ;).
+     */
+    private MetaDataFileNameGenerator fileNameGenerator;
 
     /** Constructor.
      * @param consumerContext the context to work in.
@@ -104,32 +98,12 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
         super(consumerContext);
 
         creationTimeStamp = System.currentTimeMillis();
-        directory = createDirectory(consumerContext);
-        try {
-            initFileNumber();
-        } catch (IOException ex) {
-            log.warn("File number finding problem", ex);
-            fileNumber = 1;
-        }
-    }
 
-    private File createDirectory(ConsumerContext context) {
-        File parent = context.getTargetDirectory();
-        File result;
-        String radioName = context.getRadio().getName();
-        if (! radioName.isEmpty()) {
-            String hostAndPath;
-            try {
-                hostAndPath = URLEncoder.encode(context.getRadio().getName(), "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException(e);
-            }
-            result= new File(parent, hostAndPath);
-        } else {
-            result = parent;
-        }
-        result.mkdirs();
-        return result;
+        fileNameGenerator = consumerContext.isSongNames()
+                ? new MetaDataFileNameGenerator(consumerContext.getSongnameFormat(), consumerContext, true) :
+                  new MetaDataFileNameGenerator(consumerContext.getNoSongnameFormat(), consumerContext, false);
+
+        targetDirectory = consumerContext.getTargetDirectory();
     }
 
     /**
@@ -139,65 +113,56 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
      * @see ConsumerContext#getMinFree()
      * @see ConsumerContext#getAbortAfterFileLength()
      */
-    private boolean needToAbort(Optional<File> currentFile) throws IOException {
-        if (currentFile.isPresent()) {
-            File f = currentFile.get();
-
+    private boolean needToAbort(Path currentFileOrNull) throws IOException {
+        if (currentFileOrNull != null) {
+            long length = Files.size(currentFileOrNull);
             if (getContext().getAbortAfterFileLength().isPresent()) {
-                if (f.length() > getContext().getAbortAfterFileLength().get()) {
+                if (length > getContext().getAbortAfterFileLength().get()) {
                     log.warn("Aborting due to maximum file size of {} exceeded: {} file size, {} is the abort-after size",
-                            f,
-                            f.length(),
+                            currentFileOrNull,
+                            length,
                             getContext().getAbortAfterFileLength().get());
                     return true;
                 }
             }
+        }
 
-            if (getContext().getAbortAfterDuration().isPresent()) {
-                long abortAfterMillis = getContext().getAbortAfterDuration().get();
-                long elapsedMillis = System.currentTimeMillis() - creationTimeStamp;
-                if (elapsedMillis > abortAfterMillis) {
-                    log.warn("Aborting due to maximum duration of {}ms",
-                            System.currentTimeMillis() - creationTimeStamp);
-                    return true;
-                }
-            }
+        FileStore fileStore = Files.getFileStore(targetDirectory);
+        long free = fileStore.getUsableSpace();
+        long required = getContext().getMinFree();
+        if (free < required) {
+            log.warn("Path {} is too full, has less than {} bytes free", targetDirectory, required);
+            return true;
+        }
 
-            FileStore fileStore = Files.getFileStore(f.toPath());
-            long free = fileStore.getUsableSpace();
-            long required = getContext().getMinFree();
-            if (free < required) {
-                log.warn("Path {} is too full, has less than {} bytes free", f, required);
+        if (getContext().getAbortAfterDuration().isPresent()) {
+            long abortAfterMillis = getContext().getAbortAfterDuration().get();
+            long elapsedMillis = System.currentTimeMillis() - creationTimeStamp;
+            if (elapsedMillis > abortAfterMillis) {
+                log.warn("Aborting due to maximum duration of {}ms",
+                        System.currentTimeMillis() - creationTimeStamp);
                 return true;
             }
         }
+
         return false;
     }
 
-    private void openUnnamedFileAndInputStream(Optional<MimeType> contentType) {
-        File f = getNumberFile(contentType);
-        file = Optional.of(f);
-        try {
-            outputStream = Optional.of(new FileOutputStream(f));
-        } catch (FileNotFoundException ex) {
-            throw new RadioException(false, ex);
-        }
-        log.debug("Copying from url {} to file {}, type {}",
-                getContext().getUri().toASCIIString(),
-                f,
-                contentType);
-    }
-
-    private void closeOldFileAndReopenWithNewMetadata(Optional<MimeType> contentType) throws IOException {
+    private void closeOldFileAndReopenWithNewMetadata(MimeType contentTypeOrNull) throws IOException {
         log.debug("Meta data changed");
         metaDataChanged = false;
-        closeStreamIfOpen(outputStream, file, contentType);
+        closeStreamIfOpen(outputStreamNullable, fileNullable, contentTypeOrNull);
 
-        file = getFileFromMetaData(contentType);
-        log.debug("New file {}", file);
-        outputStream = file.isPresent()
-                ? Optional.of(new FileOutputStream(file.get()))
-                : Optional.empty();
+        Optional<Path> optionalPath = fileNameGenerator.getFileFrom(getContext().getRadio(), metaData, contentTypeOrNull);
+        if (optionalPath.isPresent()) {
+            fileNullable = optionalPath.get();
+            ensureParentDirectoriesExist(fileNullable);
+            outputStreamNullable = Files.newOutputStream(fileNullable, StandardOpenOption.CREATE_NEW);
+        } else {
+            fileNullable = null;
+            outputStreamNullable = null;
+        }
+        log.debug("New file {}", fileNullable);
     }
 
     @Override
@@ -216,7 +181,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
             Optional<MimeType> contentType = MimeType.byContentType(t.getContentType());
 
             if (!getContext().isSongNames()) {
-                openUnnamedFileAndInputStream(contentType);
+                closeOldFileAndReopenWithNewMetadata(contentType.orElse(null));
             }
 
             int len;
@@ -224,23 +189,23 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
             boolean dropMsgWritten = false;
             while (-1 != (len = inputStream.read(buffer))) {
                 try {
-                    if (needToAbort(file)) {
+                    if (needToAbort(fileNullable)) {
                         return;
                     }
 
                     // open new output stream if metadata has changed, we're using song names, and
                     // we're not in the first (incomplete) song (see #37)
                     if (metaDataChanged && getContext().isSongNames() && metaData.getIndex().orElse(0) > 0) {
-                        closeOldFileAndReopenWithNewMetadata(contentType);
+                        closeOldFileAndReopenWithNewMetadata(contentType.orElse(null));
                     }
 
-                    if (outputStream.isPresent()) {
-                        outputStream.get().write(buffer, 0, len);
+                    if (outputStreamNullable != null) {
+                        outputStreamNullable.write(buffer, 0, len);
                     } else {
                         if (!dropMsgWritten) {
                             log.info("Dropping bytes of incomplete file, waiting for next song");
+                            dropMsgWritten = true;
                         }
-                        dropMsgWritten = true;
                     }
                 } catch (IOException ioe) {
                     throw new RadioException(false, ioe);
@@ -260,149 +225,66 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
     }
 
     private void cleanup(boolean deletePartly) {
-        if (outputStream.isPresent()) {
+        if (outputStreamNullable != null) {
             try {
-                outputStream.get().close();
+                outputStreamNullable.close();
             } catch (IOException ex) {
                 log.warn("URL " + getContext().getUri().toASCIIString() + " close error", ex);
             }
         }
-        if (file.isPresent() && deletePartly) {
-            log.info("Deleting partly file {}", file.get());
-            file.get().delete();
+        if (fileNullable != null && deletePartly && Files.exists(fileNullable)) {
+            log.info("Deleting partly file {}", fileNullable);
+            try {
+                Files.delete(fileNullable);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
-    private void closeStreamIfOpen(Optional<FileOutputStream> outputStream, Optional<File> file, Optional<MimeType> contentType) throws IOException {
+    private void closeStreamIfOpen(OutputStream outputStreamOrNull, Path fileOrNull, MimeType contentTypeOrNull) throws IOException {
         MetaData fileMetaData = previousMetaData != null ? previousMetaData.clone() : null;
-        if (outputStream.isPresent()) {
-            log.debug("Closing output stream to {}", file.orElse(null));
-            outputStream.get().close();
+        if (outputStreamOrNull != null) {
+            log.debug("Closing output stream to {}", fileOrNull);
+            outputStreamOrNull.close();
 
-            if (contentType.isPresent() && contentType.get() == MimeType.AUDIO_MPEG && file.isPresent() && fileMetaData != null) {
-                Runnable r = () -> {
-                    try {
-                        addID3Tags(fileMetaData, file.get());
-                    } catch (IOException ex) {
-                        log.warn("Error while adding id3 tags", ex);
-                    }
-                };
-                Thread t = new Thread(r, "ID3 " + file.get());
-                t.start();
+            Runnable idtagger;
+            if (contentTypeOrNull == MimeType.AUDIO_MPEG
+                    && fileOrNull != null
+                    && fileMetaData != null) {
+                idtagger = new ID3Tagger(fileMetaData, fileOrNull);
+            } else {
+                idtagger = null;
             }
 
-            // adjust time to stream start
-            if (file.isPresent() && fileMetaData != null) {
-                File f = file.get();
-                Files.setLastModifiedTime(f.toPath(), FileTime.from(fileMetaData.getCreated().toInstant()));
+            Runnable postprocess = () -> {
+                try {
+                    // adjust time to stream start
+                    Files.setLastModifiedTime(fileOrNull, FileTime.from(fileMetaData.getCreated().toInstant()));
+                } catch (IOException e) {
+                    log.warn("Error setting date for " + fileOrNull, e);
+                }
+            };
+
+            // set time synchronously
+            // tag id3 asynchronously
+            if (idtagger != null) {
+                Thread postprocessThread = new Thread(() -> {
+                    idtagger.run();
+                    postprocess.run();
+                }, "ID3 " + fileOrNull);
+                postprocessThread.start();
+            } else {
+                postprocess.run();
             }
+
         }
     }
 
-    private void addID3Tags(final MetaData md, final File file) throws IOException {
-        try {
-            log.debug("Adding id3 tag to {}", file);
-            Mp3File mp3File = new Mp3File(file);
-
-            ID3v1 id3v1 = new ID3v1Tag();
-            md.getTitle().ifPresent(id3v1::setTitle);
-            md.getArtist().ifPresent(id3v1::setArtist);
-            md.getStationName().ifPresent(id3v1::setComment);
-            mp3File.setId3v1Tag(id3v1);
-
-            ID3v24Tag id3v2 = new ID3v24Tag();
-            md.getTitle().ifPresent(id3v2::setTitle);
-            md.getArtist().ifPresent(id3v2::setArtist);
-            md.getStationName().ifPresent(id3v2::setPublisher);
-            md.getStationUrl().ifPresent(id3v2::setRadiostationUrl);
-            id3v2.setComment(Main.PROJECT);
-            id3v2.setUrl(Main.GITHUB_URL);
-            mp3File.setId3v2Tag(id3v2);
-
-            File bak = new File(file.getParentFile(), file.getName() + ".bak");
-            File tmp = new File(file.getParentFile(), file.getName() + ".tmp");
-            mp3File.save(tmp.getAbsolutePath());
-
-            // foo.mp3 -> foo.mp3.bak
-            Files.move(file.toPath(), bak.toPath());
-            // foo.mp3.tmp -> foo.mp3
-            Files.move(tmp.toPath(), file.toPath());
-            // foo.mp3.bak
-            Files.delete(bak.toPath());
-
-            log.debug("Done adding id3 tag to {}", file);
-        } catch (NotSupportedException | UnsupportedTagException | InvalidDataException ex) {
-            log.warn("Exception while writing id3 tag for " + file, ex);
+    private void ensureParentDirectoriesExist(Path p) throws IOException {
+        Path parent = p.getParent();
+        if (! Files.exists(parent)) {
+            Files.createDirectories(parent);
         }
-    }
-
-    /** Find the maximum used file number on disk. */
-    private void initFileNumber() throws IOException {
-        final Pattern integerPattern = Pattern.compile("[0-9]+");
-
-        // this works for both songname files and number files
-        try (final Stream<Path> stream = Files.list(directory.toPath())) {
-            OptionalInt maxFileNumber = stream.filter(Files::isRegularFile)
-                    .map(p -> p.getFileName().toString())
-                    .filter(s -> s.contains("."))
-                    .map(s -> s.substring(0, s.indexOf('.')))
-                    .filter(s -> integerPattern.matcher(s).matches())
-                    .mapToInt(Integer::parseInt)
-                    .max();
-            fileNumber = maxFileNumber.orElse(0) + 1;
-            log.debug("Found file number {}, fileNumber starts at {}", maxFileNumber, fileNumber);
-        }
-    }
-
-    /**
-     * Get the next number based filename.
-     *
-     * @param contentType content type for calculating the suffix.
-     */
-    private File getNumberFile(Optional<MimeType> contentType) {
-        File f;
-        do {
-            String fileName = String.format("%03d%s", fileNumber,
-                    suffixFromContentType(contentType));
-            f = new File(directory, fileName);
-            fileNumber++;
-        } while (f.exists() && f.length() != 0);
-        return f;
-    }
-
-    /**
-     * Get the file name derived from the received metadata.
-     *
-     * @return the file, if there is metadata, or empty.
-     */
-    private Optional<File> getFileFromMetaData(Optional<MimeType> contentType) {
-        Optional<File> result = Optional.empty();
-        if (metaData != null) {
-            File file;
-            do {
-                String unknown = "unknown";
-                String fileName = String.format("%03d.%s - %s%s", fileNumber++,
-                        sanitizeFileName(metaData.getArtist().orElse(unknown)),
-                        sanitizeFileName(metaData.getTitle().orElse(unknown)),
-                        suffixFromContentType(contentType));
-                file = new File(directory, fileName);
-            } while (file.exists() && file.length() != 0);
-            result = Optional.of(file);
-        }
-        return result;
-    }
-
-    private static String sanitizeFileName(String in) {
-        return in.replaceAll("[/:\\|]", "_");
-    }
-
-    /**
-     * Calculate the file suffix.
-     */
-    private static String suffixFromContentType(Optional<MimeType> contentType) {
-        if (!contentType.isPresent()) {
-            return "";
-        }
-        return contentType.get().getSuffix();
     }
 }
