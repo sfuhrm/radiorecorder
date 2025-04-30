@@ -76,6 +76,16 @@
       <groupId>de.sfuhrm</groupId>
       <artifactId>radiorecorder-aac</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.tianscar.javasound</groupId>
+          <artifactId>javasound-aac</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.tianscar.javasound</groupId>
+          <artifactId>javasound-resloader</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>

@@ -48,6 +48,8 @@
                   </excludes>
                 </filter>
               </filters>
+              <createDependencyReducedPom>true</createDependencyReducedPom>
+              <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
             </configuration>
           </execution>
         </executions>
