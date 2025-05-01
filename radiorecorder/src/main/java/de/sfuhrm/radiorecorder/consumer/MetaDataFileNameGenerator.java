@@ -79,6 +79,7 @@ class MetaDataFileNameGenerator {
 
         values.put("id", Integer.toString(consumerId));
         values.put("title", getMetaDataField(metaData, MetaData::getTitle, unknown));
+        values.put("artist", getMetaDataField(metaData, MetaData::getArtist, unknown));
 
         values.put("stationUrl", getMetaDataField(metaData, MetaData::getStationUrl, unknown));
         values.put("stationName", getMetaDataField(metaData, MetaData::getStationName, unknown));
