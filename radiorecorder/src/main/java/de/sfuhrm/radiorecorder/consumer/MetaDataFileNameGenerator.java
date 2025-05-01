@@ -28,6 +28,11 @@ class MetaDataFileNameGenerator {
     private final Path targetDirectory;
 
     /**
+     * @see ConsumerContext#getId()
+     */
+    private final int consumerId;
+
+    /**
      * Generate names only with metadata.
      */
     private final boolean requireMetaData;
@@ -35,6 +40,7 @@ class MetaDataFileNameGenerator {
     MetaDataFileNameGenerator(@NonNull  String fileNameFormat, @NonNull ConsumerContext consumerContext, boolean requireMetaData) {
         this.fileNameFormat = fileNameFormat;
         this.targetDirectory = consumerContext.getTargetDirectory();
+        this.consumerId = consumerContext.getId();
         this.requireMetaData = requireMetaData;
     }
 
@@ -60,19 +66,18 @@ class MetaDataFileNameGenerator {
         if (metaData != null) {
             Optional<String> value = getter.apply(metaData);
             if (value != null && value.isPresent()) {
-                result = value.get();
+                result = value.get().trim();
             }
         }
         return sanitizeFileName(result);
     }
 
     /** Gets a string substitutor for file name generation. */
-    private static StringSubstitutor newStringSubstitutor(Radio radio, MetaData metaData, MimeType mimeTypeNullable) {
+    private StringSubstitutor newStringSubstitutor(Radio radio, MetaData metaData, MimeType mimeTypeNullable) {
         String unknown = "unknown";
         Map<String, String> values = new HashMap<>();
 
-        // icy metadata
-        values.put("artist", getMetaDataField(metaData, MetaData::getArtist, unknown));
+        values.put("id", Integer.toString(consumerId));
         values.put("title", getMetaDataField(metaData, MetaData::getTitle, unknown));
 
         values.put("stationUrl", getMetaDataField(metaData, MetaData::getStationUrl, unknown));
@@ -81,15 +86,15 @@ class MetaDataFileNameGenerator {
                 m -> m.getStationUrl().map(url -> URI.create(url).getHost()), unknown));
 
         // radio metadata
-        values.put("radioName", sanitizeFileName(radio.getName()));
+        values.put("radioName", sanitizeFileName(radio.getName().trim()));
         values.put("radioHost", sanitizeFileName(radio.getUri().getHost()));
         values.put("radioUri", sanitizeFileName(radio.getUri().toASCIIString()));
 
         // composite of station name with fallback radio uri
-        values.put("stationNameOrRadioUri",
+        values.put("stationNameOrRadioName",
                 getMetaDataField(metaData,
                         MetaData::getStationName,
-                        sanitizeFileName(radio.getUri().toASCIIString())));
+                        sanitizeFileName(radio.getName())));
 
         values.put("index", getMetaDataField(metaData, m -> m.getIndex().map(intValue -> String.format("%03d", intValue)), unknown));
         values.put("suffix", suffixFromContentType(mimeTypeNullable));

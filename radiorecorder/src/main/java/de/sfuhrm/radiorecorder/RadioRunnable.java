@@ -43,7 +43,9 @@ public class RadioRunnable implements Runnable {
         MDC.put("id", Integer.toString(consumerContext.getId()));
         log.debug("Station UUID is {}", consumerContext.getRadio().getUuid());
         try {
-            log.info("Streaming from {}", consumerContext.getUri());
+            log.info("Streaming from {}, radio '{}'",
+                    consumerContext.getUri(),
+                    consumerContext.getRadio().getName());
             configurator.consume(consumerContext.getUri());
         }
         finally {

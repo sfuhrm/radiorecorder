@@ -116,11 +116,11 @@ public class Params {
             "${index}, " +
             "${suffix}",
             metaVar = "FORMAT")
-    private String songnameFormat = "${stationNameOrRadioUri:-unknown station}/${index:-000}.${artist:-unknown artist} - ${title:-unknown title}${suffix}";
+    private String songnameFormat = "${stationNameOrRadioName:-unknown station}/${index:-000}.${artist:-unknown artist} - ${title:-unknown title}${suffix}";
 
     @Option(name = "-no-name-format", aliases = {"-F"}, usage = "Formatting string for generated files without using stream meta data. " +
             "For available variables, please see '-name-format'.", metaVar = "FORMAT")
-    private String noSongnameFormat = "${stationNameOrRadioUri:-unknown station}/${index:-000}${suffix}";
+    private String noSongnameFormat = "${stationNameOrRadioName:-unknown station}/${index:-000}${suffix}";
 
     @Argument(usage = "URLs of the internet radio station(s), (partial) station name for lookup or the station " +
             "UUID (see option -list-station)", metaVar = "URL_OR_UUID_OR_NAME", required = true)

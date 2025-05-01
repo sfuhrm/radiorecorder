@@ -125,10 +125,10 @@ public class Main {
         // map by key url resolved, removing duplicates
         Map<String, Station> stationMap = new HashMap<>();
         for (Station s : stations) {
-            stationMap.put(s.getUrlResolved(), s);
+            stationMap.put(s.getUrl(), s);
         }
         if (stationMap.size() != stations.size()) {
-            log.warn("Removed {} duplicate stations", stations.size() - stationMap.size());
+            log.warn("Removed {} duplicate URL stations, increase limit parameter if you want more", stations.size() - stationMap.size());
         }
         List<Radio> radios = stationMap.values().stream().map(Radio::fromStation).collect(Collectors.toList());
         return radios;
@@ -143,7 +143,6 @@ public class Main {
         List<Radio> result = new ArrayList<>();
 
         RadioBrowser radioBrowser = newRadioBrowser(params);
-        int limit = params.getStationLimit();
         for (String urlString : urls) {
 
             List<Radio> tmpList = new ArrayList<>();
