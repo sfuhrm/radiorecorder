@@ -48,7 +48,15 @@ public class Radio {
      * */
     static Radio fromStation(Station s) {
         Radio r = new Radio();
-        r.setName(s.getName().trim());
+
+        String stationName = s.getName();
+        if (stationName != null) {
+            stationName = stationName.trim();
+            r.setName(stationName);
+        } else {
+            r.setName(s.getStationUUID().toString());
+        }
+
         if (s.getUrl() != null) {
             URI uri = URI.create(s.getUrl());
             r.setUri(uri);
