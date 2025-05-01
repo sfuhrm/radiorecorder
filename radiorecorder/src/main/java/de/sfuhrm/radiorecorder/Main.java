@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 import de.sfuhrm.radiobrowser4j.SearchMode;
 import de.sfuhrm.radiobrowser4j.Station;
+import de.sfuhrm.radiorecorder.aachelper.AACClassLoaderHelper;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import su.litvak.chromecast.api.v2.ChromeCast;

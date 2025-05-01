@@ -134,6 +134,5 @@
 
   <modules>
       <module>radiorecorder</module>
-      <module>radiorecorder-aac</module>
   </modules>
 </project>

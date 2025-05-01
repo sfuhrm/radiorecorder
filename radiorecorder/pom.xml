@@ -72,20 +72,12 @@
       <artifactId>java-vorbis-support</artifactId>
       <version>1.2.1</version>
     </dependency>
+    <!-- scope must be provided since the assembly plugin will put its JARs in another directory -->
     <dependency>
-      <groupId>de.sfuhrm</groupId>
-      <artifactId>radiorecorder-aac</artifactId>
-      <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>com.tianscar.javasound</groupId>
-          <artifactId>javasound-aac</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.tianscar.javasound</groupId>
-          <artifactId>javasound-resloader</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>com.tianscar.javasound</groupId>
+      <artifactId>javasound-aac</artifactId>
+      <version>0.9.8</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
