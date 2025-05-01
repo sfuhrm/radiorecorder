@@ -4,7 +4,7 @@
 
   <groupId>de.sfuhrm</groupId>
   <artifactId>radiorecorder-parent</artifactId>
-  <version>1.12.0</version>
+  <version>1.12.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Radio Recorder Parent</name>
@@ -30,7 +30,7 @@
   <scm>
     <url>git@github.com:sfuhrm/radiorecorder.git</url>
     <connection>scm:git:git@github.com:sfuhrm/radiorecorder.git</connection>
-    <tag>v1.12.0</tag>
+    <tag>v1.6.5</tag>
   </scm>
 
   <properties>
