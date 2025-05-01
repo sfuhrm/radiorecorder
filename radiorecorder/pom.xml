@@ -73,6 +73,7 @@
       <version>1.2.1</version>
     </dependency>
     <!-- scope must be provided since the assembly plugin will put its JARs in another directory -->
+    <!-- and loaded only on-demand by another classloader  -->
     <dependency>
       <groupId>com.tianscar.javasound</groupId>
       <artifactId>javasound-aac</artifactId>
