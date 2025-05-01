@@ -52,6 +52,10 @@ public class StreamMetaData {
     /** Current meta data. */
     private MetaData metaData = new MetaData();
 
+    /** Whether we'll get Metadata. */
+    @Getter
+    private boolean providesMetaData;
+
     private static final Pattern artistTitlePattern = Pattern.compile("(.{2,}) - (.{2,})");
 
     /** Opens the input stream of the http connection.
@@ -87,6 +91,7 @@ public class StreamMetaData {
         }
 
         if (headers.containsKey(ICY_METAINT)) {
+            providesMetaData = true;
             log.debug("Found Icy Meta Interval header: {}", headers.containsKey(ICY_METAINT));
             int metaInterval = Integer.parseInt(headers.get(ICY_METAINT).get(0));
             icyMetaFilterStream = new IcyMetaFilterStream(metaInterval, offsetFilterStream);
@@ -96,6 +101,8 @@ public class StreamMetaData {
                 metaDataConsumer.accept(target);
             });
             result = icyMetaFilterStream;
+        } else {
+            providesMetaData = false;
         }
 
         return result;

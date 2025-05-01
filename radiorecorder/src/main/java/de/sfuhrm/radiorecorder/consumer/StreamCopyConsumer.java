@@ -113,6 +113,11 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
         }
     }
 
+    /** Returns if the stream has metadata and we are processing songnames. */
+    private boolean useSongNames() {
+        return getStreamMetaData().isProvidesMetaData() && getContext().isSongNames();
+    }
+
     private File createDirectory(ConsumerContext context) {
         File parent = context.getTargetDirectory();
         File result;
@@ -206,7 +211,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
 
     @Override
     protected void __accept(HttpConnection t, InputStream inputStream) {
-        Runnable cleanup = () -> cleanup(getContext().isSongNames());
+        Runnable cleanup = () -> cleanup(useSongNames());
         Thread cleanupThread = new Thread(cleanup);
         Runtime.getRuntime().addShutdownHook(cleanupThread);
         try {
@@ -219,7 +224,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
             byte[] buffer = new byte[BUFFER_SIZE];
             Optional<MimeType> contentType = MimeType.byContentType(t.getContentType());
 
-            if (!getContext().isSongNames()) {
+            if (!useSongNames()) {
                 openUnnamedFileAndInputStream(contentType);
             }
 
@@ -234,7 +239,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
 
                     // open new output stream if metadata has changed, we're using song names, and
                     // we're not in the first (incomplete) song (see #37)
-                    if (metaDataChanged && getContext().isSongNames() && metaData.getIndex().orElse(0) > 0) {
+                    if (metaDataChanged && useSongNames() && metaData.getIndex().orElse(0) > 0) {
                         closeOldFileAndReopenWithNewMetadata(contentType);
                     }
 
@@ -258,7 +263,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
             fileNumber++;
             throw new RadioException(true, ex);
         } finally {
-            cleanup(getContext().isSongNames());
+            cleanup(useSongNames());
             Runtime.getRuntime().removeShutdownHook(cleanupThread);
         }
     }
