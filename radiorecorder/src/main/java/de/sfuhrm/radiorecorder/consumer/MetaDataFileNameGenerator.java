@@ -47,6 +47,9 @@ class MetaDataFileNameGenerator {
     static String sanitizeFileName(String in) {
         String sanitized = in.replaceAll("[/:\\|?$\\\\]", "_");
 
+        // replace heading funny stuff
+        sanitized = sanitized.replaceAll("^[ ?:-]+", "_");
+
         // limit file name length, Linux can process 256 char file names
         if (sanitized.length() > 192) {
             sanitized = sanitized.substring(0, 192);
