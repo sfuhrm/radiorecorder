@@ -4,7 +4,7 @@
 
   <groupId>de.sfuhrm</groupId>
   <artifactId>radiorecorder-parent</artifactId>
-  <version>1.11.2-SNAPSHOT</version>
+  <version>1.12.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Radio Recorder Parent</name>
@@ -134,6 +134,5 @@
 
   <modules>
       <module>radiorecorder</module>
-      <module>radiorecorder-aac</module>
   </modules>
 </project>

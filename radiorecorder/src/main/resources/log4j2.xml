@@ -5,7 +5,7 @@
   </Properties>
   <Appenders>
     <Console name="console" target="SYSTEM_OUT">
-      <PatternLayout pattern="%p: %m%n%throwable{1}" />
+      <PatternLayout pattern="%p: [%X{id}] %m%n%throwable{1}" />
     </Console>
   </Appenders>
 

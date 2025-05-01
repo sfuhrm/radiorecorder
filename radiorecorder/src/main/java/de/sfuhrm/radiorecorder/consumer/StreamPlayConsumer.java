@@ -18,11 +18,14 @@ package de.sfuhrm.radiorecorder.consumer;
 import de.sfuhrm.radiorecorder.ConsumerContext;
 import de.sfuhrm.radiorecorder.RadioException;
 import static de.sfuhrm.radiorecorder.RadioRunnable.BUFFER_SIZE;
+
+import de.sfuhrm.radiorecorder.aachelper.AACClassLoaderHelper;
 import de.sfuhrm.radiorecorder.http.HttpConnection;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 import java.util.function.Consumer;
 import javax.sound.sampled.AudioFormat;
@@ -32,6 +35,7 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.Mixer;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.sound.sampled.spi.AudioFileReader;
 
 import de.sfuhrm.radiorecorder.metadata.MimeType;
 import lombok.extern.slf4j.Slf4j;
@@ -66,7 +70,18 @@ public class StreamPlayConsumer extends MetaDataConsumer implements Consumer<Htt
         switch (mimeType.get()) {
             case AUDIO_AAC:
                 log.debug("Using hard-wired AAC plugin for content-type {}", contentType);
-                result = new AACAudioFileReader().getAudioInputStream(inputStream);
+
+                // set context class loader with AAC classes inside
+                ClassLoader pluginCL = AACClassLoaderHelper.loadPluginClassLoader();
+                Thread.currentThread().setContextClassLoader(pluginCL);
+
+                try {
+                    Class<?> aacAudioFileReaderClass = pluginCL.loadClass("net.sourceforge.jaad.spi.javasound.AACAudioFileReader");
+                    AudioFileReader aacAudioFileReader = (AudioFileReader) aacAudioFileReaderClass.getConstructor().newInstance();
+                    result = aacAudioFileReader.getAudioInputStream(inputStream);
+                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                    throw new RuntimeException(e);
+                }
                 break;
             default:
                 // default: do auto recognition

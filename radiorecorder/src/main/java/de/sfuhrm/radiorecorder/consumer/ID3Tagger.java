@@ -17,11 +17,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 @Slf4j
-public class ID3Tagger implements Runnable {
-    private MetaData metaData;
-    private Path file;
+class ID3Tagger implements Runnable {
+    private final MetaData metaData;
+    private final Path file;
 
-    public ID3Tagger(@NonNull final MetaData md, @NonNull final Path file) {
+    ID3Tagger(@NonNull final MetaData md, @NonNull final Path file) {
         this.metaData = md;
         this.file = file;
     }
@@ -36,6 +36,7 @@ public class ID3Tagger implements Runnable {
             metaData.getTitle().ifPresent(id3v1::setTitle);
             metaData.getArtist().ifPresent(id3v1::setArtist);
             metaData.getStationName().ifPresent(id3v1::setComment);
+            metaData.getIndex().ifPresent(value -> id3v1.setTrack(value.toString()));
             mp3File.setId3v1Tag(id3v1);
 
             ID3v24Tag id3v2 = new ID3v24Tag();
@@ -43,6 +44,7 @@ public class ID3Tagger implements Runnable {
             metaData.getArtist().ifPresent(id3v2::setArtist);
             metaData.getStationName().ifPresent(id3v2::setPublisher);
             metaData.getStationUrl().ifPresent(id3v2::setRadiostationUrl);
+            metaData.getIndex().ifPresent(value -> id3v2.setTrack(value.toString()));
             id3v2.setComment(Main.PROJECT);
             id3v2.setUrl(Main.GITHUB_URL);
             mp3File.setId3v2Tag(id3v2);

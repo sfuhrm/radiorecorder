@@ -26,7 +26,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -119,7 +121,16 @@ public class Main {
                 Paging.at(0, params.getStationLimit()),
                 SearchMode.BYNAME,
                 radioString);
-        List<Radio> radios = stations.stream().map(Radio::fromStation).collect(Collectors.toList());
+
+        // map by key url resolved, removing duplicates
+        Map<String, Station> stationMap = new HashMap<>();
+        for (Station s : stations) {
+            stationMap.put(s.getUrlResolved(), s);
+        }
+        if (stationMap.size() != stations.size()) {
+            log.warn("Removed {} duplicate stations", stations.size() - stationMap.size());
+        }
+        List<Radio> radios = stationMap.values().stream().map(Radio::fromStation).collect(Collectors.toList());
         return radios;
     };
 

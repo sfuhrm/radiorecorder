@@ -49,5 +49,10 @@
       <unpack>false</unpack>
       <scope>runtime</scope>
     </dependencySet>
+    <dependencySet>
+      <outputDirectory>${assembly.dir}/lib/provided</outputDirectory>
+      <unpack>false</unpack>
+      <scope>provided</scope>
+    </dependencySet>
   </dependencySets>
 </assembly>

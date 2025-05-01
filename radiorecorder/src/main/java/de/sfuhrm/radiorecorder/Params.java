@@ -103,12 +103,24 @@ public class Params {
     private URI proxy;
 
     @Option(name = "-name-format", aliases = {"-f"}, usage = "Formatting string for generated files out of stream meta data. " +
-            "Available variables: ${stationName}, ${sequence}, ${artist}, ${title}, ${suffix}", metaVar = "FORMAT")
-    private String songnameFormat = "${radioHost:-unknown station}/${index:-000}.${artist:-unknown artist} - ${title:-unknown title}${suffix}";
+            "Available variables: " +
+            "${artist}, " +
+            "${title}, " +
+            "${stationUrl}, " +
+            "${stationName}, " +
+            "${stationHost}, " +
+            "${radioName}, " +
+            "${radioHost}, " +
+            "${radioUri}, " +
+            "${stationNameOrRadioUri}, " +
+            "${index}, " +
+            "${suffix}",
+            metaVar = "FORMAT")
+    private String songnameFormat = "${stationNameOrRadioUri:-unknown station}/${index:-000}.${artist:-unknown artist} - ${title:-unknown title}${suffix}";
 
     @Option(name = "-no-name-format", aliases = {"-F"}, usage = "Formatting string for generated files without using stream meta data. " +
-            "Available variables: ${stationName}, ${sequence},${suffix}", metaVar = "FORMAT")
-    private String noSongnameFormat = "${radioHost:-unknown station}/${index:-000}${suffix}";
+            "For available variables, please see '-name-format'.", metaVar = "FORMAT")
+    private String noSongnameFormat = "${stationNameOrRadioUri:-unknown station}/${index:-000}${suffix}";
 
     @Argument(usage = "URLs of the internet radio station(s), (partial) station name for lookup or the station " +
             "UUID (see option -list-station)", metaVar = "URL_OR_UUID_OR_NAME", required = true)

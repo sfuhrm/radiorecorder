@@ -39,7 +39,14 @@ class MetaDataFileNameGenerator {
     }
 
     static String sanitizeFileName(String in) {
-        return in.replaceAll("[/:\\|?$\\\\]", "_");
+        String sanitized = in.replaceAll("[/:\\|?$\\\\]", "_");
+
+        // limit file name length, Linux can process 256 char file names
+        if (sanitized.length() > 192) {
+            sanitized = sanitized.substring(0, 192);
+        }
+
+        return sanitized;
     }
 
     /** Get meta data field falling back to a default.
@@ -74,8 +81,15 @@ class MetaDataFileNameGenerator {
                 m -> m.getStationUrl().map(url -> URI.create(url).getHost()), unknown));
 
         // radio metadata
-        values.put("radioName", radio.getName());
-        values.put("radioHost", radio.getUri().getHost());
+        values.put("radioName", sanitizeFileName(radio.getName()));
+        values.put("radioHost", sanitizeFileName(radio.getUri().getHost()));
+        values.put("radioUri", sanitizeFileName(radio.getUri().toASCIIString()));
+
+        // composite of station name with fallback radio uri
+        values.put("stationNameOrRadioUri",
+                getMetaDataField(metaData,
+                        MetaData::getStationName,
+                        sanitizeFileName(radio.getUri().toASCIIString())));
 
         values.put("index", getMetaDataField(metaData, m -> m.getIndex().map(intValue -> String.format("%03d", intValue)), unknown));
         values.put("suffix", suffixFromContentType(mimeTypeNullable));

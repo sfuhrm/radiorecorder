@@ -32,6 +32,7 @@ import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.FileTime;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -89,7 +90,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
     /**
      * Helps with file names ;).
      */
-    private MetaDataFileNameGenerator fileNameGenerator;
+    private Supplier<MetaDataFileNameGenerator> fileNameGeneratorSupplier;
 
     /** Constructor.
      * @param consumerContext the context to work in.
@@ -99,13 +100,18 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
 
         creationTimeStamp = System.currentTimeMillis();
 
-        fileNameGenerator = consumerContext.isSongNames()
+        fileNameGeneratorSupplier = () -> useSongNames()
                 ? new MetaDataFileNameGenerator(consumerContext.getSongnameFormat(), consumerContext, true) :
                   new MetaDataFileNameGenerator(consumerContext.getNoSongnameFormat(), consumerContext, false);
 
         targetDirectory = consumerContext.getTargetDirectory();
     }
 
+    /** Returns if the stream has metadata and we are processing songnames. */
+    private boolean useSongNames() {
+        return getStreamMetaData().isProvidesMetaData() && getContext().isSongNames();
+    }
+    
     /**
      * Check whether aborting is necessary because of restrictions to
      * file system or maximum write size.
@@ -153,7 +159,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
         metaDataChanged = false;
         closeStreamIfOpen(outputStreamNullable, fileNullable, contentTypeOrNull);
 
-        Optional<Path> optionalPath = fileNameGenerator.getFileFrom(getContext().getRadio(), metaData, contentTypeOrNull);
+        Optional<Path> optionalPath = fileNameGeneratorSupplier.get().getFileFrom(getContext().getRadio(), metaData, contentTypeOrNull);
         if (optionalPath.isPresent()) {
             fileNullable = optionalPath.get();
             ensureParentDirectoriesExist(fileNullable);
@@ -167,7 +173,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
 
     @Override
     protected void __accept(HttpConnection t, InputStream inputStream) {
-        Runnable cleanup = () -> cleanup(getContext().isSongNames());
+        Runnable cleanup = () -> cleanup(useSongNames());
         Thread cleanupThread = new Thread(cleanup);
         Runtime.getRuntime().addShutdownHook(cleanupThread);
         try {
@@ -180,7 +186,8 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
             byte[] buffer = new byte[BUFFER_SIZE];
             Optional<MimeType> contentType = MimeType.byContentType(t.getContentType());
 
-            if (!getContext().isSongNames()) {
+            // open stream in case no songname is existing yet
+            if (!useSongNames()) {
                 closeOldFileAndReopenWithNewMetadata(contentType.orElse(null));
             }
 
@@ -195,7 +202,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
 
                     // open new output stream if metadata has changed, we're using song names, and
                     // we're not in the first (incomplete) song (see #37)
-                    if (metaDataChanged && getContext().isSongNames() && metaData.getIndex().orElse(0) > 0) {
+                    if (metaDataChanged && useSongNames() && metaData.getIndex().orElse(0) > 0) {
                         closeOldFileAndReopenWithNewMetadata(contentType.orElse(null));
                     }
 
@@ -219,7 +226,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
             fileNumber++;
             throw new RadioException(true, ex);
         } finally {
-            cleanup(getContext().isSongNames());
+            cleanup(useSongNames());
             Runtime.getRuntime().removeShutdownHook(cleanupThread);
         }
     }
