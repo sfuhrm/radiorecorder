@@ -1,0 +1,34 @@
+
+
+name: JPackage
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  maven_version:
+    uses: sfuhrm/github_workflows/.github/workflows/maven-expression.yml@main
+    with:
+      java_version: 21
+      expression: project.version
+  jpackage:
+    needs: maven_version
+    uses: sfuhrm/github_workflows/.github/workflows/jpackage.yml@main
+    with:
+      java_version: 21
+      artifact_name: jpackage
+      jpackage_input: radiorecorder/target/radiorecorder-${{ needs.maven_version.outputs.expression_value }}-app/radiorecorder-${{ needs.maven_version.outputs.expression_value }}
+      jpackage_name: radiorecorder
+      jpackage_jarfile: lib/radiorecorder-${{ needs.maven_version.outputs.expression_value }}.jar
+      jpackage_license: target/radiorecorder-${{ needs.maven_version.outputs.expression_value }}-app/radiorecorder-${{ needs.maven_version.outputs.expression_value }}/LICENSE
+      jpackage_vendor: Stephan Fuhrmann
+      jpackage_copyright: Stephan Fuhrmann
+      jpackage_description: Records and plays internet radio streams
+      jpackage_mainclass: de.sfuhrm.radiorecorder.Main
+      jpackage_linux_deb_maintainer: s@sfuhrm.de
+      jpackage_linux_deb_app_category: gnome
+      jpackage_linux_rpm_app_category: utilities
+      jpackage_win_upgrade_uuid: a32f7c72-87d5-44ab-91b6-1f4e13fea46b
