@@ -1,0 +1,16 @@
+
+
+name: Spotbugs with Maven
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  call-workflow-passing-data:
+    uses: sfuhrm/github_workflows/.github/workflows/spotbugs.yml@main
+    with:
+      java_version: 21
+      artifact_name: spotbugs
