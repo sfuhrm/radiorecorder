@@ -129,6 +129,11 @@ class MetaDataFileNameGenerator {
             if (Files.exists(path)) {
                 path = generateNonExistingPath(path);
             }
+
+            if (! path.startsWith(targetDirectory)) {
+                throw new IllegalArgumentException("Generated file name "+path+" is outside target directory " + targetDirectory);
+            }
+
             result = Optional.of(path);
         }
         return result;
