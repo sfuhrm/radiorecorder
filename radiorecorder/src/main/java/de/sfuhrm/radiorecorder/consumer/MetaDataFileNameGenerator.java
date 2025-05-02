@@ -9,11 +9,14 @@ import lombok.NonNull;
 import org.apache.commons.text.StringSubstitutor;
 
 import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /** Generates song file names out of received {@link MetaData}. */
 class MetaDataFileNameGenerator {
@@ -45,10 +48,13 @@ class MetaDataFileNameGenerator {
     }
 
     static String sanitizeFileName(String in) {
-        String sanitized = in.replaceAll("[/:\\|?$\\\\]", "_");
+        String sanitized = in;
 
         // replace heading funny stuff
         sanitized = sanitized.replaceAll("^[ ?:-]+", "_");
+
+        // sanitize inside
+        sanitized = sanitized.replaceAll("[/:\\|?$\\\\()#]", "_");
 
         // limit file name length, Linux can process 256 char file names
         if (sanitized.length() > 192) {
@@ -116,12 +122,49 @@ class MetaDataFileNameGenerator {
     Optional<Path> getFileFrom(Radio radio, MetaData metaData, MimeType contentType) {
         Optional<Path> result = Optional.empty();
 
-        if (metaData != null || !requireMetaData) {
+        if ((metaData != null || !requireMetaData) && contentType != null) {
             StringSubstitutor substitutor = newStringSubstitutor(radio, metaData, contentType);
             String targetName = substitutor.replace(fileNameFormat);
-            result = Optional.of(targetDirectory.resolve(targetName));
+            Path path = targetDirectory.resolve(targetName);
+            if (Files.exists(path)) {
+                path = generateNonExistingPath(path);
+            }
+            result = Optional.of(path);
         }
         return result;
+    }
+
+    /**
+     * Generate a non-existing path from an existing one.
+     */
+    static Path generateNonExistingPath(Path currentPath) {
+        Pattern withCountPattern = Pattern.compile("(.*)-([0-9]+)(\\.[^.]+)");
+        Pattern withoutCountPattern = Pattern.compile("(.*)(\\.[^.]+)");
+        while (Files.exists(currentPath)) {
+            Path parent = currentPath.getParent();
+            String fileName = currentPath.getFileName().toString();
+
+            Matcher matcher = withCountPattern.matcher(fileName);
+            if (matcher.matches()) {
+                String prefix = matcher.group(1);
+                String count = matcher.group(2);
+                String suffix = matcher.group(3);
+                int countInt = Integer.parseInt(count);
+
+                String newName = String.format("%s-%d%s", prefix, countInt + 1, suffix);
+                currentPath = parent.resolve(newName);
+            } else {
+                matcher = withoutCountPattern.matcher(fileName);
+                if (matcher.matches()) {
+                    String prefix = matcher.group(1);
+                    String suffix = matcher.group(2);
+
+                    String newName = String.format("%s-%d%s", prefix, 1, suffix);
+                    currentPath = parent.resolve(newName);
+                }
+            }
+        }
+        return currentPath;
     }
 
     /**
