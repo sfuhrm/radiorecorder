@@ -23,7 +23,7 @@ jobs:
       jpackage_input: radiorecorder/target/radiorecorder-${{ needs.maven_version.outputs.expression_value }}-app/radiorecorder-${{ needs.maven_version.outputs.expression_value }}
       jpackage_name: radiorecorder
       jpackage_jarfile: lib/radiorecorder-${{ needs.maven_version.outputs.expression_value }}.jar
-      jpackage_license: target/radiorecorder-${{ needs.maven_version.outputs.expression_value }}-app/radiorecorder-${{ needs.maven_version.outputs.expression_value }}/LICENSE
+      jpackage_license: radiorecorder/target/radiorecorder-${{ needs.maven_version.outputs.expression_value }}-app/radiorecorder-${{ needs.maven_version.outputs.expression_value }}/LICENSE
       jpackage_vendor: Stephan Fuhrmann
       jpackage_copyright: Stephan Fuhrmann
       jpackage_description: Records and plays internet radio streams
