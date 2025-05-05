@@ -1,6 +1,6 @@
 Radio Recorder
 ===================
-[![Java CI](https://github.com/sfuhrm/radiorecorder/actions/workflows/maven.yml/badge.svg)](https://github.com/sfuhrm/radiorecorder/actions/workflows/maven.yml)
+[![Java CI with Maven](https://github.com/sfuhrm/radiorecorder/actions/workflows/maven-ref.yml/badge.svg)](https://github.com/sfuhrm/radiorecorder/actions/workflows/maven-ref.yml)
 [![Integration Test](https://github.com/sfuhrm/radiorecorder/actions/workflows/maven-integration.yml/badge.svg)](https://github.com/sfuhrm/radiorecorder/actions/workflows/maven-integration.yml)
 [![ReleaseDate](https://img.shields.io/github/release-date/sfuhrm/radiorecorder)](https://github.com/sfuhrm/radiorecorder/releases)
 ![Maven Central](https://img.shields.io/maven-central/v/de.sfuhrm/radiorecorder)
