@@ -99,7 +99,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'adopt'
-          java-version: 17
+          java-version: 21
       - name: Build package
         run: |
           if test "${{ matrix.style }}" = "redhat"; then
@@ -155,7 +155,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'adopt'
-          java-version: 17
+          java-version: 21
       - name: Build package
         run: |
           APPDIR=$(pwd)/radiorecorder-${{ needs.build.outputs.version }}
@@ -205,7 +205,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'adopt'
-          java-version: 17
+          java-version: 21
       - name: Build package
         run: |
           APPDIR=$(pwd)/radiorecorder-${{ needs.build.outputs.version }}
