@@ -18,7 +18,7 @@ jobs:
   get_classpath:
     runs-on: ubuntu-latest
     outputs:
-      classpath: ${{ steps.classpath.outputs.classpath }}
+      classpath: ${{ steps.classpath.outputs.cp }}
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK
