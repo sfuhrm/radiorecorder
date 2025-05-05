@@ -18,6 +18,8 @@ package de.sfuhrm.radiorecorder.metadata;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,12 +29,15 @@ import lombok.Setter;
  * @see #getOffset()
  * @author Stephan Fuhrmann
  */
+@Getter(AccessLevel.PACKAGE)
+@Setter(AccessLevel.PACKAGE)
 class OffsetFilterStream extends FilterInputStream {
 
-    @Getter @Setter
+    /** The current byte offset of the stream. */
     private long offset;
 
-    @Getter @Setter
+    /** @see #mark(int)
+     * */
     private long marked;
 
     OffsetFilterStream(InputStream inputStream) {

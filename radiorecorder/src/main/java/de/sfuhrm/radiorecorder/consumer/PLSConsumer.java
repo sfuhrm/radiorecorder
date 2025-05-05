@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -44,7 +45,7 @@ public class PLSConsumer extends AbstractConsumer implements Consumer<HttpConnec
     }
 
     static List<String> readUrls(InputStream i) throws UnsupportedEncodingException {
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(i, "ASCII"));
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(i, StandardCharsets.US_ASCII));
         return bufferedReader
                 .lines()
                 .filter(l -> l.startsWith("File"))
@@ -62,7 +63,7 @@ public class PLSConsumer extends AbstractConsumer implements Consumer<HttpConnec
                 getConnectionHandler().consume(URI.create(url));
             }
         } catch (IOException ex) {
-            log.warn("URL " + getContext().getUri().toASCIIString() + " broke down", ex);
+            log.warn("URL {} broke down", getContext().getUri().toASCIIString(), ex);
             throw new RadioException(true, ex);
         }
     }

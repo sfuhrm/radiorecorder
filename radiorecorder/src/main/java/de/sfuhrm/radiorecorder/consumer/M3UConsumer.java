@@ -22,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -43,7 +44,7 @@ public class M3UConsumer extends AbstractConsumer implements Consumer<HttpConnec
 
     @Override
     protected void _accept(HttpConnection t) {
-        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(t.getInputStream(), "ASCII"))) {
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(t.getInputStream(), StandardCharsets.US_ASCII))) {
             List<String> lines = bufferedReader.lines().filter(l -> l.startsWith("http")).collect(Collectors.toList());
 
             log.debug("Found {} lines with URLs", lines.size());
@@ -53,7 +54,7 @@ public class M3UConsumer extends AbstractConsumer implements Consumer<HttpConnec
             }
         }
         catch (IOException ex) {
-            log.warn("URL " + getContext().getUri().toASCIIString() + " broke down", ex);
+            log.warn("URL {} broke down", getContext().getUri().toASCIIString(), ex);
             throw new RadioException(true, ex);
         }
     }

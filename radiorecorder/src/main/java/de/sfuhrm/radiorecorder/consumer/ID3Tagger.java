@@ -62,7 +62,7 @@ class ID3Tagger implements Runnable {
 
             log.debug("Done adding id3 tag to {}", file);
         } catch (NotSupportedException | UnsupportedTagException | InvalidDataException | IOException ex) {
-            log.warn("Exception while writing id3 tag for " + file, ex);
+            log.warn("Exception while writing id3 tag for {}", file, ex);
         }
     }
 }

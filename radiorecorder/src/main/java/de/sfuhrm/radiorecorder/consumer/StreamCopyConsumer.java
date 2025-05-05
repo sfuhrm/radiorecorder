@@ -69,7 +69,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
     private boolean metaDataChanged;
 
     /** The directory to write files to.
-     * @see #getFileFromMetaData(MimeType)
+     * @see #fileNameGeneratorSupplier
      * */
     private final Path targetDirectory;
 
@@ -90,7 +90,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
     /**
      * Helps with file names ;).
      */
-    private Supplier<MetaDataFileNameGenerator> fileNameGeneratorSupplier;
+    private final Supplier<MetaDataFileNameGenerator> fileNameGeneratorSupplier;
 
     /** Constructor.
      * @param consumerContext the context to work in.
@@ -222,7 +222,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
             }
 
         } catch (IOException ex) {
-            log.warn("URL " + getContext().getUri().toASCIIString() + " broke down", ex);
+            log.warn("URL {} broke down", getContext().getUri().toASCIIString(), ex);
             fileNumber++;
             throw new RadioException(true, ex);
         } finally {
@@ -236,7 +236,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
             try {
                 outputStreamNullable.close();
             } catch (IOException ex) {
-                log.warn("URL " + getContext().getUri().toASCIIString() + " close error", ex);
+                log.warn("URL {} close error", getContext().getUri().toASCIIString(), ex);
             }
         }
         if (fileNullable != null && deletePartly && Files.exists(fileNullable)) {
@@ -267,9 +267,11 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
             Runnable postprocess = () -> {
                 try {
                     // adjust time to stream start
-                    Files.setLastModifiedTime(fileOrNull, FileTime.from(fileMetaData.getCreated().toInstant()));
+                    if (fileOrNull != null && fileMetaData != null) {
+                        Files.setLastModifiedTime(fileOrNull, FileTime.from(fileMetaData.getCreated().toInstant()));
+                    }
                 } catch (IOException e) {
-                    log.warn("Error setting date for " + fileOrNull, e);
+                    log.warn("Error setting date for {}", fileOrNull, e);
                 }
             };
 

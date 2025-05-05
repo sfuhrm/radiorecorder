@@ -36,11 +36,7 @@ public class HttpConnectionBuilderFactory {
 
         /** Apache Httpcomponents HttpClient 5.x. */
         APACHE_CLIENT_5(url -> {
-            try {
-                return new ApacheHttpClient5ConnectionBuilder(url);
-            } catch (URISyntaxException e) {
-                throw new RuntimeException(e);
-            }
+            return new ApacheHttpClient5ConnectionBuilder(url);
         });
 
         private final Function<URI, HttpConnectionBuilder> builder;

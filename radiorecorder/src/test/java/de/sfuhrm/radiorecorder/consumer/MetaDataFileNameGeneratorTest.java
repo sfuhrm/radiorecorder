@@ -17,7 +17,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -50,15 +52,17 @@ class MetaDataFileNameGeneratorTest {
     @AfterEach
     void after() throws IOException {
         if (tmpDir != null) {
-            Files.list(tmpDir).forEach(f -> {
-                try {
-                    Files.delete(f);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-            Files.delete(tmpDir);
-            tmpDir = null;
+            try (Stream<Path> stream = Files.list(tmpDir)) {
+                    stream.forEach(f -> {
+                    try {
+                        Files.delete(f);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            }
+                 Files.delete(tmpDir);
+                 tmpDir = null;
         }
     }
 
@@ -89,7 +93,7 @@ class MetaDataFileNameGeneratorTest {
     public void getFileFromWithTargetFileExists() throws IOException {
         MetaDataFileNameGenerator instance = new MetaDataFileNameGenerator("${radioName}${suffix}", consumerContext, false);
         stubRadio();
-        Files.write(tmpDir.resolve("radiorecorderradio.mp3"), Arrays.asList("hello"), StandardOpenOption.CREATE_NEW);
+        Files.write(tmpDir.resolve("radiorecorderradio.mp3"), Collections.singletonList("hello"), StandardOpenOption.CREATE_NEW);
         Optional<Path> actual = instance.getFileFrom(radio, null, MimeType.AUDIO_MPEG);
         assertEquals(Optional.of(tmpDir.resolve("radiorecorderradio-1.mp3")), actual, "Target file exists, generate new name");
     }
@@ -98,8 +102,8 @@ class MetaDataFileNameGeneratorTest {
     public void getFileFromWithReplacementFileExists() throws IOException {
         MetaDataFileNameGenerator instance = new MetaDataFileNameGenerator("${radioName}${suffix}", consumerContext, false);
         stubRadio();
-        Files.write(tmpDir.resolve("radiorecorderradio.mp3"), Arrays.asList("hello"), StandardOpenOption.CREATE_NEW);
-        Files.write(tmpDir.resolve("radiorecorderradio-1.mp3"), Arrays.asList("meow"), StandardOpenOption.CREATE_NEW);
+        Files.write(tmpDir.resolve("radiorecorderradio.mp3"), Collections.singletonList("hello"), StandardOpenOption.CREATE_NEW);
+        Files.write(tmpDir.resolve("radiorecorderradio-1.mp3"), Collections.singletonList("meow"), StandardOpenOption.CREATE_NEW);
         Optional<Path> actual = instance.getFileFrom(radio, null, MimeType.AUDIO_MPEG);
         assertEquals(Optional.of(tmpDir.resolve("radiorecorderradio-2.mp3")), actual, "Target file exists, generate new name");
     }

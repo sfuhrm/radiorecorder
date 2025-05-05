@@ -89,7 +89,7 @@ public class XSPFConsumer extends AbstractConsumer implements Consumer<HttpConne
         } catch (XPathExpressionException ex) {
             throw new RadioException(false, ex);
         } catch (IOException ex) {
-            log.warn("URL " + getContext().getUri().toASCIIString() + " broke down", ex);
+            log.warn("URL {} broke down", getContext().getUri().toASCIIString(), ex);
             throw new RadioException(true, ex);
         }
     }

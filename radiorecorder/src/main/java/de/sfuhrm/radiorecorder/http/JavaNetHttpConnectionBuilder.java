@@ -43,13 +43,9 @@ class JavaNetHttpConnectionBuilder extends AbstractHttpConnectionBuilder impleme
         }
         HttpURLConnection connection = (HttpURLConnection)url.toURL().openConnection(proxyToUse);
 
-        if (readTimeout.isPresent()) {
-            connection.setReadTimeout(readTimeout.get());
-        }
+        readTimeout.ifPresent(connection::setReadTimeout);
 
-        if (connectTimeout.isPresent()) {
-            connection.setConnectTimeout(connectTimeout.get());
-        }
+        connectTimeout.ifPresent(connection::setConnectTimeout);
 
         if (! requestProperties.isEmpty()) {
             requestProperties.forEach(connection::setRequestProperty);

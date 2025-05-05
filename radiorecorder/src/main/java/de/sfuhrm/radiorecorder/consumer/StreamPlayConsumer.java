@@ -39,7 +39,6 @@ import javax.sound.sampled.spi.AudioFileReader;
 
 import de.sfuhrm.radiorecorder.metadata.MimeType;
 import lombok.extern.slf4j.Slf4j;
-import net.sourceforge.jaad.spi.javasound.AACAudioFileReader;
 
 /**
  * Plays a stream using the Java Media Framework API.
@@ -150,7 +149,7 @@ public class StreamPlayConsumer extends MetaDataConsumer implements Consumer<Htt
                 }
             }
         } catch (UnsupportedAudioFileException | LineUnavailableException | IOException ex) {
-            log.warn("URL " + getContext().getUri().toASCIIString() + " broke down", ex);
+            log.warn("URL {} broke down", getContext().getUri().toASCIIString(), ex);
             throw new RadioException(false, ex);
         }
     }

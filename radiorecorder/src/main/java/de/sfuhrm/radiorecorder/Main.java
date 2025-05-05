@@ -86,7 +86,7 @@ public class Main {
         List<Radio> fromString(RadioBrowser radioBrowser, Params params, String radioString);
     }
 
-    private static Resolver resolverByUri = (radioBrowser, params, radioString) -> {
+    private static final Resolver resolverByUri = (radioBrowser, params, radioString) -> {
         try {
             Radio s = new Radio();
             URI uri = URI.create(radioString); // parse the url
@@ -103,7 +103,7 @@ public class Main {
         return Collections.emptyList();
     };
 
-    private static Resolver resolverByUUID = (radioBrowser, params, radioString) -> {
+    private static final Resolver resolverByUUID = (radioBrowser, params, radioString) -> {
         try {
             UUID uuid = UUID.fromString(radioString);
             List<Station> stations = radioBrowser.listStationsBy(SearchMode.BYUUID, uuid.toString()).collect(Collectors.toList());
@@ -116,7 +116,7 @@ public class Main {
         return Collections.emptyList();
     };
 
-    private static Resolver resolverByQuery = (radioBrowser, params, radioString) -> {
+    private static final Resolver resolverByQuery = (radioBrowser, params, radioString) -> {
         List<Station> stations = radioBrowser.listStationsBy(
                 Paging.at(0, params.getStationLimit()),
                 SearchMode.BYNAME,
@@ -160,7 +160,7 @@ public class Main {
         return result;
     }
 
-    private static ConsumerContext toConsumerContext(Params p, Radio radio) throws MalformedURLException {
+    private static ConsumerContext toConsumerContext(Params p, Radio radio) {
         return new ConsumerContext(nextId++, radio, p);
     }
 
@@ -249,15 +249,11 @@ public class Main {
 
         List<Thread> threadList = new ArrayList<>();
         radios.stream().forEach(radio -> {
-            try {
-                log.info("Starting radio: {}", radio);
-                RadioRunnable r = new RadioRunnable(toConsumerContext(params, radio));
-                Thread t = new Thread(r, "Radio " + radio.getUuid());
-                threadList.add(t);
-                t.start();
-            } catch (IOException ex) {
-                log.warn("Could not start thread for station url "+radio.getUri(), ex);
-            }
+            log.info("Starting radio: {}", radio);
+            RadioRunnable r = new RadioRunnable(toConsumerContext(params, radio));
+            Thread t = new Thread(r, "Radio " + radio.getUuid());
+            threadList.add(t);
+            t.start();
         });
 
         // wait for finish

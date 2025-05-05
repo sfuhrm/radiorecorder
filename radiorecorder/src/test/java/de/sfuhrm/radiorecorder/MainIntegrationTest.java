@@ -92,6 +92,6 @@ public class MainIntegrationTest {
                     throw new RuntimeException(e);
                 }
             });
-        };
+        }
     }
 }

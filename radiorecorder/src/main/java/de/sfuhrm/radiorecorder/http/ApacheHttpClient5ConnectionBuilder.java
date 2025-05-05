@@ -42,7 +42,7 @@ class ApacheHttpClient5ConnectionBuilder extends AbstractHttpConnectionBuilder i
     private final RequestConfig.Builder configBuilder;
     private final ClassicRequestBuilder requestBuilder;
 
-    ApacheHttpClient5ConnectionBuilder(URI url) throws URISyntaxException {
+    ApacheHttpClient5ConnectionBuilder(URI url) {
         this.configBuilder = RequestConfig.custom();
         this.requestBuilder = ClassicRequestBuilder.get(url);
 

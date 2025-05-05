@@ -49,7 +49,7 @@ class ApacheHttpClient5Connection implements HttpConnection {
     }
 
     @Override
-    public URI getURI() throws IOException {
+    public URI getURI() {
         return uri;
     }
 
