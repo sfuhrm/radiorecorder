@@ -58,10 +58,10 @@ public class PLSConsumerTest {
         try (TemporaryFile tmp = new TemporaryFile()) {
             tmp.write(TEST_STRING);
 
-            Mockito.when(consumerContext.getUri()).thenReturn(tmp.getFile().toURI());
+            Mockito.when(consumerContext.getUri()).thenReturn(tmp.getFile().toUri());
 
             HttpConnection connection = Mockito.mock(HttpConnection.class);
-            Mockito.when(connection.getURI()).thenReturn(tmp.getFile().toURI());
+            Mockito.when(connection.getURI()).thenReturn(tmp.getFile().toUri());
             //Mockito.when(connection.getContentType()).thenReturn("audio/x-scpls");
             Mockito.when(connection.getInputStream()).thenReturn(tmp.getInputStream());
 

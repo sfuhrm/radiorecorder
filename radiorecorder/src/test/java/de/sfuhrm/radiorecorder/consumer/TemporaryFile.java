@@ -25,11 +25,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Temporary file reference that will delete on closing.
  * @author Stephan Fuhrmann
  */
+@Slf4j
 @Getter
 public class TemporaryFile implements AutoCloseable {
     private final Path file;
@@ -52,11 +54,15 @@ public class TemporaryFile implements AutoCloseable {
     }
 
     public InputStream getInputStream() throws IOException {
-        return Files.newInputStream(file.toPath());
+        return Files.newInputStream(file);
     }
 
     @Override
     public void close() {
-        file.delete();
+        try {
+            Files.delete(file);
+        } catch (IOException e) {
+            log.warn("Could not delete {}", file);
+        }
     }
 }
