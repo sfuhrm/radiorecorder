@@ -99,6 +99,23 @@ The program is a command line only program. It supports multiple parameters:
  -mixer (-m) MIXER_NAME                 : The mixer to use for playback. The
                                           mixer parameter is the name from the
                                           '-list-mixer' option output.
+ -name-format (-f) FORMAT               : Formatting string for generated files
+                                          out of stream meta data. Available
+                                          variables: ${artist}, ${title},
+                                          ${stationUrl}, ${stationName},
+                                          ${stationHost}, ${radioName},
+                                          ${radioHost}, ${radioUri},
+                                          ${stationNameOrRadioUri}, ${index},
+                                          ${suffix} (default: ${stationNameOrRad
+                                          ioName:-unknown station}/${index:-000}
+                                          .${artist:-unknown artist} -
+                                          ${title:-unknown title}${suffix})
+ -no-name-format (-F) FORMAT            : Formatting string for generated files
+                                          without using stream meta data. For
+                                          available variables, please see
+                                          '-name-format'. (default:
+                                          ${stationNameOrRadioName:-unknown
+                                          station}/${index:-000}${suffix})
  -play (-p)                             : Play live instead of recording to a
                                           file. (default: false)
  -proxy (-P) URL                        : The HTTP/HTTPS proxy to use.
@@ -115,7 +132,7 @@ The program is a command line only program. It supports multiple parameters:
 
 ## License
 
-Copyright 2017-2024 Stephan Fuhrmann
+Copyright 2017-2025 Stephan Fuhrmann
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
