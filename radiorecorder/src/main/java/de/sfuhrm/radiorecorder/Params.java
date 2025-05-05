@@ -164,7 +164,7 @@ public class Params {
             }
 
             if (result.getDirectory() != null &&
-                    prepareOutputDirectory(cmdLineParser, result.getDirectory().toPath())) return null;
+                    prepareOutputDirectory(cmdLineParser, result.getDirectory())) return null;
 
             if (result.getAbortAfterDuration() != null) {
                 try {
