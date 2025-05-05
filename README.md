@@ -130,6 +130,31 @@ The program is a command line only program. It supports multiple parameters:
                                           (default: false)
 ```
 
+## File name formatting
+
+File name formatting has the following variables available, where each needs to be enclosed in a `${ ... }` sequence. 
+The following sources exist:
+
+* Metadata: Stream metadata received from the radio station itself. Some radiostations send metadata, some don't.
+* Radio Browser: Radio Browser is a web service that provides internet radio station lists.
+* HTTP: HTTP transmission metadata.
+* Context: Each downloaded stream is a separate context.
+
+| Name | Sample | Source | Description |
+| ---- | ------ | ------ | ----------- |
+| id | 0 | Context | Consecutive number of the download context. Always starts with 0. |
+| title | Dangerous | Metadata | Title of a song. |
+| artist | Michael Jackson | Metadata | Artist of a song. |
+| stationUrl | `https://radioblabla.com/` | Metadata | The URL the station sends via metadata. |
+| stationName | Radio Blala | Metadata | The name the station sends via metadata. |
+| stationHost | radioblabla.com | Metadata | The extracted station host from the stationUrl. |
+| radioName | Radio Blabla | Radio Browser | The name of the station from Radio Browser. |
+| radioUri | `https://radioblabla.com/` | Radio Browser | The station URL from Radio Browser. |
+| radioHost | radioblabla.com | Radio Browser | The extracted station host from the radioUri. |
+| stationNameOrRadioName | Radio Blabla | Metadata, Radio Browser | Combined station name either from metadata or Radio Browser. |
+| index | 001 | Metadata | Consecutive title number received from this station in this session. |
+| suffix | `.mp3` | HTTP | File name suffix to help the operating system to identify the file format. |
+
 ## License
 
 Copyright 2017-2025 Stephan Fuhrmann
