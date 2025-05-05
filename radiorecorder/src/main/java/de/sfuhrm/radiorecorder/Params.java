@@ -15,7 +15,6 @@
  */
 package de.sfuhrm.radiorecorder;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -49,7 +48,7 @@ public class Params {
     private boolean help;
 
     @Option(name = "-directory", aliases = {"-d"}, usage = "Write recorded stream files to a folder hierarchy in this target directory.", metaVar = "DIR")
-    private File directory;
+    private Path directory;
 
     @Option(name = "-use-songnames", aliases = {"-S"}, usage = "Use songnames from retrieved metadata information. Will create one file per detected song.")
     private boolean songNames;

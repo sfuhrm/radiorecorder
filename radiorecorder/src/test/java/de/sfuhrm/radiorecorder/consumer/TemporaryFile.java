@@ -15,9 +15,6 @@
  */
 package de.sfuhrm.radiorecorder.consumer;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -25,6 +22,8 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+
 import lombok.Getter;
 
 /**
@@ -33,15 +32,15 @@ import lombok.Getter;
  */
 @Getter
 public class TemporaryFile implements AutoCloseable {
-    private final File file;
+    private final Path file;
 
     public TemporaryFile() throws IOException {
-        file = File.createTempFile("stfu", "tmp");
+        file = Files.createTempFile("stfu", "tmp");
     }
 
     public void write(String text, Charset charset) throws IOException {
         byte[] data = text.getBytes(charset);
-        Files.write(file.toPath(), data);
+        Files.write(file, data);
     }
 
     public void write(String data) throws IOException {
@@ -49,7 +48,7 @@ public class TemporaryFile implements AutoCloseable {
     }
 
     public URL getURL() throws MalformedURLException {
-        return file.toURI().toURL();
+        return file.toUri().toURL();
     }
 
     public InputStream getInputStream() throws IOException {

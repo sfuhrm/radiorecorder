@@ -15,7 +15,6 @@
  */
 package de.sfuhrm.radiorecorder;
 
-import java.io.File;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -72,7 +71,7 @@ public class ConsumerContext {
      * @return directory to write files to.
      */
     public Path getTargetDirectory() {
-        return params.getDirectory().toPath();
+        return params.getDirectory();
     }
 
     /** Get minimum free bytes.
