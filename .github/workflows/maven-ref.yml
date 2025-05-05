@@ -18,6 +18,6 @@ jobs:
     needs: maven_version
     uses: sfuhrm/github_workflows/.github/workflows/maven.yml@main
     with:
-      java_version: 21
+      java_version: "[ \"21\" ]"
       artifact_name: build
       artifact_path: radiorecorder/target/radiorecorder-${{ needs.maven_version.outputs.expression_value }}.jar
