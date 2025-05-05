@@ -15,8 +15,31 @@ jobs:
     with:
       java_version: 21
       expression: project.version
+  get_classpath:
+    runs-on: ubuntu-latest
+    outputs:
+      classpath: ${{ steps.classpath.outputs.classpath }}
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'adopt'
+        java-version: 21
+    - name: Calculate classpath
+      run: mvn dependency:build-classpath -Dmdep.prefix=\\\$APPDIR/lib -Dmdep.outputFile=classpath.txt
+    - name: Extract classpath
+      run: echo "cp=$(cat radiorecorder/classpath.txt)" >> $GITHUB_OUTPUT
+      id: classpath
+      shell: bash
+    - uses: actions/upload-artifact@v4
+      with:
+        name: binary
+        path: radiorecorder/target/radiorecorder-${{ steps.version.outputs.version }}-bin.tar.gz
   jpackage:
-    needs: maven_version
+    needs:
+      - maven_version
+      - get_classpath
     uses: sfuhrm/github_workflows/.github/workflows/jpackage.yml@main
     with:
       java_version: 21
@@ -33,3 +56,5 @@ jobs:
       jpackage_linux_deb_app_category: gnome
       jpackage_linux_rpm_app_category: utilities
       jpackage_win_upgrade_uuid: a32f7c72-87d5-44ab-91b6-1f4e13fea46b
+      jpackage_additional_options: |
+        --java-options "-cp ${{ needs.get_classpath.outputs.classpath }}"
