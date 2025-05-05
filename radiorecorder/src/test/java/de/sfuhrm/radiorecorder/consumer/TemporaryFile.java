@@ -17,8 +17,6 @@ package de.sfuhrm.radiorecorder.consumer;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -47,10 +45,6 @@ public class TemporaryFile implements AutoCloseable {
 
     public void write(String data) throws IOException {
         write(data, StandardCharsets.UTF_8);
-    }
-
-    public URL getURL() throws MalformedURLException {
-        return file.toUri().toURL();
     }
 
     public InputStream getInputStream() throws IOException {
