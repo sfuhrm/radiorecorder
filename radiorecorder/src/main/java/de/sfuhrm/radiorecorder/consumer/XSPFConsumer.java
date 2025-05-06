@@ -30,6 +30,8 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import javax.xml.xpath.XPathFactoryConfigurationException;
+
 import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -60,6 +62,7 @@ public class XSPFConsumer extends AbstractConsumer implements Consumer<HttpConne
     protected void _accept(HttpConnection t) {
         try (InputStream is = t.getInputStream()) {
             XPathFactory factory = XPathFactory.newInstance();
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             XPath xp = factory.newXPath();
             xp.setNamespaceContext(new NamespaceContext() {
                 @Override
@@ -78,7 +81,6 @@ public class XSPFConsumer extends AbstractConsumer implements Consumer<HttpConne
                 }
             });
             InputSource inputSource = new InputSource(is);
-
             NodeList nl = (NodeList) xp.evaluate("/x:playlist/x:trackList/x:track/x:location", inputSource, XPathConstants.NODESET);
 
             for (int i = 0; i < nl.getLength(); i++) {
@@ -86,7 +88,7 @@ public class XSPFConsumer extends AbstractConsumer implements Consumer<HttpConne
                 String url = n.getTextContent();
                 getConnectionHandler().consume(URI.create(url));
             }
-        } catch (XPathExpressionException ex) {
+        } catch (XPathExpressionException  | XPathFactoryConfigurationException ex) {
             throw new RadioException(false, ex);
         } catch (IOException ex) {
             log.warn("URL {} broke down", getContext().getUri().toASCIIString(), ex);
