@@ -12,12 +12,16 @@ on:
 jobs:
   maven_version:
     uses: sfuhrm/github_workflows/.github/workflows/maven-expression.yml@main
+    permissions:
+      contents: read
     with:
       java_version: 21
       expression: project.version
   get_classpath:
     needs:
       - maven_version
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     outputs:
       classpath: ${{ steps.classpath.outputs.cp }}
@@ -38,6 +42,8 @@ jobs:
     needs:
       - maven_version
       - get_classpath
+    permissions:
+      contents: read
     uses: sfuhrm/github_workflows/.github/workflows/jpackage.yml@main
     with:
       java_version: 21
