@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       version: ${{ steps.version.outputs.version }}
     steps:
@@ -29,6 +31,8 @@ jobs:
         name: binary
         path: radiorecorder/target/radiorecorder-${{ steps.version.outputs.version }}-bin.tar.gz
   run:
+    permissions:
+      contents: read
     needs: build
     runs-on: ubuntu-latest
     strategy:
