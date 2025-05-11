@@ -11,6 +11,8 @@ on:
 jobs:
   call-workflow-passing-data:
     uses: sfuhrm/github_workflows/.github/workflows/spotbugs.yml@main
+    permissions:
+      contents: read
     with:
       java_version: 21
       artifact_name: spotbugs

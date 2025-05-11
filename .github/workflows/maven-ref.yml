@@ -11,12 +11,16 @@ on:
 jobs:
   maven_version:
     uses: sfuhrm/github_workflows/.github/workflows/maven-expression.yml@main
+    permissions:
+      contents: read
     with:
       java_version: 21
       expression: project.version
   call-workflow-passing-data:
     needs: maven_version
     uses: sfuhrm/github_workflows/.github/workflows/maven.yml@main
+    permissions:
+      contents: read
     with:
       java_version: "[ \"21\" ]"
       artifact_name: build

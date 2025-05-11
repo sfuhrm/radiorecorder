@@ -10,6 +10,7 @@ on:
 jobs:
   call-workflow-passing-data:
     uses: sfuhrm/github_workflows/.github/workflows/jacoco-badge.yml@main
+    permissions: write-all
     with:
       java_version: 21
       artifact_name: jacoco-report
