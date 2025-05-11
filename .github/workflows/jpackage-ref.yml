@@ -35,7 +35,7 @@ jobs:
     - name: Calculate classpath
       run: mvn dependency:build-classpath -Dmdep.prefix=\\\$APPDIR/lib -Dmdep.outputFile=classpath.txt
     - name: Extract classpath
-      run: echo "cp=\\\$APPDIR/lib/radiorecorder-${{ needs.maven_version.outputs.expression_value }}.jar:$(cat radiorecorder/classpath.txt)" >> $GITHUB_OUTPUT
+      run: echo "cp=\\\$APPDIR/lib/radiorecorder-${{ needs.maven_version.outputs.expression_value }}.jar;$(cat radiorecorder/classpath.txt)" >> $GITHUB_OUTPUT
       id: classpath
       shell: bash
   jpackage:
