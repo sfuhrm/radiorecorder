@@ -4,7 +4,7 @@ name: JPackage
 
 on:
   push:
-    branches: [ master, fix_141 ]
+    branches: [ master ]
     tags: [ v* ]
   pull_request:
     branches: [ master ]
