@@ -217,6 +217,7 @@ public class Main {
      * @throws InterruptedException when there's an unexpected interrupt
      * */
     public static void main(String[] args) throws IOException, InterruptedException {
+        System.out.println("Classpath: " + System.getProperty("java.class.path"));
         Params params = Params.parse(args);
         if (params == null) {
             return;
