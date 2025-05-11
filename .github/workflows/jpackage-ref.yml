@@ -61,4 +61,4 @@ jobs:
       jpackage_linux_rpm_app_category: utilities
       jpackage_win_upgrade_uuid: a32f7c72-87d5-44ab-91b6-1f4e13fea46b
       jpackage_additional_options: |
-        --java-options "-cp \\\$APPDIR/lib/radiorecorder-${{ needs.maven_version.outputs.expression_value }}.jar$CLASSPATH_SEPARATOR${{ needs.get_classpath.outputs.classpath }}"
+        --java-options "-cp \$APPDIR${PATH_SEPARATOR}lib${PATH_SEPARATOR}radiorecorder-${{ needs.maven_version.outputs.expression_value }}.jar${CLASSPATH_SEPARATOR}${{ needs.get_classpath.outputs.classpath }}"
