@@ -20,8 +20,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /** Test for {@link AACClassLoaderHelper}.
  * @author Stephan Fuhrmann
@@ -42,9 +41,11 @@ public class AACClassLoaderHelperTest {
     }
 
     @Test
-    public void loadPluginClassLoaderPluginDir() throws MalformedURLException {
-        Optional<ClassLoader> loader = AACClassLoaderHelper.loadPluginClassLoaderPluginDir();
-        assertFalse(loader.isPresent(), "Should always be false, we are building and testing from classpath dir, not jars");
+    public void loadPluginClassLoaderJarResources() throws MalformedURLException, ClassNotFoundException {
+        Optional<ClassLoader> loader = AACClassLoaderHelper.loadPluginClassLoaderJarResources();
+        assertTrue(loader.isPresent(), "Should always be false, we are building and testing from classpath dir, not jars");
+        Class<?> clazz = loader.get().loadClass("net.sourceforge.jaad.spi.javasound.AACAudioFileReader");
+        assertNotNull(clazz, "Local loading JARs should always work");
     }
 
     @Test

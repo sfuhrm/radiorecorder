@@ -4,7 +4,7 @@ name: JPackage
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, fix_141 ]
     tags: [ v* ]
   pull_request:
     branches: [ master ]
@@ -17,31 +17,9 @@ jobs:
     with:
       java_version: 21
       expression: project.version
-  get_classpath:
-    needs:
-      - maven_version
-    permissions:
-      contents: read
-    runs-on: ubuntu-latest
-    outputs:
-      classpath: ${{ steps.classpath.outputs.cp }}
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'adopt'
-        java-version: 21
-    - name: Calculate classpath
-      run: mvn dependency:build-classpath -Dmdep.prefix=\\\$APPDIR/lib -Dmdep.outputFile=classpath.txt
-    - name: Extract classpath
-      run: echo "cp=\\\$APPDIR/lib/radiorecorder-${{ needs.maven_version.outputs.expression_value }}.jar:$(cat radiorecorder/classpath.txt)" >> $GITHUB_OUTPUT
-      id: classpath
-      shell: bash
   jpackage:
     needs:
       - maven_version
-      - get_classpath
     permissions:
       contents: read
     uses: sfuhrm/github_workflows/.github/workflows/jpackage.yml@main
@@ -60,5 +38,3 @@ jobs:
       jpackage_linux_deb_app_category: gnome
       jpackage_linux_rpm_app_category: utilities
       jpackage_win_upgrade_uuid: a32f7c72-87d5-44ab-91b6-1f4e13fea46b
-      jpackage_additional_options: |
-        --java-options "-cp ${{ needs.get_classpath.outputs.classpath }}"

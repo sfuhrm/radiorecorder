@@ -72,14 +72,6 @@
       <artifactId>java-vorbis-support</artifactId>
       <version>1.2.1</version>
     </dependency>
-    <!-- scope must be provided since the assembly plugin will put its JARs in another directory -->
-    <!-- and loaded only on-demand by another classloader  -->
-    <dependency>
-      <groupId>com.tianscar.javasound</groupId>
-      <artifactId>javasound-aac</artifactId>
-      <version>0.9.8</version>
-      <scope>provided</scope>
-    </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-slf4j2-impl</artifactId>
@@ -151,7 +143,41 @@
     </resources>
 
     <plugins>
-      <plugin>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-dependency-plugin</artifactId>
+      <version>3.6.0</version>
+      <executions>
+        <execution>
+          <id>copy-dependency-jar</id>
+          <phase>process-resources</phase>
+          <goals>
+            <goal>copy</goal>
+          </goals>
+          <configuration>
+            <artifactItems>
+              <artifactItem>
+                <groupId>com.tianscar.javasound</groupId>
+                <artifactId>javasound-aac</artifactId>
+                <version>0.9.8</version>
+                <type>jar</type>
+                <overWrite>true</overWrite>
+                <outputDirectory>${project.build.outputDirectory}/lib</outputDirectory>
+              </artifactItem>
+              <artifactItem>
+                <groupId>com.tianscar.javasound</groupId>
+                <artifactId>javasound-resloader</artifactId>
+                <version>0.1.3</version>
+                <type>jar</type>
+                <overWrite>true</overWrite>
+                <outputDirectory>${project.build.outputDirectory}/lib</outputDirectory>
+              </artifactItem>
+            </artifactItems>
+          </configuration>
+        </execution>
+      </executions>
+    </plugin>
+    <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <version>3.4.2</version>
