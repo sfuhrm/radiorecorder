@@ -38,7 +38,7 @@ Releases typically contain files named like this for downloading:
   * `radiorecorder-xxx.x86_64.rpm`: A CentOS/RHEL install archive with the program and the Java runtime included. 
   * `radiorecorder-xxx.pkg`: A macOS PKG installer with the program and the Java runtime included.
   * `radiorecorder-xxx.dmg`: A macOS DMG installer with the program and the Java runtime included.
-* Needing a JDK, runnable on any platform
+* Needing a JDK, runnable on any platform with Java 21+
   * `radiorecorder-xxx-bin.tar.bz2`: A program-only archive in tar.bz2 format that requires a Java runtime installed on your system.
   * `radiorecorder-xxx-bin.tar.gz`: A program-only archive in tar.gz format that requires a Java runtime installed on your system.
   * `radiorecorder-xxx-bin.zip`: A program-only archive in ZIP format that requires a Java runtime installed on your system.
