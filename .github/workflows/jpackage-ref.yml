@@ -46,7 +46,7 @@ jobs:
     with:
       java_version: "[ \"21\" ]"
       artifact_name: binaries
-      artifact_path: radiorecorder/target/radiorecorder-${{ needs.maven_version.outputs.expression_value }}.bin.*
+      artifact_path: radiorecorder/target/radiorecorder-${{ needs.maven_version.outputs.expression_value }}-bin.*
   merge-jpackage-and-binary-archives:
     needs:
       - jpackage
