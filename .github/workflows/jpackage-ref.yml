@@ -38,3 +38,34 @@ jobs:
       jpackage_linux_deb_app_category: gnome
       jpackage_linux_rpm_app_category: utilities
       jpackage_win_upgrade_uuid: a32f7c72-87d5-44ab-91b6-1f4e13fea46b
+  binary-archives:
+    needs: maven_version
+    uses: sfuhrm/github_workflows/.github/workflows/maven.yml@main
+    permissions:
+      contents: read
+    with:
+      java_version: "[ \"21\" ]"
+      artifact_name: binaries
+      artifact_path: radiorecorder/target/radiorecorder-${{ needs.maven_version.outputs.expression_value }}.bin.*
+  merge-jpackage-and-binary-archives:
+    needs:
+      - jpackage
+      - binary-archives
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download package jpackages
+        uses: actions/download-artifact@v4.1.7
+        with:
+          path: merge
+          pattern: jpackage
+          merge-multiple: true
+      - name: Download package jpackages
+        uses: actions/download-artifact@v4.1.7
+        with:
+          path: merge
+          pattern: binaries*
+          merge-multiple: true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: jpackage_plus_binary
+          path: merge
