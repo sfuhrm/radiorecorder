@@ -59,7 +59,7 @@ jobs:
           path: merge
           pattern: jpackage
           merge-multiple: true
-      - name: Download package jpackages
+      - name: Download package platform neutral binaries
         uses: actions/download-artifact@v4.1.7
         with:
           path: merge
