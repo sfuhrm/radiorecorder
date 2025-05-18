@@ -68,7 +68,7 @@ jobs:
           pattern: binaries*
           merge-multiple: true
       - name: GPG-sign files
-        uses: sfuhrm/gpg-sign-action
+        uses: sfuhrm/gpg-sign-action@main
         with:
           path: merge
           gpg-key: "${{ secrets.GPG_KEYFILE }}"
