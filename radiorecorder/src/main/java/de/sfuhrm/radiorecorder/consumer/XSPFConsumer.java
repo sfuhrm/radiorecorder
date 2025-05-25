@@ -26,19 +26,22 @@ import java.util.Iterator;
 import java.util.function.Consumer;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import javax.xml.xpath.XPathFactoryConfigurationException;
-
 import lombok.extern.slf4j.Slf4j;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
- * Consumer for XSPF playlist format URLs.
+ * Consumer for XSPF playlist format URLs, hardened against XXE attacks.
  *
  * @author Stephan Fuhrmann
  */
@@ -53,7 +56,7 @@ public class XSPFConsumer extends AbstractConsumer implements Consumer<HttpConne
 
     /** Constructor.
      * @param context the context to work in.
-     * */
+     */
     public XSPFConsumer(ConsumerContext context) {
         super(context);
     }
@@ -61,10 +64,25 @@ public class XSPFConsumer extends AbstractConsumer implements Consumer<HttpConne
     @Override
     protected void _accept(HttpConnection t) {
         try (InputStream is = t.getInputStream()) {
-            XPathFactory factory = XPathFactory.newInstance();
+            // Create a secure DocumentBuilderFactory
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setNamespaceAware(true);
+            // Disable external entities and DTD processing
             factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            XPath xp = factory.newXPath();
-            xp.setNamespaceContext(new NamespaceContext() {
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            factory.setXIncludeAware(false);
+            factory.setExpandEntityReferences(false);
+
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document document = builder.parse(is);
+
+            // Set up XPath with namespace context
+            XPathFactory xPathFactory = XPathFactory.newInstance();
+            xPathFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            XPath xpath = xPathFactory.newXPath();
+            xpath.setNamespaceContext(new NamespaceContext() {
                 @Override
                 public String getNamespaceURI(String prefix) {
                     return prefix.equals(PREFIX) ? NS : XMLConstants.NULL_NS_URI;
@@ -80,15 +98,17 @@ public class XSPFConsumer extends AbstractConsumer implements Consumer<HttpConne
                     return namespaceURI.equals(NS) ? Collections.singletonList(PREFIX).iterator() : Collections.emptyIterator();
                 }
             });
-            InputSource inputSource = new InputSource(is);
-            NodeList nl = (NodeList) xp.evaluate("/x:playlist/x:trackList/x:track/x:location", inputSource, XPathConstants.NODESET);
+
+            // Evaluate XPath expression
+            NodeList nl = (NodeList) xpath.evaluate("/x:playlist/x:trackList/x:track/x:location", document, XPathConstants.NODESET);
 
             for (int i = 0; i < nl.getLength(); i++) {
                 Node n = nl.item(i);
                 String url = n.getTextContent();
                 getConnectionHandler().consume(URI.create(url));
             }
-        } catch (XPathExpressionException  | XPathFactoryConfigurationException ex) {
+        } catch (ParserConfigurationException | SAXException | XPathExpressionException |
+                 XPathFactoryConfigurationException ex) {
             throw new RadioException(false, ex);
         } catch (IOException ex) {
             log.warn("URL {} broke down", getContext().getUri().toASCIIString(), ex);
