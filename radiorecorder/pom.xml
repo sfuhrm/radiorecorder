@@ -17,7 +17,7 @@
     <dependency>
       <groupId>de.sfuhrm</groupId>
       <artifactId>radiobrowser4j</artifactId>
-      <version>3.2.0</version>
+      <version>3.2.1</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -27,7 +27,7 @@
     <dependency>
       <groupId>org.apache.httpcomponents.client5</groupId>
       <artifactId>httpclient5</artifactId>
-      <version>5.4.4</version>
+      <version>5.5</version>
       <exclusions>
         <exclusion>
           <groupId>org.slf4j</groupId>
@@ -107,7 +107,7 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-junit-jupiter</artifactId>
-      <version>5.17.0</version>
+      <version>5.18.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
