@@ -167,4 +167,13 @@ class MetaDataFileNameGeneratorTest {
         Optional<Path> actual = instance.getFileFrom(radio, metaData, MimeType.AUDIO_MPEG);
         assertEquals(Optional.of(tmpDir.resolve("Michael Jackson - Bad.mp3")), actual, "Metadata used");
     }
+
+    @Test
+    public void getFileFromWithMetaDataWithIllegal() {
+        MetaDataFileNameGenerator instance = new MetaDataFileNameGenerator("${artist} - ${title}${suffix}", consumerContext, false);
+        stubRadio();
+        when(metaData.getArtist()).thenReturn(Optional.of("foo\u0000\u0000\u0000\u0000"));
+        Optional<Path> actual = instance.getFileFrom(radio, metaData, MimeType.AUDIO_MPEG);
+        assertEquals(Optional.of(tmpDir.resolve("Michael Jackson - Bad.mp3")), actual, "Metadata used");
+    }
 }

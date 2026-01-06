@@ -6,10 +6,12 @@ import de.sfuhrm.radiorecorder.Radio;
 import de.sfuhrm.radiorecorder.metadata.MetaData;
 import de.sfuhrm.radiorecorder.metadata.MimeType;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.text.StringSubstitutor;
 
 import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /** Generates song file names out of received {@link MetaData}. */
+@Slf4j
 class MetaDataFileNameGenerator {
     /**
      * @see Params#getSongnameFormat() ()
@@ -47,7 +50,7 @@ class MetaDataFileNameGenerator {
         this.requireMetaData = requireMetaData;
     }
 
-    static String sanitizeFileName(String in) {
+    String sanitizeFileName(String in) {
         String sanitized = in;
 
         // replace heading funny stuff
@@ -55,6 +58,15 @@ class MetaDataFileNameGenerator {
 
         // sanitize inside
         sanitized = sanitized.replaceAll("[/:\\|?$\\\\()#]", "_");
+
+        // use OS specific Path class to test filename ... might work
+        try {
+            Path testPath = targetDirectory.resolve(sanitized);
+        } catch (InvalidPathException e) {
+            sanitized = sanitized.replaceAll("[^a-zA-Z0-9]", "_");
+            log.debug("Sanitizing for filesystem {} -> {}", in, sanitized);
+        }
+
 
         // limit file name length, Linux can process 256 char file names
         if (sanitized.length() > 192) {
@@ -70,7 +82,7 @@ class MetaDataFileNameGenerator {
      * @param fallback fallback value of metaData or the field itself is {@code null}.
      * @return filesystem-sanitized metadata field content or fallback if field is not given.
      * */
-    private static String getMetaDataField(MetaData metaData, Function<MetaData, Optional<String>> getter, String fallback) {
+    private String getMetaDataField(MetaData metaData, Function<MetaData, Optional<String>> getter, String fallback) {
         String result = fallback;
         if (metaData != null) {
             Optional<String> value = getter.apply(metaData);
