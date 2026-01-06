@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.FileStore;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.FileTime;
@@ -159,15 +160,22 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
         metaDataChanged = false;
         closeStreamIfOpen(outputStreamNullable, fileNullable, contentTypeOrNull);
 
-        Optional<Path> optionalPath = fileNameGeneratorSupplier.get().getFileFrom(getContext().getRadio(), metaData, contentTypeOrNull);
-        if (optionalPath.isPresent()) {
-            fileNullable = optionalPath.get();
-            ensureParentDirectoriesExist(fileNullable);
-            outputStreamNullable = Files.newOutputStream(fileNullable, StandardOpenOption.CREATE_NEW);
-        } else {
+        try {
+            Optional<Path> optionalPath = fileNameGeneratorSupplier.get().getFileFrom(getContext().getRadio(), metaData, contentTypeOrNull);
+            if (optionalPath.isPresent()) {
+                fileNullable = optionalPath.get();
+                ensureParentDirectoriesExist(fileNullable);
+                outputStreamNullable = Files.newOutputStream(fileNullable, StandardOpenOption.CREATE_NEW);
+            } else {
+                fileNullable = null;
+                outputStreamNullable = null;
+            }
+        } catch (InvalidPathException invalidPathException) {
             fileNullable = null;
             outputStreamNullable = null;
+            log.warn("Illegal file name file skipped", invalidPathException);
         }
+
         log.debug("New file {}", fileNullable);
     }
 
