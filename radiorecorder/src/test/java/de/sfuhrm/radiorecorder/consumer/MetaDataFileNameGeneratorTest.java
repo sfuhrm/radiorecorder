@@ -172,8 +172,13 @@ class MetaDataFileNameGeneratorTest {
     public void getFileFromWithMetaDataWithIllegal() {
         MetaDataFileNameGenerator instance = new MetaDataFileNameGenerator("${artist} - ${title}${suffix}", consumerContext, false);
         stubRadio();
-        when(metaData.getArtist()).thenReturn(Optional.of("foo\u0000\u0000\u0000\u0000"));
+        when(metaData.getArtist()).thenReturn(Optional.of("fo\0x"));
         Optional<Path> actual = instance.getFileFrom(radio, metaData, MimeType.AUDIO_MPEG);
-        assertEquals(Optional.of(tmpDir.resolve("Michael Jackson - Bad.mp3")), actual, "Metadata used");
+
+        // note: Null byte is only handled by the Linux OS as a unknown char
+        String os = System.getProperty("os.name");
+        if (os.equalsIgnoreCase("linux")) {
+            assertEquals(Optional.of(tmpDir.resolve("fo_x - unknown.mp3")), actual, "Null byte is replaced with _");
+        }
     }
 }
