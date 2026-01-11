@@ -23,48 +23,22 @@ import java.net.URISyntaxException;
 import java.util.function.Function;
 
 /**
- * Configures an URLConnection.
+ * Creates a HttpConnectionBuilder.
  * @author Stephan Fuhrmann
  */
 @Slf4j
 public class HttpConnectionBuilderFactory {
 
-    /** Multiple types of http clients this program offers. */
-    public enum HttpClientType {
-        /** Built-in JDK java.net HTTP connection.  */
-        JAVA_NET(JavaNetHttpConnectionBuilder::new),
-
-        /** Apache Httpcomponents HttpClient 5.x. */
-        APACHE_CLIENT_5(url -> {
-            return new ApacheHttpClient5ConnectionBuilder(url);
-        });
-
-        private final Function<URI, HttpConnectionBuilder> builder;
-
-        HttpClientType(@NonNull Function<URI, HttpConnectionBuilder> inBuilder) {
-            this.builder = inBuilder;
-        }
-        HttpConnectionBuilder builder(@NonNull URI url) {
-            return builder.apply(url);
-        }
-    }
-
-    private final HttpClientType httpClientType;
-
     /** Constructor.
-     * @param httpClientType the type of client to produce.
      * */
-    public HttpConnectionBuilderFactory(@NonNull HttpClientType httpClientType) {
-        log.debug("Using client {}", httpClientType);
-        this.httpClientType = httpClientType;
+    public HttpConnectionBuilderFactory() {
     }
 
     /** Creates a new client of the type configured in the type.
      * @param url the URL to create a new builder for.
      * @return a new builder instance for the given URL.
-     * @see #httpClientType
      * */
     public HttpConnectionBuilder newInstance(URI url) {
-        return httpClientType.builder(url);
+        return new ApacheHttpClient5ConnectionBuilder(url);
     }
 }

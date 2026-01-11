@@ -44,7 +44,6 @@ public class PLSConsumerTest {
 
     @BeforeEach
     public void init() {
-        Mockito.when(consumerContext.getHttpClient()).thenReturn(HttpConnectionBuilderFactory.HttpClientType.JAVA_NET);
     }
 
     @Test

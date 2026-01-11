@@ -95,9 +95,6 @@ public class Params {
     @Option(name = "-timeout", aliases = {"-T"}, usage = "Connect/read timeout in seconds.", metaVar = "SECS")
     private int timeout = 60;
 
-    @Option(name = "-client", aliases = {"-C"}, usage = "Specify HTTP client to use.", metaVar = "CLIENT")
-    private HttpConnectionBuilderFactory.HttpClientType httpClientType = HttpConnectionBuilderFactory.HttpClientType.APACHE_CLIENT_5;
-
     @Option(name = "-proxy", aliases = {"-P"}, usage = "The HTTP/HTTPS proxy to use.", metaVar = "URL")
     private URI proxy;
 

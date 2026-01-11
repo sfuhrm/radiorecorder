@@ -148,13 +148,6 @@ public class ConsumerContext {
         return null;
     }
 
-    /** The client type to use.
-     * @return the HTTP client type requested in the command line.
-     * */
-    public HttpConnectionBuilderFactory.HttpClientType getHttpClient() {
-        return params.getHttpClientType();
-    }
-
     /** The HTTP proxy to use or NULL.
      * @return the HTTP proxy requested in the command line.
      * */

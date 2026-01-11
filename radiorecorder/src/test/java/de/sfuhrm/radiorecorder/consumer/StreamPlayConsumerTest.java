@@ -54,7 +54,6 @@ public class StreamPlayConsumerTest {
 
     @BeforeEach
     public void init() {
-        Mockito.when(consumerContext.getHttpClient()).thenReturn(HttpConnectionBuilderFactory.HttpClientType.JAVA_NET);
         streamPlayConsumer = new StreamPlayConsumer(consumerContext);
     }
 
