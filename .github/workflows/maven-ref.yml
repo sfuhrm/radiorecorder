@@ -14,7 +14,7 @@ jobs:
     permissions:
       contents: read
     with:
-      java_version: 21
+      java_version: 25
       expression: project.version
   call-workflow-passing-data:
     needs: maven_version
@@ -22,6 +22,6 @@ jobs:
     permissions:
       contents: read
     with:
-      java_version: "[ \"21\" ]"
+      java_version: "[ \"25\" ]"
       artifact_name: build
       artifact_path: radiorecorder/target/radiorecorder-${{ needs.maven_version.outputs.expression_value }}.jar

@@ -14,5 +14,5 @@ jobs:
     permissions:
       contents: read
     with:
-      java_version: 21
+      java_version: 25
       artifact_name: spotbugs
