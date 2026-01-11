@@ -114,6 +114,8 @@ public class ConnectionHandler {
     public void consume(@NonNull URI uri) {
         boolean first = true;
         boolean loop = consumerContext.isReconnect();
+        RadioException last = null;
+
         do {
             if (!first) {
                 log.info("Sleeping for {} millis before retry", GRACE_PERIOD);
@@ -132,9 +134,13 @@ public class ConnectionHandler {
                 loop = false;
             } catch (RadioException re) {
                 loop &= re.isRetryable();
+                last = re;
                 log.debug("Retrying after {}? retryable={}, will retry={}", re.getMessage(), re.isRetryable(), loop);
             }
         } while (loop);
+        if (last != null) {
+            log.warn("Got an exception", last);
+        }
     }
 
     private static Consumer<HttpConnection> consumerFromContentType(ConsumerContext cc, String contentType) {
