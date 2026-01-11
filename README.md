@@ -78,8 +78,6 @@ The program is a command line only program. It supports multiple parameters:
  -cast (-c) CASTDEVICE_TITLE            : Stream to the given chrome cast
                                           device. Use cast device title from
                                           '-list-cast'.
- -client (-C) [JAVA_NET |               : Specify HTTP client to use. (default:
- APACHE_CLIENT_5]                         APACHE_CLIENT_5)
  -directory (-d) DIR                    : Write recorded stream files to a
                                           folder hierarchy in this target
                                           directory.
