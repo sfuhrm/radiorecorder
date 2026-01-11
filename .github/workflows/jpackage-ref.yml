@@ -16,7 +16,7 @@ jobs:
     permissions:
       contents: read
     with:
-      java_version: 21
+      java_version: 25
       expression: project.version
   jpackage:
     needs:
@@ -25,7 +25,7 @@ jobs:
       contents: read
     uses: sfuhrm/github_workflows/.github/workflows/jpackage.yml@main
     with:
-      java_version: 21
+      java_version: 25
       artifact_name: jpackage
       jpackage_input: radiorecorder/target/radiorecorder-${{ needs.maven_version.outputs.expression_value }}-app/radiorecorder-${{ needs.maven_version.outputs.expression_value }}
       jpackage_name: radiorecorder
@@ -45,7 +45,7 @@ jobs:
     permissions:
       contents: read
     with:
-      java_version: "[ \"21\" ]"
+      java_version: "[ \"25\" ]"
       artifact_name: binaries
       artifact_path: radiorecorder/target/radiorecorder-${{ needs.maven_version.outputs.expression_value }}-bin.*
   merge-and-sign-archives:
