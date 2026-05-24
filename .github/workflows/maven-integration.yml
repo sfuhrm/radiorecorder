@@ -14,9 +14,9 @@ jobs:
     outputs:
       version: ${{ steps.version.outputs.version }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Set up JDK
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5
       with:
         distribution: 'adopt'
         java-version: 25
@@ -26,7 +26,7 @@ jobs:
       run: echo "version=$(mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
       id: version
       shell: bash
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v7
       with:
         name: binary
         path: radiorecorder/target/radiorecorder-${{ steps.version.outputs.version }}-bin.tar.gz
@@ -40,9 +40,9 @@ jobs:
         java: [ 25 ]
         proxy: [ NO, YES ]
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Download build
-      uses: actions/download-artifact@v4.1.7
+      uses: actions/download-artifact@v8.0.1
       with:
         name: binary
     - name: Extract build
@@ -53,7 +53,7 @@ jobs:
         sudo apt-get update && sudo apt-get install --yes docker-compose
       if: matrix.proxy == 'YES'
     - name: Set up JDK ${{ matrix.java }}
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5
       with:
         distribution: 'adopt'
         java-version: ${{ matrix.java }}
