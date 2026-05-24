@@ -74,7 +74,7 @@ jobs:
           path: merge
           gpg-key: "${{ secrets.GPG_KEYFILE }}"
           gpg-passphrase: "${{ secrets.GPG_PASSPHRASE }}"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: all
           path: merge
