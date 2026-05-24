@@ -64,6 +64,20 @@ jobs:
         ls -al
         docker-compose up --detach
       if: matrix.proxy == 'YES'
+    - name: Wait for SQUID proxy TCP port
+      run: |
+        for i in {1..60}; do
+          if bash -c "cat < /dev/null > /dev/tcp/127.0.0.1/3128" 2>/dev/null; then
+            echo "Proxy is reachable on 127.0.0.1:3128"
+            exit 0
+          fi
+          echo "Waiting for proxy on 127.0.0.1:3128 ($i/60)"
+          sleep 1
+        done
+        echo "Proxy did not become reachable in time"
+        docker-compose -f ./.github/docker-compose/docker-compose.yml logs
+        exit 1
+      if: matrix.proxy == 'YES'
     - name: Run created binary
       run: |
         ARGS="-abort-after 100 240d28b9-7858-48d2-a816-9cf8e1875fe8 -d output"
@@ -105,4 +119,3 @@ jobs:
         else
           echo "File type of ${FIRST_MPEG}: ${FILE_TYPE}"
         fi
-
