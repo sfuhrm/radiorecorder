@@ -92,6 +92,8 @@ The program is a command line only program. It supports multiple parameters:
  -list-station (-Z)                     : List matching radio stations limited
                                           by '-limit', then exit. (default:
                                           false)
+ -metadata-csv (-C) FILE                : Append encountered song metadata to
+                                          this CSV file.
  -min-free (-M) MEGS                    : Minimum of free megs on target drive.
                                           (default: 512)
  -mixer (-m) MIXER_NAME                 : The mixer to use for playback. The
@@ -127,6 +129,18 @@ The program is a command line only program. It supports multiple parameters:
  -version (-V)                          : Show version information and exit.
                                           (default: false)
 ```
+
+### Metadata CSV logging
+
+Use `-metadata-csv <file>` to append all encountered track metadata to a CSV file.
+The CSV contains one row per encountered song with these columns:
+
+* `start_time` (ISO-8601 with timezone offset)
+* `duration_ms`
+* `station`
+* `artist`
+* `title`
+* `file_path`
 
 ## File name formatting
 

@@ -129,9 +129,10 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<Htt
 
     @Override
     protected void __accept(HttpConnection t, InputStream inputStream) {
+        CombinedMetaDataConsumer metaDataConsumer = createMetaDataConsumer();
         try {
 
-            getStreamMetaData().setMetaDataConsumer(new ConsoleMetaDataConsumer());
+            getStreamMetaData().setMetaDataConsumer(metaDataConsumer);
 
             ChromeCasts.registerListener(new MyChromeCastsListener());
             ChromeCasts.startDiscovery();
@@ -210,6 +211,7 @@ public class StreamCastConsumer extends MetaDataConsumer implements Consumer<Htt
             log.warn("Chromecast problem", ex);
             throw new RadioException(false, ex);
         } finally {
+            metaDataConsumer.close();
             cleanup();
         }
     }

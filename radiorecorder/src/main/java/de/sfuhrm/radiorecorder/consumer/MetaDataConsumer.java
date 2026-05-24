@@ -18,9 +18,11 @@ package de.sfuhrm.radiorecorder.consumer;
 import de.sfuhrm.radiorecorder.ConsumerContext;
 import de.sfuhrm.radiorecorder.http.HttpConnection;
 import de.sfuhrm.radiorecorder.RadioException;
+import de.sfuhrm.radiorecorder.metadata.MetaData;
 import de.sfuhrm.radiorecorder.metadata.StreamMetaData;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.function.Consumer;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +46,47 @@ public abstract class MetaDataConsumer extends AbstractConsumer implements Consu
     public MetaDataConsumer(ConsumerContext consumerContext) {
         super(consumerContext);
         streamMetaData = new StreamMetaData();
+    }
+
+    /** Combines console output and optional CSV output for stream metadata. */
+    protected static class CombinedMetaDataConsumer implements Consumer<MetaData>, AutoCloseable {
+
+        private final Consumer<MetaData> delegate;
+        private final CsvMetaDataConsumer csvMetaDataConsumer;
+
+        CombinedMetaDataConsumer(CsvMetaDataConsumer csvMetaDataConsumer) {
+            this.csvMetaDataConsumer = csvMetaDataConsumer;
+            Consumer<MetaData> metaDataConsumer = new ConsoleMetaDataConsumer();
+            if (csvMetaDataConsumer != null) {
+                metaDataConsumer = metaDataConsumer.andThen(csvMetaDataConsumer);
+            }
+            this.delegate = metaDataConsumer;
+        }
+
+        @Override
+        public void accept(MetaData metaData) {
+            delegate.accept(metaData);
+        }
+
+        @Override
+        public void close() {
+            if (csvMetaDataConsumer != null) {
+                csvMetaDataConsumer.close();
+            }
+        }
+
+        public void setCurrentFilePath(Path currentFilePath) {
+            if (csvMetaDataConsumer != null) {
+                csvMetaDataConsumer.setCurrentFilePath(currentFilePath);
+            }
+        }
+    }
+
+    protected CombinedMetaDataConsumer createMetaDataConsumer() {
+        CsvMetaDataConsumer csvMetaDataConsumer = getContext().getMetaDataCsv() == null
+                ? null
+                : new CsvMetaDataConsumer(getContext().getMetaDataCsv(), getContext().getRadio().getName());
+        return new CombinedMetaDataConsumer(csvMetaDataConsumer);
     }
 
     @Override

@@ -50,6 +50,9 @@ public class Params {
     @Option(name = "-directory", aliases = {"-d"}, usage = "Write recorded stream files to a folder hierarchy in this target directory.", metaVar = "DIR")
     private Path directory;
 
+    @Option(name = "-metadata-csv", aliases = {"-C"}, usage = "Append encountered song metadata to this CSV file.", metaVar = "FILE")
+    private Path metaDataCsv;
+
     @Option(name = "-use-songnames", aliases = {"-S"}, usage = "Use songnames from retrieved metadata information. Will create one file per detected song.")
     private boolean songNames;
 
@@ -163,6 +166,9 @@ public class Params {
             if (result.getDirectory() != null &&
                     prepareOutputDirectory(cmdLineParser, result.getDirectory())) return null;
 
+            if (result.getMetaDataCsv() != null &&
+                    prepareCsvOutputFile(cmdLineParser, result.getMetaDataCsv())) return null;
+
             if (result.getAbortAfterDuration() != null) {
                 try {
                     toMillis(result.abortAfterDuration);
@@ -209,6 +215,31 @@ public class Params {
             cmdLineParser.printUsage(System.err);
             log.error("Target directory {} given, but it is not writable!",
                     directoryPath);
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean prepareCsvOutputFile(CmdLineParser cmdLineParser, Path csvOutputFile) throws IOException {
+        if (Files.exists(csvOutputFile) && Files.isDirectory(csvOutputFile)) {
+            cmdLineParser.printUsage(System.err);
+            log.error("CSV output file {} is a directory", csvOutputFile);
+            return true;
+        }
+
+        Path parent = csvOutputFile.getParent();
+        if (parent != null && !Files.exists(parent)) {
+            log.info("CSV parent directory {} not existing, creating.", parent);
+            Files.createDirectories(parent);
+        }
+        if (parent != null && !Files.isWritable(parent)) {
+            cmdLineParser.printUsage(System.err);
+            log.error("CSV parent directory {} given, but it is not writable!", parent);
+            return true;
+        }
+        if (Files.exists(csvOutputFile) && !Files.isWritable(csvOutputFile)) {
+            cmdLineParser.printUsage(System.err);
+            log.error("CSV output file {} given, but it is not writable!", csvOutputFile);
             return true;
         }
         return false;

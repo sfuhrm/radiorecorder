@@ -93,8 +93,9 @@ public class StreamPlayConsumer extends MetaDataConsumer implements Consumer<Htt
 
     @Override
     protected void __accept(HttpConnection t, InputStream inputStream) {
+        CombinedMetaDataConsumer metaDataConsumer = createMetaDataConsumer();
         try {
-            getStreamMetaData().setMetaDataConsumer(new ConsoleMetaDataConsumer());
+            getStreamMetaData().setMetaDataConsumer(metaDataConsumer);
             byte[] buffer = new byte[BUFFER_SIZE];
 
             String contentType = t.getContentType();
@@ -151,6 +152,8 @@ public class StreamPlayConsumer extends MetaDataConsumer implements Consumer<Htt
         } catch (UnsupportedAudioFileException | LineUnavailableException | IOException ex) {
             log.warn("URL {} broke down", getContext().getUri().toASCIIString(), ex);
             throw new RadioException(false, ex);
+        } finally {
+            metaDataConsumer.close();
         }
     }
 }

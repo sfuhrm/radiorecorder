@@ -74,6 +74,13 @@ public class ConsumerContext {
         return params.getDirectory();
     }
 
+    /** Get the CSV file for metadata logging.
+     * @return CSV output file or {@code null}.
+     */
+    public Path getMetaDataCsv() {
+        return params.getMetaDataCsv();
+    }
+
     /** Get minimum free bytes.
      * @return minimum number of free bytes on disk.
      */

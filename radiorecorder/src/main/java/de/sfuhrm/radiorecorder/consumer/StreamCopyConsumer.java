@@ -93,6 +93,8 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
      */
     private final Supplier<MetaDataFileNameGenerator> fileNameGeneratorSupplier;
 
+    private final CombinedMetaDataConsumer metaDataConsumer;
+
     /** Constructor.
      * @param consumerContext the context to work in.
      * */
@@ -106,6 +108,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
                   new MetaDataFileNameGenerator(consumerContext.getNoSongnameFormat(), consumerContext, false);
 
         targetDirectory = consumerContext.getTargetDirectory();
+        metaDataConsumer = createMetaDataConsumer();
     }
 
     /** Returns if the stream has metadata and we are processing songnames. */
@@ -176,6 +179,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
             log.warn("Illegal file name file skipped", invalidPathException);
         }
 
+        metaDataConsumer.setCurrentFilePath(fileNullable);
         log.debug("New file {}", fileNullable);
     }
 
@@ -189,7 +193,7 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
                 this.previousMetaData = metaData;
                 this.metaData = m;
                 metaDataChanged = true;
-            new ConsoleMetaDataConsumer().accept(m);
+                metaDataConsumer.accept(m);
             });
             byte[] buffer = new byte[BUFFER_SIZE];
             Optional<MimeType> contentType = MimeType.byContentType(t.getContentType());
@@ -240,20 +244,24 @@ public class StreamCopyConsumer extends MetaDataConsumer implements Consumer<Htt
     }
 
     private void cleanup(boolean deletePartly) {
-        if (outputStreamNullable != null) {
-            try {
-                outputStreamNullable.close();
-            } catch (IOException ex) {
-                log.warn("URL {} close error", getContext().getUri().toASCIIString(), ex);
+        try {
+            if (outputStreamNullable != null) {
+                try {
+                    outputStreamNullable.close();
+                } catch (IOException ex) {
+                    log.warn("URL {} close error", getContext().getUri().toASCIIString(), ex);
+                }
             }
-        }
-        if (fileNullable != null && deletePartly && Files.exists(fileNullable)) {
-            log.info("Deleting partly file {}", fileNullable);
-            try {
-                Files.delete(fileNullable);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            if (fileNullable != null && deletePartly && Files.exists(fileNullable)) {
+                log.info("Deleting partly file {}", fileNullable);
+                try {
+                    Files.delete(fileNullable);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
+        } finally {
+            metaDataConsumer.close();
         }
     }
 
