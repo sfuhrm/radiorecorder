@@ -73,8 +73,10 @@ public enum MimeType {
     }
 
     boolean matches(String contentTypeToMatch) {
+        /* Retrieve only 'type/subtype', filtering out any additional parameters */
+        String typeSTypeToMatch = contentTypeToMatch.split(";", 2)[0];
         for (String contentType : contentTypes) {
-            if (contentTypeToMatch.equalsIgnoreCase(contentType)) {
+            if (typeSTypeToMatch.equalsIgnoreCase(contentType)) {
                 return true;
             }
         }
